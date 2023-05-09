@@ -14,6 +14,7 @@ class GameState:
         self.current_pot = current_pot
         self.current_bets = {player: 0 for player in players}
         self.current_stage = current_stage
+        self.all_in_players = []
         self.hand_evaluator = HandEvaluator()
         self.current_player = self.players[(self.dealer_position + 1) % len(players)]
         self.round_turns = 0
@@ -69,16 +70,17 @@ class GameState:
             else:
                 actions.append(('check', None))
 
-        if self.current_player.chips + player_bet >= current_bet + self.big_blind:
-            min_raise = current_bet - player_bet + self.big_blind
-            max_raise = self.current_player.chips
+        if len(self.all_in_players) + 1 < len(self.active_players):
+            if self.current_player.chips + player_bet >= current_bet + self.big_blind:
+                min_raise = current_bet - player_bet + self.big_blind
+                max_raise = self.current_player.chips
 
-            if min_raise < max_raise:
-                raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, max_raise)
-                for raise_amount in raise_buckets:
-                    actions.append(('raise', raise_amount))
-            else:
-                actions.append(('raise', min_raise))
+                if min_raise < max_raise:
+                    raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, max_raise)
+                    for raise_amount in raise_buckets:
+                        actions.append(('raise', raise_amount))
+                else:
+                    actions.append(('raise', min_raise))
 
         actions.append(('all-in', None))
         actions.append(('fold', None))
@@ -153,16 +155,18 @@ class GameState:
             raise_amount = min(raise_amount, self.current_player.chips)
             self.current_player.bet(raise_amount)
             self.current_pot += raise_amount
-            self.current_bets[self.current_player] = raise_amount
+            self.current_bets[self.current_player] += raise_amount
         elif action == 'all-in':
             bet_adversary = self.current_bets[self.get_next_player(self.current_player)]
             bet_amount = self.current_player.chips
             if bet_amount < bet_adversary:
                 bet_diff = bet_adversary - bet_amount
                 self.current_pot -= bet_diff
-                self.players[self.get_next_player(self.current_player)].chips += bet_diff
+                self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += bet_diff
             self.current_player.bet(bet_amount)
+            self.current_pot += bet_amount
             self.current_bets[self.current_player] = bet_amount
+            self.all_in_players.append(self.current_player)
         elif action == 'fold':
             self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += self.current_pot
             self.eliminate_player(self.current_player)
@@ -173,6 +177,7 @@ class GameState:
         self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
         self.round_turns = 0
         self.round_players = self.active_players
+
     def is_round_over(self):
         if len(self.active_players) < 2:
             return True
@@ -220,7 +225,7 @@ class GameState:
 
     def play_round(self):
         # The player_action function should return the next action ('check', 'call', 'raise', 'fold') and the raise amount (if applicable)
-        while not self.is_round_over():
+        while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
             action = self.player_action()
             self.handle_action(action[0], action[1])
             self.next_player()
