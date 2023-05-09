@@ -138,15 +138,12 @@ class GameState:
         return winning_player
 
     def handle_action(self, action, raise_amount=0):
-        print('HANDLING THE ACTION')
-        print(action)
+        print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
         if action == 'check':
             self.current_bets[self.current_player] = 0
         elif action == 'call':
             call_amount = max(self.current_bets.values()) - self.current_bets[self.current_player]
-            print(f"call amount : {call_amount}")
-            call_amount = min(self.current_player.chips, call_amount)
-            print(f"call amount : {call_amount}")
+            print(f"\nCall amount: {call_amount}\n")
             self.current_player.bet(call_amount)
             self.current_pot += call_amount
             self.current_bets[self.current_player] = 0
@@ -183,7 +180,7 @@ class GameState:
             return True
         if self.round_turns >= len(self.round_players):
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
-            print(active_bets)
+            print(f"\nActive bets: {active_bets}\n")
             if all(bet == 0 for bet in active_bets):
                 return True
         return False
@@ -203,13 +200,15 @@ class GameState:
         self.dealer_position = (self.dealer_position + 1) % len(self.players) """
 
     def player_action(self):
+        if self.current_player == self.target_player:
+            print("\nCFR TIME!\n")
         actions = self.available_actions()
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
         index = -1
         for i in actions:
             index += 1
             print(f"{index} - {i}")
-        return actions[int(input("Chosen action: "))]
+        return actions[int(input("\nChosen action: "))]
 
     def collect_blinds(self):
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
@@ -232,25 +231,25 @@ class GameState:
         self.reset_round()
 
     def play_preflop(self):
-        print("PREFLOP")
+        print("\nPREFLOP\n")
         self.determine_hole_cards()
         self.collect_blinds()
         self.play_round()
 
     def play_flop(self):
-        print("FLOP")
+        print("\nFLOP\n")
         self.current_stage = 'flop'
         self.determine_community_cards()
         self.play_round()
 
     def play_turn(self):
-        print("TURN")
+        print("\nTURN\n")
         self.current_stage = 'turn'
         self.determine_community_cards()
         self.play_round()
 
     def play_river(self):
-        print("RIVER")
+        print("\nRIVER\n")
         self.current_stage = 'river'
         self.determine_community_cards()
         self.play_round()
