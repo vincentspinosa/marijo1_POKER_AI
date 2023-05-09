@@ -7,8 +7,8 @@ class Player:
         self.chips -= amount
         return amount
 
-    def fold(self):
-        self.hand = []
+    """ def fold(self):
+        self.hand = [] """
 
     def __str__(self):
         return f"Player has {self.chips} chips and a hand of {self.hand[0]} and {self.hand[1]}"

@@ -17,6 +17,7 @@ class GameState:
         self.hand_evaluator = HandEvaluator()
         self.current_player = self.players[(self.dealer_position + 1) % len(players)]
         self.round_turns = 0
+        self.round_players = self.active_players
 
     def determine_hole_cards(self):
         for x in range(2):
@@ -51,7 +52,7 @@ class GameState:
 
 
     def eliminate_player(self, player):
-        self.active_players.remove(player)
+        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
     def available_actions(self):
         actions = []
@@ -159,22 +160,23 @@ class GameState:
             if bet_amount < bet_adversary:
                 bet_diff = bet_adversary - bet_amount
                 self.current_pot -= bet_diff
-                self.get_next_player.chips += bet_diff
+                self.players[self.get_next_player(self.current_player)].chips += bet_diff
             self.current_player.bet(bet_amount)
             self.current_bets[self.current_player] = bet_amount
         elif action == 'fold':
-            self.current_player.fold()
+            self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += self.current_pot
             self.eliminate_player(self.current_player)
+            print(len(self.active_players))
         self.round_turns += 1
 
-    def reset_round_turns(self):
+    def reset_round(self):
+        self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
         self.round_turns = 0
-
+        self.round_players = self.active_players
     def is_round_over(self):
-        # Check if all players have either folded or have the same bet amount
         if len(self.active_players) < 2:
             return True
-        if self.round_turns > 0:
+        if self.round_turns >= len(self.round_players):
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(active_bets)
             if all(bet == 0 for bet in active_bets):
@@ -192,8 +194,8 @@ class GameState:
         self.deck.shuffle()
         self.target_player.hand = [self.deck.deal(), self.deck.deal()]
 
-    def move_dealer_button(self):
-        self.dealer_position = (self.dealer_position + 1) % len(self.players)
+    """ def move_dealer_button(self):
+        self.dealer_position = (self.dealer_position + 1) % len(self.players) """
 
     def player_action(self):
         actions = self.available_actions()
@@ -222,7 +224,7 @@ class GameState:
             action = self.player_action()
             self.handle_action(action[0], action[1])
             self.next_player()
-        self.reset_round_turns()
+        self.reset_round()
 
     def play_preflop(self):
         print("PREFLOP")
