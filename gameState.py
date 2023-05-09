@@ -178,6 +178,13 @@ class GameState:
     def go_to_showdown(self):
         if len(self.all_in_players) == len(self.active_players):
             self.community_cards.append(self.deck.deal() for _ in range(5 - len(self.community_cards)))
+    
+
+    ###########################################################
+
+            # UI functions
+
+    ###########################################################
 
     def is_round_over(self):
         if len(self.active_players) < 2:
@@ -190,13 +197,6 @@ class GameState:
         if len(self.all_in_players) == len(self.active_players):
             return True   
         return False
-    
-
-    ###########################################################
-
-            # UI functions
-
-    ###########################################################
 
     def deal_hole_cards(self):
         self.deck.shuffle()
