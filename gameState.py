@@ -175,6 +175,10 @@ class GameState:
         self.round_turns = 0
         self.round_players = self.active_players
 
+    def go_to_showdown(self):
+        if len(self.all_in_players) == len(self.active_players):
+            self.community_cards.append(self.deck.deal() for _ in range(5 - len(self.community_cards)))
+
     def is_round_over(self):
         if len(self.active_players) < 2:
             return True
@@ -183,6 +187,8 @@ class GameState:
             print(f"\nActive bets: {active_bets}\n")
             if all(bet == 0 for bet in active_bets):
                 return True
+        if len(self.all_in_players) == len(self.active_players):
+            return True   
         return False
     
 
@@ -224,10 +230,10 @@ class GameState:
         self.current_pot += small_blind_amount + big_blind_amount
 
     def play_round(self):
-        # The player_action function should return the next action ('check', 'call', 'raise', 'fold') and the raise amount (if applicable)
+        # player_action() returns the next action and the raise amount (if applicable)
         while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
             action = self.player_action()
-            self.handle_action(action[0], action[1])
+            self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
         self.reset_round()
 
