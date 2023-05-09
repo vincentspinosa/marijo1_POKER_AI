@@ -200,15 +200,17 @@ class GameState:
         self.dealer_position = (self.dealer_position + 1) % len(self.players) """
 
     def player_action(self):
-        if self.current_player == self.target_player:
-            print("\nCFR TIME!\n")
         actions = self.available_actions()
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
-        index = -1
-        for i in actions:
-            index += 1
-            print(f"{index} - {i}")
-        return actions[int(input("\nChosen action: "))]
+        if self.current_player == self.target_player:
+            print("\nCFR TIME!\n")
+            return actions[0]
+        else:
+            index = -1
+            for i in actions:
+                index += 1
+                print(f"{index} - {i}")
+            return actions[int(input("\nChosen action: "))]
 
     def collect_blinds(self):
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
