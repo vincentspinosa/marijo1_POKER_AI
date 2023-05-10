@@ -203,7 +203,7 @@ class GameState:
         if self.round_turns >= len(self.round_players):
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(f"\nActive bets: {active_bets}\n")
-            if all(bet == 0 for bet in active_bets):
+            if len(set(active_bets)) == 1:
                 return True
         if len(self.all_in_players) == len(self.active_players):
             return True   
