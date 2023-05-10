@@ -20,6 +20,7 @@ def cfr(gameState, seconds):
     gameStateInitial = copy.deepcopy(gameState)
     gameStateTemp = copy.deepcopy(gameState)
     start_time = time.time()
+    iterations = 0
     while (time.time() - start_time) < seconds:
         maxReward = None
         index = -1
@@ -33,13 +34,10 @@ def cfr(gameState, seconds):
             else:
                 gameStateTemp.next_player()
                 actions = gameStateTemp.available_actions()
-                try:
-                    if actions[0][0] == 'call':
-                        gameStateTemp.handle_action(action[0], raise_amount=action[1])
-                    else:
-                        gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
-                except:
-                    print(action)
+                if actions[0][0] in ['call', 'check']:
+                    gameStateTemp.handle_action(action[0], raise_amount=action[1])
+                else:
+                    gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
                 gameStateTemp.go_to_showdown()
                 print(len(gameStateTemp.community_cards))
                 print(len(gameStateTemp.deck.cards))
@@ -59,7 +57,9 @@ def cfr(gameState, seconds):
                         break
             maxReward = reward
             index += 1
+            iterations += 1
         probabilities[index][1] += 1
+    print(f"NUMBER OF ITERATIONS: {iterations}")
     return compute_probabilities(probabilities)
 
 

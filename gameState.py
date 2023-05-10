@@ -122,9 +122,16 @@ class GameState:
             print(type(i)) """
         player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
 
+        """ print("\nHANDS: ")
+        for hand in player_hands:
+            print(hand)
+            print("\n") """
+
         # Find the highest rank and hands with the same highest rank
         highest_rank = player_hands[0][1]
         winning_hands = [player_hand for player_hand in player_hands if player_hand[1] == highest_rank]
+
+        #print(f"\n{winning_hands}\n")
 
         # If there's only one winning hand, return the corresponding player
         if len(winning_hands) == 1:
