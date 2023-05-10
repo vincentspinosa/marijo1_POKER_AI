@@ -97,4 +97,4 @@ def get_play(arrayProbas):
 
 
 def eval(gameState):
-    return get_play(cfr(gameState, 4))
+    return get_play(cfr(gameState, 1))
