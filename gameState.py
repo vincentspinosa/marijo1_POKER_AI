@@ -200,7 +200,7 @@ class GameState:
     def is_round_over(self):
         if len(self.active_players) < 2:
             return True
-        if self.round_turns >= len(self.round_players):
+        if self.round_turns >= len(self.round_players) or self.current_stage == 'pre-flop':
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(f"\nActive bets: {active_bets}\n")
             if len(set(active_bets)) == 1:
