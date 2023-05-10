@@ -36,7 +36,7 @@ def cfr(gameState, seconds):
                 gameStateTemp.next_player()
                 actions = gameStateTemp.available_actions()
                 print(f"Pot before action: {gameStateTemp.current_pot}")
-                if actions[0][0] in ['call', 'check']:
+                if actions[1][0] in ['call', 'check']:
                     gameStateTemp.handle_action(action[0], raise_amount=action[1])
                 else:
                     gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
@@ -72,13 +72,13 @@ def cfr(gameState, seconds):
             iterations += 1
         print(f"\n\nINDEX: {index}")
         print(f"MAX REWARD: {maxReward}")
-        print(probabilities[index][0])
+        print(f"ACTION: {str(probabilities[index][0]).upper()}")
         probabilities[index][1] += 1
     print(f"NUMBER OF ITERATIONS: {iterations}")
-    """ sum = 0
+    sum = 0
     for i in range(1, len(probabilities)):
         sum += probabilities[i][1]
-    probabilities[0][1] = iterations - sum """
+    probabilities[0][1] = iterations - sum
     print("Probabilities:")
     for p in probabilities:
         print(p)
@@ -97,4 +97,4 @@ def get_play(arrayProbas):
 
 
 def eval(gameState):
-    return get_play(cfr(gameState, 1))
+    return get_play(cfr(gameState, 4))
