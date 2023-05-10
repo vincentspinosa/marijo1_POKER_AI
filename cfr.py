@@ -33,14 +33,20 @@ def cfr(gameState, seconds):
             if action[0] == 'fold':
                 reward = 0 - gameStateTemp.current_pot
             else:
-                gameStateTemp.next_player()
-                actions = gameStateTemp.available_actions()
-                print(f"Pot before action: {gameStateTemp.current_pot}")
-                if actions[1][0] in ['call', 'check']:
-                    gameStateTemp.handle_action(action[0], raise_amount=action[1])
-                else:
-                    gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
-                print(f"Pot after action: {gameStateTemp.current_pot}")
+                if not gameStateTemp.is_round_over():
+                    gameStateTemp.next_player()
+                    actions = gameStateTemp.available_actions()
+                    print(f"Pot before action: {gameStateTemp.current_pot}")
+                    if any('check' == action[0] for action in actions):
+                        print("ADVERSARY CHECKS")
+                        gameStateTemp.handle_action('check', raise_amount=0)
+                    elif any('call' == action[0] for action in actions):
+                        print("ADVERSARY CALLS")
+                        gameStateTemp.handle_action('call', raise_amount=0)
+                    else:
+                        print("ADVERSARY GOES ALL-IN")
+                        gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
+                    print(f"Pot after action: {gameStateTemp.current_pot}")
                 print(f"Len community cards BEFORE GOING TO SHOWDOWN: {len(gameStateTemp.community_cards)}")
                 print(f"GOING TO SHOWDOWN!")
                 print(gameStateTemp.community_cards)
