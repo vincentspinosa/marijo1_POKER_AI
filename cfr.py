@@ -3,15 +3,21 @@ import numpy as np
 import random
 import copy
 
-def compute_probabilities(arrayInput):
-    arrayInput = np.array(arrayInput)
+def compute_probabilities(array):
+    sum = 0
+    for el in array:
+        sum += el[1]
+    for el in array:
+        el[1] /= sum
+    return array
+    """ arrayInput = np.array(arrayInput)
     integers = arrayInput[:, 1].astype(int)
     total = np.sum(integers)
     arrayProbas = integers / total
     result = []
     for index, proba in enumerate(arrayProbas):
         result.append([arrayInput[index, 0], proba])
-    return np.array(result)
+    return np.array(result) """
 
 
 def cfr(gameState, seconds):
@@ -95,11 +101,12 @@ def cfr(gameState, seconds):
     return probabilities
 
 
-def get_play(arrayProbas):
-    indices = np.arange(len(arrayProbas))
-    probabilities = arrayProbas[:, 1].astype(float)
+def get_play(array):
+    array = np.array(array, dtype=list)
+    indices = np.arange(len(array))
+    probabilities = array[:, 1].astype(float)
     chosen_index = np.random.choice(indices, p=probabilities)
-    return arrayProbas[chosen_index]
+    return array[chosen_index]
 
 
 def eval(gameState):
