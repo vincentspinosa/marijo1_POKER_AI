@@ -1,5 +1,7 @@
 from hand_evaluator import HandEvaluator
 from deck import Deck
+from player import Player
+from cfr import eval
 
 class GameState:
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
@@ -35,7 +37,7 @@ class GameState:
         if self.current_stage == 'flop':
             self.community_cards = [self.deck.deal() for _ in range(3)]
         elif self.current_stage in ['turn', 'river']:
-            self.community_cards.append(self.deck.deal())
+            self.community_cards += [self.deck.deal()]
 
     def determine_community_cards(self):
         if self.current_stage == 'flop':
@@ -112,11 +114,13 @@ class GameState:
         # Calculate the hand ranks for each player
         player_hands = []
         for player in players:
-            hand_rank, hand = self.hand_evaluator.evaluate_hand(player.hand, self.community_cards)
+            hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
             player_hands.append((player, hand_rank, hand))
 
         # Sort the player hands by rank and the actual hand in descending order
-        player_hands.sort(key=lambda x: (x[1], x[2]), reverse=True)
+        """ for i in player_hands:
+            print(type(i)) """
+        player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
 
         # Find the highest rank and hands with the same highest rank
         highest_rank = player_hands[0][1]
@@ -177,7 +181,7 @@ class GameState:
 
     def go_to_showdown(self):
         if len(self.all_in_players) == len(self.active_players):
-            self.community_cards.append(self.deck.deal() for _ in range(5 - len(self.community_cards)))
+            self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
     
 
     ###########################################################
@@ -210,7 +214,7 @@ class GameState:
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
         if self.current_player == self.target_player:
             print("\nCFR TIME!\n")
-            print(f"\nCFR suggestion: {actions[0]}\n")
+            print(f"\nCFR suggestion: {eval(self)}\n")
         index = -1
         for i in actions:
             index += 1

@@ -1,7 +1,7 @@
 import time
 import numpy as np
 import random
-
+import copy
 
 def compute_probabilities(arrayInput):
     arrayInput = np.array(arrayInput)
@@ -15,33 +15,42 @@ def compute_probabilities(arrayInput):
 
 
 def cfr(gameState, seconds):
-    liste_actions = gameState.current_player.available_actions()
+    liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
-    gameStateInitial = gameState
+    gameStateInitial = copy.deepcopy(gameState)
+    gameStateTemp = copy.deepcopy(gameState)
     start_time = time.time()
     while (time.time() - start_time) < seconds:
-        gameState = gameStateInitial
-        gameState.deck.shuffle()
         maxReward = None
         index = -1
         for action in liste_actions:
+            print('iterating')
+            opposite_player_index = (gameStateTemp.get_player_position(gameStateTemp.target_player) + 1) % len(gameStateTemp.players)
             reward = 0
-            """ 
-            We execute 'action'
-            While the hand is not over
-                If Chance Node : we compute ONE possibility of card
-                Elif Action Node : call / all -in if call is not possible
-                Elif Terminal Node :
-                    1 - If showdown :
-                        A - We compute ONE possibility of hole cards for players who are not 'gameState.target_player'
-                        B - We compute the best hand between the players  
-                    2 - We compute the 'reward' variable
-                        If player who wins is target_player:
-                            reward = gameState.pot
-                        Elif player who wins is not None:
-                            reward = 0 - gameState.pot
-                We update the Game State accordingly
-            """
+            gameStateTemp.handle_action(action[0], raise_amount=action[1])
+            if action[0] == 'fold':
+                reward = 0 - gameStateTemp.current_pot
+            else:
+                gameStateTemp.next_player()
+                actions = gameStateTemp.available_actions()
+                try:
+                    if actions[0][0] == 'call':
+                        gameStateTemp.handle_action(action[0], raise_amount=action[1])
+                    else:
+                        gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
+                except:
+                    print(action)
+                gameStateTemp.go_to_showdown()
+                print(len(gameStateTemp.community_cards))
+                print(len(gameStateTemp.deck.cards))
+                gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
+                winner = gameStateTemp.showdown(gameStateTemp.players)
+                if winner == gameStateTemp.target_player:
+                    reward = gameStateTemp.current_pot
+                elif winner == gameStateTemp.players[opposite_player_index]:
+                    reward == 0 - gameStateTemp.current_pot
+            gameStateTemp = copy.deepcopy(gameStateInitial)
+            gameStateTemp.deck.shuffle()
             if maxReward is not None:
                 if reward < maxReward:
                     break
