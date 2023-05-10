@@ -27,6 +27,7 @@ def cfr(gameState, seconds):
         for action in liste_actions:
             print('iterating')
             opposite_player_index = (gameStateTemp.get_player_position(gameStateTemp.target_player) + 1) % len(gameStateTemp.players)
+            print(f"Opposite player index: {opposite_player_index}")
             reward = 0
             gameStateTemp.handle_action(action[0], raise_amount=action[1])
             if action[0] == 'fold':
@@ -34,19 +35,29 @@ def cfr(gameState, seconds):
             else:
                 gameStateTemp.next_player()
                 actions = gameStateTemp.available_actions()
+                print(f"Pot before action: {gameStateTemp.current_pot}")
                 if actions[0][0] in ['call', 'check']:
                     gameStateTemp.handle_action(action[0], raise_amount=action[1])
                 else:
                     gameStateTemp.handle_action('all-in', raise_amount=gameStateTemp.current_player.chips)
+                print(f"Pot after action: {gameStateTemp.current_pot}")
+                print(f"Len community cards BEFORE GOING TO SHOWDOWN: {len(gameStateTemp.community_cards)}")
+                print(f"GOING TO SHOWDOWN!")
+                print(gameStateTemp.community_cards)
                 gameStateTemp.go_to_showdown()
-                print(len(gameStateTemp.community_cards))
-                print(len(gameStateTemp.deck.cards))
+                print(f"Len community cards AFTER GOING TO SHOWDOWN: {len(gameStateTemp.community_cards)}")
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
+                print(f"Len community cards after distributing hole_cards to the other player: {len(gameStateTemp.community_cards)}")
+                print(f"Len deck: {len(gameStateTemp.deck.cards)}")
                 winner = gameStateTemp.showdown(gameStateTemp.players)
                 if winner == gameStateTemp.target_player:
+                    print("Winner is the target player!")
                     reward = gameStateTemp.current_pot
+                    print(reward)
                 elif winner == gameStateTemp.players[opposite_player_index]:
+                    print("Winner is NOT the target player!")
                     reward == 0 - gameStateTemp.current_pot
+                    print(reward)
             gameStateTemp = copy.deepcopy(gameStateInitial)
             gameStateTemp.deck.shuffle()
             if maxReward is not None:
@@ -55,12 +66,27 @@ def cfr(gameState, seconds):
                 elif reward == maxReward:
                     if random.choice([True, False]):
                         break
+            print(f"REWARD: {reward}")
             maxReward = reward
             index += 1
             iterations += 1
+        print(f"\n\nINDEX: {index}")
+        print(f"MAX REWARD: {maxReward}")
+        print(probabilities[index][0])
         probabilities[index][1] += 1
     print(f"NUMBER OF ITERATIONS: {iterations}")
-    return compute_probabilities(probabilities)
+    """ sum = 0
+    for i in range(1, len(probabilities)):
+        sum += probabilities[i][1]
+    probabilities[0][1] = iterations - sum """
+    print("Probabilities:")
+    for p in probabilities:
+        print(p)
+    probabilities = compute_probabilities(probabilities)
+    print("Computed probabilities:")
+    for p in probabilities:
+        print(p)
+    return probabilities
 
 
 def get_play(arrayProbas):

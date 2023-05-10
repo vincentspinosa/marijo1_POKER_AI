@@ -4,4 +4,4 @@ class Card:
         self.suit = suit
 
     def __str__(self):
-        return f"{self.rank} of {self.suit}"
+        return f"{self.rank} de {str(self.suit).upper()}"

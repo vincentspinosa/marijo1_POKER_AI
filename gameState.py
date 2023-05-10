@@ -60,6 +60,8 @@ class GameState:
     def available_actions(self):
         actions = []
 
+        actions.append(('fold', None))
+
         if self.current_player not in self.active_players:
             return actions
 
@@ -85,7 +87,6 @@ class GameState:
                     actions.append(('raise', min_raise))
 
         actions.append(('all-in', None))
-        actions.append(('fold', None))
         return actions
 
     def calculate_raise_buckets(self, player, min_raise, max_raise):
@@ -178,7 +179,7 @@ class GameState:
         elif action == 'fold':
             self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += self.current_pot
             self.eliminate_player(self.current_player)
-            print(len(self.active_players))
+            print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
     def reset_round(self):
@@ -187,8 +188,7 @@ class GameState:
         self.round_players = self.active_players
 
     def go_to_showdown(self):
-        if len(self.all_in_players) == len(self.active_players):
-            self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
+        self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
     
 
     ###########################################################
