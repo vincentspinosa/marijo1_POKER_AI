@@ -19,10 +19,10 @@ class HandEvaluator:
 
     def evaluate_hand(self, player_cards, community_cards):
         all_cards = player_cards + community_cards
-        print("\nEvaluating:\nPrinting all cards:")
+        """ print("\nEvaluating:\nPrinting all cards:")
         for card in all_cards:
             print(card)
-        print("\n")
+        print("\n") """
         all_cards.sort(key=lambda x: x.rank, reverse=True)
 
         if self.check_royal_flush(all_cards):

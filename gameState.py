@@ -142,13 +142,20 @@ class GameState:
         # If there are multiple winning hands, compare their high cards to determine the winner
         winning_player = winning_hands[0][0]
         winning_hand_high_card = winning_hands[0][2][0].rank
+        winners = 1
         for i in range(1, len(winning_hands)):
             current_hand_high_card = winning_hands[i][2][0].rank
             if current_hand_high_card > winning_hand_high_card:
                 winning_player = winning_hands[i][0]
                 winning_hand_high_card = current_hand_high_card
+                winners = 1
+            elif current_hand_high_card == winning_hand_high_card:
+                winners = 2
 
-        return winning_player
+        if winners < 2:
+            return winning_player
+        
+        return None
 
     def handle_action(self, action, raise_amount=0):
         print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
@@ -216,18 +223,50 @@ class GameState:
 
     """ def move_dealer_button(self):
         self.dealer_position = (self.dealer_position + 1) % len(self.players) """
+    
+    def available_opposite_player_actions(self):
+        actions = []
 
-    def player_action(self):
-        actions = self.available_actions()
-        print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
-        if self.current_player == self.target_player:
-            print("\nCFR TIME!\n")
-            print(f"\nCFR suggestion: {eval(self)}\n")
+        actions.append(('fold', 0))
+
+        if self.current_player not in self.active_players:
+            return actions
+
+        current_bet = max(self.current_bets.values())
+        player_bet = self.current_bets[self.current_player]
+
+        if self.current_player.chips + player_bet >= current_bet:
+            if player_bet < current_bet:
+                actions.append(('call', current_bet - player_bet))
+            else:
+                actions.append(('check', 0))
+                actions.pop(0)
+
+        if len(self.all_in_players) + 1 < len(self.active_players):
+            if self.current_player.chips + player_bet >= current_bet + self.big_blind:
+                actions.append(('raise', 0))
+
+        actions.append(('all-in', self.current_player.chips))
+        return actions
+    
+    def get_action(self, actions):
         index = -1
         for i in actions:
             index += 1
             print(f"{index} - {i}")
         return actions[int(input("\nChosen action: "))]
+
+    def player_action(self):
+        actions = self.available_actions()
+        print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
+        print("\nCFR TIME!\n")
+        print(f"\nCFR suggestion: {eval(self)}\n")
+        return self.get_action(actions)
+    
+    def opposite_player_action(self):
+        actions = self.available_opposite_player_actions()
+        print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
+        return self.get_action(actions)
 
     def collect_blinds(self):
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
@@ -244,7 +283,13 @@ class GameState:
     def play_round(self):
         # player_action() returns the next action and the raise amount (if applicable)
         while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
-            action = self.player_action()
+            if self.current_player == self.target_player:
+                action = self.player_action()
+            else:
+                action = self.opposite_player_action()
+                if action[0] == 'raise':
+                    raise_amount = int(input("Raise amount:"))
+                    action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
         self.reset_round()

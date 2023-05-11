@@ -44,14 +44,14 @@ def cfr(gameState, seconds):
             index += 1
             iterations += 1
         probabilities[index][1] += 1
-    print(f"\nNUMBER OF ITERATIONS: {iterations}")
+    """ print(f"\nNUMBER OF ITERATIONS: {iterations}")
     print("Probabilities:")
     for p in probabilities:
-        print(p)
+        print(p) """
     probabilities = compute_probabilities(probabilities)
-    print("Computed probabilities:")
+    """ print("Computed probabilities:")
     for p in probabilities:
-        print(p)
+        print(p) """
     return probabilities
 
 
@@ -64,4 +64,4 @@ def get_play(array):
 
 
 def eval(gameState):
-    return get_play(cfr(gameState, 1))
+    return get_play(cfr(gameState, 50))
