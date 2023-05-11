@@ -23,7 +23,6 @@ def cfr(gameState, seconds):
         maxReward = None
         index = -1
         for action in liste_actions:
-            print('iterating')
             opposite_player_index = (gameStateTemp.get_player_position(gameStateTemp.target_player) + 1) % len(gameStateTemp.players)
             reward = 0
             gameStateTemp.handle_action(action[0], raise_amount=action[1])
@@ -34,13 +33,9 @@ def cfr(gameState, seconds):
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
                 winner = gameStateTemp.showdown(gameStateTemp.players)
                 if winner == gameStateTemp.target_player:
-                    print("Winner is the target player!")
                     reward = gameStateTemp.current_pot
-                    print(reward)
                 elif winner == gameStateTemp.players[opposite_player_index]:
-                    print("Winner is NOT the target player!")
                     reward == 0 - gameStateTemp.current_pot
-                    print(reward)
             gameStateTemp = copy.deepcopy(gameStateInitial)
             gameStateTemp.deck.shuffle()
             if maxReward is not None:
@@ -52,11 +47,8 @@ def cfr(gameState, seconds):
             maxReward = reward
             index += 1
             iterations += 1
-        print(f"\n\nINDEX: {index}")
-        print(f"MAX REWARD: {maxReward}")
-        print(f"ACTION: {str(probabilities[index][0]).upper()}")
         probabilities[index][1] += 1
-    print(f"NUMBER OF ITERATIONS: {iterations}")
+    print(f"\nNUMBER OF ITERATIONS: {iterations}")
     sum = 0
     for i in range(1, len(probabilities)):
         sum += probabilities[i][1]
