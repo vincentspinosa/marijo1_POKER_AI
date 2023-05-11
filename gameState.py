@@ -73,6 +73,7 @@ class GameState:
                 actions.append(('call', None))
             else:
                 actions.append(('check', None))
+                actions.pop(0)
 
         if len(self.all_in_players) + 1 < len(self.active_players):
             if self.current_player.chips + player_bet >= current_bet + self.big_blind:

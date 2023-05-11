@@ -10,14 +10,6 @@ def compute_probabilities(array):
     for el in array:
         el[1] /= sum
     return array
-    """ arrayInput = np.array(arrayInput)
-    integers = arrayInput[:, 1].astype(int)
-    total = np.sum(integers)
-    arrayProbas = integers / total
-    result = []
-    for index, proba in enumerate(arrayProbas):
-        result.append([arrayInput[index, 0], proba])
-    return np.array(result) """
 
 
 def cfr(gameState, seconds):
@@ -33,20 +25,13 @@ def cfr(gameState, seconds):
         for action in liste_actions:
             print('iterating')
             opposite_player_index = (gameStateTemp.get_player_position(gameStateTemp.target_player) + 1) % len(gameStateTemp.players)
-            print(f"Opposite player index: {opposite_player_index}")
             reward = 0
             gameStateTemp.handle_action(action[0], raise_amount=action[1])
             if action[0] == 'fold':
                 reward = 0 - gameStateTemp.current_pot
             else:
-                print(f"Len community cards BEFORE GOING TO SHOWDOWN: {len(gameStateTemp.community_cards)}")
-                print(f"GOING TO SHOWDOWN!")
-                print(gameStateTemp.community_cards)
                 gameStateTemp.go_to_showdown()
-                print(f"Len community cards AFTER GOING TO SHOWDOWN: {len(gameStateTemp.community_cards)}")
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
-                print(f"Len community cards after distributing hole_cards to the other player: {len(gameStateTemp.community_cards)}")
-                print(f"Len deck: {len(gameStateTemp.deck.cards)}")
                 winner = gameStateTemp.showdown(gameStateTemp.players)
                 if winner == gameStateTemp.target_player:
                     print("Winner is the target player!")
@@ -64,7 +49,6 @@ def cfr(gameState, seconds):
                 elif reward == maxReward:
                     if random.choice([True, False]):
                         break
-            print(f"REWARD: {reward}")
             maxReward = reward
             index += 1
             iterations += 1
