@@ -60,7 +60,7 @@ class GameState:
     def available_actions(self):
         actions = []
 
-        actions.append(('fold', None))
+        actions.append(('fold', 0))
 
         if self.current_player not in self.active_players:
             return actions
@@ -70,9 +70,9 @@ class GameState:
 
         if self.current_player.chips + player_bet >= current_bet:
             if player_bet < current_bet:
-                actions.append(('call', None))
+                actions.append(('call', current_bet - player_bet))
             else:
-                actions.append(('check', None))
+                actions.append(('check', 0))
                 actions.pop(0)
 
         if len(self.all_in_players) + 1 < len(self.active_players):
@@ -87,7 +87,7 @@ class GameState:
                 else:
                     actions.append(('raise', min_raise))
 
-        actions.append(('all-in', None))
+        actions.append(('all-in', self.current_player.chips))
         return actions
 
     def calculate_raise_buckets(self, player, min_raise, max_raise):
