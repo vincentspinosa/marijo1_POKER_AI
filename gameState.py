@@ -81,7 +81,7 @@ class GameState:
                 max_raise = self.current_player.chips
 
                 if min_raise < max_raise:
-                    raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, max_raise)
+                    raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise)
                     for raise_amount in raise_buckets:
                         actions.append(('raise', raise_amount))
                 else:
@@ -90,16 +90,8 @@ class GameState:
         actions.append(('all-in', self.current_player.chips))
         return actions
 
-    def calculate_raise_buckets(self, player, min_raise, max_raise):
-        raise_buckets = [min_raise]
-        current_raise = min_raise
-        while current_raise < max_raise:
-            next_raise = int(current_raise + (0.33 * player.chips))
-            if next_raise > max_raise:
-                break
-            raise_buckets.append(next_raise)
-            current_raise = next_raise
-        return raise_buckets
+    def calculate_raise_buckets(self, player, min_raise):
+        return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
 
     def get_player_position(self, player):
         return self.players.index(player)
