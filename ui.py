@@ -7,7 +7,7 @@ while True:
     n_players = 2
     players = ()
     target_player_chips = int(input("Target player chips: "))
-    target_player_index = int(input("Target player index: "))
+    target_player_index = int(input("Target player position (BIG BLIND: 0, SMALL BLIND: 1): "))
     if target_player_index == 0:
         players += (Player(chips=target_player_chips), )
         players += (Player(chips=int(input("Opposite player chips: "))), )
