@@ -37,9 +37,8 @@ def cfr(gameState, seconds):
                     reward += sumAction
                 elif winner == gameStateTemp.players[opposite_player_index]:
                     reward -= sumAction
-            if maxReward is not None:
-                if reward < maxReward:
-                    break
+            if maxReward is not None and reward < maxReward:
+                break
             maxReward = copy.copy(reward)
             index += 1
             iterations += 1
