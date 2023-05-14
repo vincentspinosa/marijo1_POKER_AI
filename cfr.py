@@ -24,12 +24,12 @@ def cfr(gameState, seconds):
         maxReward = None
         index = -1
         for action in liste_actions:
-            gameStateTemp.deck.shuffle()
             reward = 0
             sumAction = gameStateTemp.current_pot + action[1]
             if action[0] == 'fold':
                 reward -= sumAction
-            else:
+            elif action[0] in ['call', 'raise', 'all-in']:
+                gameStateTemp.deck.shuffle()
                 gameStateTemp.go_to_showdown()
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
                 winner = gameStateTemp.showdown(gameStateTemp.players)
@@ -38,20 +38,20 @@ def cfr(gameState, seconds):
                 elif winner == gameStateTemp.players[opposite_player_index]:
                     reward -= sumAction
             if maxReward is not None:
-                if reward < maxReward or (reward == maxReward and random.choice([True, False])):
+                if reward < maxReward:
                     break
             maxReward = copy.copy(reward)
             index += 1
             iterations += 1
         probabilities[index][1] += 1
-    """ print(f"\nNUMBER OF ITERATIONS: {iterations}")
+    print(f"\nNUMBER OF ITERATIONS: {iterations}")
     print("Probabilities:")
     for p in probabilities:
-        print(p) """
+        print(p)
     probabilities = compute_probabilities(probabilities)
-    """ print("Computed probabilities:")
+    print("Computed probabilities:")
     for p in probabilities:
-        print(p) """
+        print(p)
     return probabilities
 
 
