@@ -43,15 +43,7 @@ def cfr(gameState, seconds):
             index += 1
             iterations += 1
         probabilities[index][1] += 1
-    print(f"\nNUMBER OF ITERATIONS: {iterations}")
-    print("Probabilities:")
-    for p in probabilities:
-        print(p)
-    probabilities = compute_probabilities(probabilities)
-    print("Computed probabilities:")
-    for p in probabilities:
-        print(p)
-    return probabilities
+    return [compute_probabilities(probabilities), iterations]
 
 
 def get_play(array):
@@ -61,6 +53,11 @@ def get_play(array):
     chosen_index = np.random.choice(indices, p=probabilities)
     return array[chosen_index]
 
-
+# Need to move eval to UI, because it is not really a part of the algorithm 
 def eval(gameState):
-    return get_play(cfr(gameState, 1))
+    cfr_result = cfr(gameState, 1)
+    print(f"\nNumber of iterations: {cfr_result[1]}")
+    print("Computed probabilities:")
+    for action in cfr_result[0]:
+        print(f"Action: {action[0]}, Probability: {action[1]}")
+    return get_play(cfr_result[0])
