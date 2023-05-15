@@ -1,7 +1,6 @@
 from hand_evaluator import HandEvaluator
 from deck import Deck
-from player import Player
-from cfr import eval
+from evalAgent import eval
 
 class GameState:
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
@@ -252,7 +251,7 @@ class GameState:
         actions = self.available_actions()
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
         print("\nCFR TIME!\n")
-        print(f"\nCFR suggestion: {eval(self)}\n")
+        print(f"\nCFR suggestion: {eval(self, 1)}\n")
         return self.get_action(actions)
     
     def opposite_player_action(self):
