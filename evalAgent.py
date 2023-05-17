@@ -1,4 +1,4 @@
-from  cfr import cfr, get_play
+from cfr import cfr, get_play
 
 def eval(gameState, seconds):
     cfr_result = cfr(gameState, seconds)

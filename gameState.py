@@ -251,7 +251,7 @@ class GameState:
         actions = self.available_actions()
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
         print("\nCFR TIME!\n")
-        print(f"\nCFR suggestion: {eval(self, 1)}\n")
+        print(f"\nCFR suggestion: {eval(self, 100)}\n")
         return self.get_action(actions)
     
     def opposite_player_action(self):
