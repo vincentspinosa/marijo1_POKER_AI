@@ -9,14 +9,14 @@ p2 = Player(chips=1000)
 game_state = GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
 max_seconds = 10
-cfr_runs = 100
+cfr_runs = 10
 plot = [[], []]
 for second in range(max_seconds, 0, -1):
     print(f"\n{second} seconds:")
     loss = []
     for run in range(cfr_runs):
         cfr_result = cfr(copy.deepcopy(game_state), second)
-        print(f"\Run n°{run}")
+        print(f"\nRun n°{run}")
         if run == 0:
             for action in cfr_result[0]:
                 loss.append([action[0], [action[1], action[1]]])
