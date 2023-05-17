@@ -9,7 +9,7 @@ p2 = Player(chips=1000)
 game_state = GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
 start = 10
-iterations = 50
+iterations = 100
 plot = [[], []]
 for second in range(start, 0, -1):
     print(f"\n{second} seconds:")
@@ -32,7 +32,7 @@ for second in range(start, 0, -1):
     for el in loss:
         print(el)
         totalLoss += el[1][1] - el[1][0]
-    print(f"\nTotal loss: {int(totalLoss * 10000) / 100}".upper())
+    print(f"\nTotal loss: {totalLoss}".upper())
     plot[0].append(second)
     plot[1].append(totalLoss)
 for el in plot[0]:
