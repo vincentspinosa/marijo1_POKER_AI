@@ -66,8 +66,8 @@ class GameState:
         current_bet = max(self.current_bets.values())
         player_bet = self.current_bets[self.current_player]
 
-        if self.current_player.chips + player_bet >= current_bet:
-            if player_bet < current_bet:
+        if self.current_player.chips + player_bet > current_bet:
+            if player_bet < current_bet and self.current_player.chips > current_bet - player_bet:
                 actions.append(('call', current_bet - player_bet))
             else:
                 actions.append(('check', 0))

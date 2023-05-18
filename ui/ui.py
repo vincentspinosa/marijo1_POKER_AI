@@ -5,6 +5,12 @@ class UI(gameState.GameState):
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
         super().__init__(players, target_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
 
+    def is_hand_over(self):
+        if len(self.active_players) > 1 and len(self.all_in_players) + 1 < len(self.active_players):
+            return False
+        return True
+
+
     def is_round_over(self):
         if len(self.active_players) < 2:
             return True
@@ -35,8 +41,8 @@ class UI(gameState.GameState):
         current_bet = max(self.current_bets.values())
         player_bet = self.current_bets[self.current_player]
 
-        if self.current_player.chips + player_bet >= current_bet:
-            if player_bet < current_bet:
+        if self.current_player.chips + player_bet > current_bet:
+            if player_bet < current_bet and self.current_player.chips > current_bet - player_bet:
                 actions.append(('call', current_bet - player_bet))
             else:
                 actions.append(('check', 0))
