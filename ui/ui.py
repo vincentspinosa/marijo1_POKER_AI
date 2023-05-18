@@ -5,11 +5,15 @@ class UI(gameState.GameState):
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
         super().__init__(players, target_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
 
+    def is_game_over(self):
+        if self.players[0].chips == 0 or self.players[1].chips == 0:
+            return True
+        return False
+
     def is_hand_over(self):
         if len(self.active_players) > 1 and len(self.all_in_players) + 1 < len(self.active_players):
             return False
         return True
-
 
     def is_round_over(self):
         if len(self.active_players) < 2:
