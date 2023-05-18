@@ -81,9 +81,9 @@ class UI(gameState.GameState):
         self.current_pot += small_blind_amount + big_blind_amount
 
         if small_blind_player.chips == 0:
-            self.eliminate_player(small_blind_player)
+            self.all_in_players.append(small_blind_player)
         if big_blind_player.chips == 0:
-            self.eliminate_player(big_blind_player)
+            self.all_in_players.append(big_blind_player)
 
     def play_round(self):
         # player_action() returns the next action and the raise amount (if applicable)
