@@ -166,14 +166,3 @@ class UI(gameState.GameState):
             y = int(input(f"\nCard {x}: "))
             self.community_cards.append(self.deck.cards[y])
             self.deck.cards.pop(y)
-
-    """ def deal_hole_cards(self):
-        self.deck.shuffle()
-        self.target_player.hand = [self.deck.deal(), self.deck.deal()] """
-
-    """ def deal_community_cards(self):
-        self.deck.shuffle()
-        if self.current_stage == 'flop':
-            self.community_cards = [self.deck.deal() for _ in range(3)]
-        elif self.current_stage in ['turn', 'river']:
-            self.community_cards += [self.deck.deal()] """
