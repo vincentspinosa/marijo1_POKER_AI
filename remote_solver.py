@@ -23,9 +23,9 @@ while not game_ui.is_game_over():
     if not game_ui.is_hand_over():
         game_ui.play_river()
     print("Hand done.\n")
-    winner = int(input(f"Winner (0 for PO, 1 for P1): "))
+    winner = int(input(f"Winner (0 for P0, 1 for P1): "))
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
 
 print(f"\nGame is over! Winner is player {winner}.")
-print(f"\Chips of player {winner}: {game_ui.players[winner].chips}")
+print(f"\nChips of player {winner}: {game_ui.players[winner].chips}")
