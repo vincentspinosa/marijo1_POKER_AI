@@ -28,4 +28,4 @@ while not game_ui.is_game_over():
     game_ui.move_dealer_button()
 
 print(f"\nGame is over! Winner is player {winner}.")
-print(f"\nChips of player {winner}: {game_ui.players[winner].chips}")
+print(f"\nChips of player {winner}: {game_ui.players[winner].chips}\n")
