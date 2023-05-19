@@ -53,10 +53,12 @@ class GameState:
         return actions
 
     def handle_action(self, action, raise_amount=0):
+        print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
         if action == 'check':
             self.current_bets[self.current_player] = 0
         elif action == 'call':
             call_amount = max(self.current_bets.values()) - self.current_bets[self.current_player]
+            print(f"\nCall amount: {call_amount}\n")
             self.current_player.bet(call_amount)
             self.current_pot += call_amount
             self.current_bets[self.current_player] = 0
@@ -79,6 +81,7 @@ class GameState:
             self.all_in_players.append(self.current_player)
         elif action == 'fold':
             self.eliminate_player(self.current_player)
+            print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
     def go_to_showdown(self):
