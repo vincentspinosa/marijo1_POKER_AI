@@ -27,6 +27,16 @@ class UI(gameState.GameState):
             return True   
         return False
 
+    def reset_round(self):
+        self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
+        self.round_turns = 0
+        self.round_players = self.active_players
+
+    def end_round(self, winner):
+        reward = self.current_pot
+        self.players[winner].chips += reward
+        self.current_pot = 0
+
     def eliminate_player(self, player):
         self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
@@ -40,6 +50,20 @@ class UI(gameState.GameState):
 
     def next_player(self):
         self.current_player = self.get_next_player(self.current_player)
+    
+    def get_action(self, actions):
+        index = -1
+        for i in actions:
+            index += 1
+            print(f"{index} - {i}")
+        return actions[int(input("\nChosen action: "))]
+
+    def player_action(self):
+        actions = self.available_actions()
+        print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
+        print("\nCFR TIME!\n")
+        print(f"\nCFR suggestion: {evalAgent.eval(self, 3)}\n")
+        return self.get_action(actions)
     
     def available_opposite_player_actions(self):
         actions = []
@@ -60,41 +84,10 @@ class UI(gameState.GameState):
         actions.append(('all-in', self.current_player.chips))
         return actions
     
-    def get_action(self, actions):
-        index = -1
-        for i in actions:
-            index += 1
-            print(f"{index} - {i}")
-        return actions[int(input("\nChosen action: "))]
-
-    def player_action(self):
-        actions = self.available_actions()
-        print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
-        print("\nCFR TIME!\n")
-        print(f"\nCFR suggestion: {evalAgent.eval(self, 3)}\n")
-        return self.get_action(actions)
-    
     def opposite_player_action(self):
         actions = self.available_opposite_player_actions()
         print(f"\nPLAYER {self.get_player_position(self.current_player)}'s TURN\n")
         return self.get_action(actions)
-
-    def collect_blinds(self):
-        small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
-        big_blind_player = self.players[(self.dealer_position + 2) % len(self.players)]
-        small_blind_amount = min(small_blind_player.chips, self.small_blind)
-        big_blind_amount = min(big_blind_player.chips, self.big_blind)
-
-        small_blind_player.bet(small_blind_amount)
-        big_blind_player.bet(big_blind_amount)
-        self.current_bets[small_blind_player] = small_blind_amount
-        self.current_bets[big_blind_player] = big_blind_amount
-        self.current_pot += small_blind_amount + big_blind_amount
-
-        if small_blind_player.chips == 0:
-            self.all_in_players.append(small_blind_player)
-        if big_blind_player.chips == 0:
-            self.all_in_players.append(big_blind_player)
 
     def play_round(self):
         while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
@@ -132,16 +125,6 @@ class UI(gameState.GameState):
         self.current_stage = 'river'
         self.determine_community_cards()
         self.play_round()
-
-    def reset_round(self):
-        self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
-        self.round_turns = 0
-        self.round_players = self.active_players
-
-    def end_round(self, winner):
-        reward = self.current_pot
-        self.players[winner].chips += reward
-        self.current_pot = 0
     
     def determine_hole_cards(self):
         for x in range(2):
@@ -166,3 +149,20 @@ class UI(gameState.GameState):
             y = int(input(f"\nCard {x}: "))
             self.community_cards.append(self.deck.cards[y])
             self.deck.cards.pop(y)
+
+    def collect_blinds(self):
+        small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
+        big_blind_player = self.players[(self.dealer_position + 2) % len(self.players)]
+        small_blind_amount = min(small_blind_player.chips, self.small_blind)
+        big_blind_amount = min(big_blind_player.chips, self.big_blind)
+
+        small_blind_player.bet(small_blind_amount)
+        big_blind_player.bet(big_blind_amount)
+        self.current_bets[small_blind_player] = small_blind_amount
+        self.current_bets[big_blind_player] = big_blind_amount
+        self.current_pot += small_blind_amount + big_blind_amount
+
+        if small_blind_player.chips == 0:
+            self.all_in_players.append(small_blind_player)
+        if big_blind_player.chips == 0:
+            self.all_in_players.append(big_blind_player)
