@@ -1,7 +1,8 @@
 from ui import ui
 from rules import player
+from helper_functions import helpers
 
-sm_blind = int(input("Small blind: "))
+sm_blind = helpers.force_int_input("Small blind: ")
 bg_blind = int(input("Big blind: "))
 p0_chips = int(input("Player 0 chips: "))
 p1_chips = int(input("Player 1 chips: "))
@@ -23,7 +24,7 @@ while not game_ui.is_game_over():
     if not game_ui.is_hand_over():
         game_ui.play_river()
     print("Hand done.\n")
-    winner = int(input(f"Winner (0 for P0, 1 for P1): "))
+    winner = helpers.force_input(int(input(f"Winner (0 for P0, 1 for P1): ")))
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
 
