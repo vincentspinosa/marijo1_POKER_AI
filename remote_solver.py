@@ -10,7 +10,7 @@ ai_index = int(input("AI position (Starting as Dealer: 0, Starting as Small Blin
 game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
 
 while not game_ui.is_game_over():
-    print("\nNew round!")
+    print("\nNew hand!")
     x = 0
     for p in game_ui.players:
         print(f"\nChips of player {x}: {p.chips}")

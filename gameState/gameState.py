@@ -28,34 +28,27 @@ class GameState:
 
     def available_actions(self):
         actions = []
-
         actions.append(('fold', 0))
-
         if self.current_player not in self.active_players:
             return actions
-
         current_bet = max(self.current_bets.values())
         player_bet = self.current_bets[self.current_player]
-
         if self.current_player.chips + player_bet > current_bet:
             if player_bet < current_bet and self.current_player.chips > current_bet - player_bet:
                 actions.append(('call', current_bet - player_bet))
             else:
                 actions.append(('check', 0))
                 actions.pop(0)
-
         if len(self.all_in_players) + 1 < len(self.active_players):
             if self.current_player.chips + player_bet >= current_bet + self.big_blind:
                 min_raise = current_bet - player_bet + self.big_blind
                 max_raise = self.current_player.chips
-
                 if min_raise < max_raise:
                     raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise)
                     for raise_amount in raise_buckets:
                         actions.append(('raise', raise_amount))
                 else:
                     actions.append(('raise', min_raise))
-
         actions.append(('all-in', self.current_player.chips))
         return actions
 
@@ -101,20 +94,14 @@ class GameState:
         for player in players:
             hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
             player_hands.append((player, hand_rank, hand))
-
         # Sort the player hands by rank and the actual hand in descending order
         player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
-
         # Find the highest rank and hands with the same highest rank
         highest_rank = player_hands[0][1]
         winning_hands = [player_hand for player_hand in player_hands if player_hand[1] == highest_rank]
-
-        #print(f"\n{winning_hands}\n")
-
         # If there's only one winning hand, return the corresponding player
         if len(winning_hands) == 1:
             return winning_hands[0][0]
-
         # If there are multiple winning hands, compare their high cards to determine the winner
         winning_player = winning_hands[0][0]
         winning_hand_high_card = winning_hands[0][2][0].rank

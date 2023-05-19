@@ -30,10 +30,6 @@ class UI(gameState.GameState):
     def eliminate_player(self, player):
         self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
-    def deal_hole_cards(self):
-        self.deck.shuffle()
-        self.target_player.hand = [self.deck.deal(), self.deck.deal()]
-
     def move_dealer_button(self):
         self.dealer_position = (self.dealer_position + 1) % len(self.players)
 
@@ -47,26 +43,20 @@ class UI(gameState.GameState):
     
     def available_opposite_player_actions(self):
         actions = []
-
         actions.append(('fold', 0))
-
         if self.current_player not in self.active_players:
             return actions
-
         current_bet = max(self.current_bets.values())
         player_bet = self.current_bets[self.current_player]
-
         if self.current_player.chips + player_bet > current_bet:
             if player_bet < current_bet and self.current_player.chips > current_bet - player_bet:
                 actions.append(('call', current_bet - player_bet))
             else:
                 actions.append(('check', 0))
                 actions.pop(0)
-
         if len(self.all_in_players) + 1 < len(self.active_players):
             if self.current_player.chips + player_bet >= current_bet + self.big_blind:
                 actions.append(('raise', 0))
-
         actions.append(('all-in', self.current_player.chips))
         return actions
     
@@ -107,7 +97,6 @@ class UI(gameState.GameState):
             self.all_in_players.append(big_blind_player)
 
     def play_round(self):
-        # player_action() returns the next action and the raise amount (if applicable)
         while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
             if self.current_player == self.target_player:
                 action = self.player_action()
@@ -153,7 +142,6 @@ class UI(gameState.GameState):
         reward = self.current_pot
         self.players[winner].chips += reward
         self.current_pot = 0
-
     
     def determine_hole_cards(self):
         for x in range(2):
@@ -164,13 +152,6 @@ class UI(gameState.GameState):
             y = int(input(f"\nCard {x}: "))
             self.target_player.hand.append(self.deck.cards[y])
             self.deck.cards.pop(y)
-
-    """ def deal_community_cards(self):
-        self.deck.shuffle()
-        if self.current_stage == 'flop':
-            self.community_cards = [self.deck.deal() for _ in range(3)]
-        elif self.current_stage in ['turn', 'river']:
-            self.community_cards += [self.deck.deal()] """
 
     def determine_community_cards(self):
         if self.current_stage == 'flop':
@@ -185,3 +166,14 @@ class UI(gameState.GameState):
             y = int(input(f"\nCard {x}: "))
             self.community_cards.append(self.deck.cards[y])
             self.deck.cards.pop(y)
+
+    """ def deal_hole_cards(self):
+        self.deck.shuffle()
+        self.target_player.hand = [self.deck.deal(), self.deck.deal()] """
+
+    """ def deal_community_cards(self):
+        self.deck.shuffle()
+        if self.current_stage == 'flop':
+            self.community_cards = [self.deck.deal() for _ in range(3)]
+        elif self.current_stage in ['turn', 'river']:
+            self.community_cards += [self.deck.deal()] """

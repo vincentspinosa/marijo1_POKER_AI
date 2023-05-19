@@ -8,31 +8,31 @@ p1 = player.Player(chips=1000)
 p2 = player.Player(chips=1000)
 game_state = gameState.GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
-max_seconds = 50
+max_seconds = 10
 cfr_runs = 100
 strategyFound = False
 plot = [[], []]
 for second in range(1, max_seconds):
     print(f"\n{second} seconds:")
-    loss = []
+    spreadTable = []
     for run in range(cfr_runs):
         cfr_result = ai.cfr(copy.deepcopy(game_state), second)
         print(f"\nRun n°{run}")
         print(f"Number of iterations inside the run: {cfr_result[1]}")
         if run == 0:
             for action in cfr_result[0]:
-                loss.append([action[0], [action[1], action[1]]])
+                spreadTable.append([action[0], [action[1], action[1]]])
         else:
-            for i in range(len(loss)):
-                if loss[i][1][0] > cfr_result[0][i][1]:
-                    loss[i][1][0] = copy.copy(cfr_result[0][i][1])
-                elif loss[i][1][1] < cfr_result[0][i][1]:
-                    loss[i][1][1] = copy.copy(cfr_result[0][i][1])
-        for el in loss:
-            print(el)
+            for i in range(len(spreadTable)):
+                if spreadTable[i][1][0] > cfr_result[0][i][1]:
+                    spreadTable[i][1][0] = copy.copy(cfr_result[0][i][1])
+                elif spreadTable[i][1][1] < cfr_result[0][i][1]:
+                    spreadTable[i][1][1] = copy.copy(cfr_result[0][i][1])
+        for data in spreadTable:
+            print(data)
     totalSpread = 0
-    for el in loss:
-        totalSpread += el[1][1] - el[1][0]
+    for data in spreadTable:
+        totalSpread += data[1][1] - data[1][0]
     print(f"\nTotal spread: {totalSpread}".upper())
     plot[0].append(second)
     plot[1].append(totalSpread)
