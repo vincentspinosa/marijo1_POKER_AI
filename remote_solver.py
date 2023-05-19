@@ -4,10 +4,10 @@ from helper_functions import helpers
 
 sm_blind = helpers.force_int_input("Small blind: ")
 bg_blind = helpers.force_int_input("Big blind: ")
+ai_index = helpers.force_int_input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): ")
 p0_chips = helpers.force_int_input("Player 0 chips: ")
 p1_chips = helpers.force_int_input("Player 1 chips: ")
 players = (player.Player(chips=p0_chips), player.Player(chips=p1_chips))
-ai_index = helpers.force_int_input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): ")
 game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
 
 while not game_ui.is_game_over():
