@@ -20,40 +20,11 @@ class GameState:
         self.round_turns = 0
         self.round_players = self.active_players
 
-    def determine_hole_cards(self):
-        for x in range(2):
-            index = -1
-            for i in self.deck.cards:
-                index += 1
-                print(f"{index} - {i}")
-            y = int(input(f"\nCard {x}: "))
-            self.target_player.hand.append(self.deck.cards[y])
-            self.deck.cards.pop(y)
+    def get_player_position(self, player):
+        return self.players.index(player)
 
-    def deal_community_cards(self):
-        self.deck.shuffle()
-        if self.current_stage == 'flop':
-            self.community_cards = [self.deck.deal() for _ in range(3)]
-        elif self.current_stage in ['turn', 'river']:
-            self.community_cards += [self.deck.deal()]
-
-    def determine_community_cards(self):
-        if self.current_stage == 'flop':
-            nb_cards = 3
-        elif self.current_stage in ['turn', 'river']:
-            nb_cards = 1
-        for x in range(nb_cards):
-            index = -1
-            for i in self.deck.cards:
-                index += 1
-                print(f"{index} - {i}")
-            y = int(input(f"\nCard {x}: "))
-            self.community_cards.append(self.deck.cards[y])
-            self.deck.cards.pop(y)
-
-
-    def eliminate_player(self, player):
-        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
+    def calculate_raise_buckets(self, player, min_raise):
+        return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
 
     def available_actions(self):
         actions = []
@@ -88,65 +59,6 @@ class GameState:
         actions.append(('all-in', self.current_player.chips))
         return actions
 
-    def calculate_raise_buckets(self, player, min_raise):
-        return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
-
-    def get_player_position(self, player):
-        return self.players.index(player)
-
-    def get_next_player(self, player):
-        position = self.get_player_position(player)
-        next_position = (position + 1) % len(self.players)
-        return self.players[next_position]
-
-    def next_player(self):
-        self.current_player = self.get_next_player(self.current_player)
-
-    def showdown(self, players):
-        # Calculate the hand ranks for each player
-        player_hands = []
-        for player in players:
-            hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
-            player_hands.append((player, hand_rank, hand))
-
-        # Sort the player hands by rank and the actual hand in descending order
-        """ for i in player_hands:
-            print(type(i)) """
-        player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
-
-        """ print("\nHANDS: ")
-        for hand in player_hands:
-            print(hand)
-            print("\n") """
-
-        # Find the highest rank and hands with the same highest rank
-        highest_rank = player_hands[0][1]
-        winning_hands = [player_hand for player_hand in player_hands if player_hand[1] == highest_rank]
-
-        #print(f"\n{winning_hands}\n")
-
-        # If there's only one winning hand, return the corresponding player
-        if len(winning_hands) == 1:
-            return winning_hands[0][0]
-
-        # If there are multiple winning hands, compare their high cards to determine the winner
-        winning_player = winning_hands[0][0]
-        winning_hand_high_card = winning_hands[0][2][0].rank
-        winners = 1
-        for i in range(1, len(winning_hands)):
-            current_hand_high_card = winning_hands[i][2][0].rank
-            if current_hand_high_card > winning_hand_high_card:
-                winning_player = winning_hands[i][0]
-                winning_hand_high_card = current_hand_high_card
-                winners = 1
-            elif current_hand_high_card == winning_hand_high_card:
-                winners = 2
-
-        if winners < 2:
-            return winning_player
-        
-        return None
-
     def handle_action(self, action, raise_amount=0):
         print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
         if action == 'check':
@@ -180,10 +92,41 @@ class GameState:
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
-    def reset_round(self):
-        self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
-        self.round_turns = 0
-        self.round_players = self.active_players
-
     def go_to_showdown(self):
         self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
+
+    def showdown(self, players):
+        # Calculate the hand ranks for each player
+        player_hands = []
+        for player in players:
+            hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
+            player_hands.append((player, hand_rank, hand))
+
+        # Sort the player hands by rank and the actual hand in descending order
+        player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
+
+        # Find the highest rank and hands with the same highest rank
+        highest_rank = player_hands[0][1]
+        winning_hands = [player_hand for player_hand in player_hands if player_hand[1] == highest_rank]
+
+        #print(f"\n{winning_hands}\n")
+
+        # If there's only one winning hand, return the corresponding player
+        if len(winning_hands) == 1:
+            return winning_hands[0][0]
+
+        # If there are multiple winning hands, compare their high cards to determine the winner
+        winning_player = winning_hands[0][0]
+        winning_hand_high_card = winning_hands[0][2][0].rank
+        winners = 1
+        for i in range(1, len(winning_hands)):
+            current_hand_high_card = winning_hands[i][2][0].rank
+            if current_hand_high_card > winning_hand_high_card:
+                winning_player = winning_hands[i][0]
+                winning_hand_high_card = current_hand_high_card
+                winners = 1
+            elif current_hand_high_card == winning_hand_high_card:
+                winners = 2
+        if winners < 2:
+            return winning_player  
+        return None

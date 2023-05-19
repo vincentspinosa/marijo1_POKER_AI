@@ -27,12 +27,23 @@ class UI(gameState.GameState):
             return True   
         return False
 
+    def eliminate_player(self, player):
+        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
+
     def deal_hole_cards(self):
         self.deck.shuffle()
         self.target_player.hand = [self.deck.deal(), self.deck.deal()]
 
-    """ def move_dealer_button(self):
-        self.dealer_position = (self.dealer_position + 1) % len(self.players) """
+    def move_dealer_button(self):
+        self.dealer_position = (self.dealer_position + 1) % len(self.players)
+
+    def get_next_player(self, player):
+        position = self.get_player_position(player)
+        next_position = (position + 1) % len(self.players)
+        return self.players[next_position]
+
+    def next_player(self):
+        self.current_player = self.get_next_player(self.current_player)
     
     def available_opposite_player_actions(self):
         actions = []
@@ -132,3 +143,45 @@ class UI(gameState.GameState):
         self.current_stage = 'river'
         self.determine_community_cards()
         self.play_round()
+
+    def reset_round(self):
+        self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
+        self.round_turns = 0
+        self.round_players = self.active_players
+
+    def end_round(self, winner):
+        reward = self.current_pot
+        self.players[winner].chips += reward
+        self.current_pot = 0
+
+    
+    def determine_hole_cards(self):
+        for x in range(2):
+            index = -1
+            for i in self.deck.cards:
+                index += 1
+                print(f"{index} - {i}")
+            y = int(input(f"\nCard {x}: "))
+            self.target_player.hand.append(self.deck.cards[y])
+            self.deck.cards.pop(y)
+
+    """ def deal_community_cards(self):
+        self.deck.shuffle()
+        if self.current_stage == 'flop':
+            self.community_cards = [self.deck.deal() for _ in range(3)]
+        elif self.current_stage in ['turn', 'river']:
+            self.community_cards += [self.deck.deal()] """
+
+    def determine_community_cards(self):
+        if self.current_stage == 'flop':
+            nb_cards = 3
+        elif self.current_stage in ['turn', 'river']:
+            nb_cards = 1
+        for x in range(nb_cards):
+            index = -1
+            for i in self.deck.cards:
+                index += 1
+                print(f"{index} - {i}")
+            y = int(input(f"\nCard {x}: "))
+            self.community_cards.append(self.deck.cards[y])
+            self.deck.cards.pop(y)
