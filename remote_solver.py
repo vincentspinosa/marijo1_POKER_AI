@@ -3,11 +3,11 @@ from rules import player
 from helper_functions import helpers
 
 sm_blind = helpers.force_int_input("Small blind: ")
-bg_blind = int(input("Big blind: "))
-p0_chips = int(input("Player 0 chips: "))
-p1_chips = int(input("Player 1 chips: "))
+bg_blind = helpers.force_int_input("Big blind: ")
+p0_chips = helpers.force_int_input("Player 0 chips: ")
+p1_chips = helpers.force_int_input("Player 1 chips: ")
 players = (player.Player(chips=p0_chips), player.Player(chips=p1_chips))
-ai_index = int(input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): "))
+ai_index = helpers.force_int_input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): ")
 game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
 
 while not game_ui.is_game_over():
@@ -24,7 +24,7 @@ while not game_ui.is_game_over():
     if not game_ui.is_hand_over():
         game_ui.play_river()
     print("Hand done.\n")
-    winner = helpers.force_input(int(input(f"Winner (0 for P0, 1 for P1): ")))
+    winner = helpers.force_int_input(f"Winner (0 for P0, 1 for P1): ")
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
 
