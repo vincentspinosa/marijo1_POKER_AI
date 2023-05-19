@@ -11,6 +11,7 @@ players = (player.Player(chips=p0_chips), player.Player(chips=p1_chips))
 game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
 
 while not game_ui.is_game_over():
+    game_ui = game_ui.new_hand()
     print("\nNew hand!")
     x = 0
     for p in game_ui.players:

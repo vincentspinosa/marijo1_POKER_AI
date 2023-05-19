@@ -1,10 +1,15 @@
 from gameState import gameState
 from eval import evalAgent
 from helper_functions import helpers
+from rules import deck
 
 class UI(gameState.GameState):
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
         super().__init__(players, target_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
+
+    def new_hand(self):
+        new_hand = UI(self.players, self.get_player_position(self.target_player), self.dealer_position, self.small_blind, self.big_blind, 0, 'pre-flop')
+        return new_hand
 
     def is_game_over(self):
         if self.players[0].chips == 0 or self.players[1].chips == 0:
