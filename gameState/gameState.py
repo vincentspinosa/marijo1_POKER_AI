@@ -80,7 +80,6 @@ class GameState:
             self.current_bets[self.current_player] = bet_amount
             self.all_in_players.append(self.current_player)
         elif action == 'fold':
-            self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += self.current_pot
             self.eliminate_player(self.current_player)
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1

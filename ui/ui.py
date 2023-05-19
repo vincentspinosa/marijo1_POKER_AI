@@ -39,8 +39,7 @@ class UI(gameState.GameState):
         self.round_players = self.active_players
 
     def end_round(self, winner):
-        reward = self.current_pot
-        self.players[winner].chips += reward
+        self.players[winner].chips += self.current_pot
         self.current_pot = 0
 
     def eliminate_player(self, player):
