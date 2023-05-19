@@ -1,7 +1,7 @@
+from tkinter import simpledialog
 from gameState import gameState
 from eval import evalAgent
 from helper_functions import helpers
-from rules import deck
 
 class UI(gameState.GameState):
     def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
@@ -57,11 +57,9 @@ class UI(gameState.GameState):
         self.current_player = self.get_next_player(self.current_player)
     
     def get_action(self, actions):
-        index = -1
-        for i in actions:
-            index += 1
-            print(f"{index} - {i}")
-        return actions[helpers.force_int_input("\nChosen action: ")]
+        action_strings = [f"{index} - {i}" for index, i in enumerate(actions)]
+        index = simpledialog.askstring("Choose an action", "\n".join(action_strings))
+        return actions[int(index)]
 
     def player_action(self):
         actions = self.available_actions()
@@ -101,7 +99,7 @@ class UI(gameState.GameState):
             else:
                 action = self.opposite_player_action()
                 if action[0] == 'raise':
-                    raise_amount = helpers.force_int_input("Raise amount:")
+                    raise_amount = helpers.force_gui_int_input("Raise amount:")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
@@ -137,7 +135,7 @@ class UI(gameState.GameState):
             for i in self.deck.cards:
                 index += 1
                 print(f"{index} - {i}")
-            y = helpers.force_int_input(f"\nCard {x}: ")
+            y = helpers.force_gui_int_input(f"\nCard {x}: ")
             self.target_player.hand.append(self.deck.cards[y])
             self.deck.cards.pop(y)
 
@@ -151,7 +149,7 @@ class UI(gameState.GameState):
             for i in self.deck.cards:
                 index += 1
                 print(f"{index} - {i}")
-            y = helpers.force_int_input(f"\nCard {x}: ")
+            y = helpers.force_gui_int_input(f"\nCard {x}: ")
             self.community_cards.append(self.deck.cards[y])
             self.deck.cards.pop(y)
 
