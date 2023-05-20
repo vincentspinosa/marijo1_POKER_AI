@@ -39,7 +39,11 @@ class UI(gameState.GameState):
         self.round_players = self.active_players
 
     def end_round(self, winner):
-        self.players[winner].chips += self.current_pot
+        if winner == 0 or winner == 1:
+            self.players[winner].chips += self.current_pot
+        else:
+            self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
+            self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
         self.current_pot = 0
 
     def eliminate_player(self, player):
@@ -58,8 +62,9 @@ class UI(gameState.GameState):
     
     def get_action(self, actions):
         action_strings = [f"{index} - {i}" for index, i in enumerate(actions)]
-        index = simpledialog.askstring("Choose an action", "\n".join(action_strings))
-        return actions[int(index)]
+        question = "Choose an action:\n" + "\n".join(action_strings)
+        index = helpers.force_gui_int_input(question)
+        return actions[index]
 
     def player_action(self):
         actions = self.available_actions()
@@ -105,28 +110,17 @@ class UI(gameState.GameState):
             self.next_player()
         self.reset_round()
 
-    def play_preflop(self):
-        print("\nPREFLOP\n")
-        self.determine_hole_cards()
-        self.collect_blinds()
-        self.play_round()
-
-    def play_flop(self):
-        print("\nFLOP\n")
-        self.current_stage = 'flop'
-        self.determine_community_cards()
-        self.play_round()
-
-    def play_turn(self):
-        print("\nTURN\n")
-        self.current_stage = 'turn'
-        self.determine_community_cards()
-        self.play_round()
-
-    def play_river(self):
-        print("\nRIVER\n")
-        self.current_stage = 'river'
-        self.determine_community_cards()
+    def start_round(self, stage):
+        # (self.current_stage is already initialized to 'pre-flop')
+        if stage != 'pre-flop':
+            self.current_stage = stage
+        self.print_round_info()
+        self.print_chips_info()
+        if self.current_stage == 'pre-flop':
+            self.determine_hole_cards()
+            self.collect_blinds()
+        else:
+            self.determine_community_cards()
         self.play_round()
     
     def determine_hole_cards(self):
@@ -169,3 +163,16 @@ class UI(gameState.GameState):
             self.all_in_players.append(small_blind_player)
         if big_blind_player.chips == 0:
             self.all_in_players.append(big_blind_player)
+
+    def print_round_info(self):
+        print("\n-----------------------------------------------")
+        print(f"\nRound: {self.current_stage}".upper())
+
+    def print_chips_info(self):
+        x = 0
+        for player in self.players:
+            print(f"\nChips of player {x}: {player.chips}".upper())
+            x += 1
+        print(f"\nCurrent pot: {self.current_pot}".upper())
+        print("\n-----------------------------------------------")
+        print("\n")

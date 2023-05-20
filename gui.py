@@ -8,24 +8,23 @@ from helper_functions import helpers
 def new_game():
     global game_ui
     sm_blind = helpers.force_gui_int_input("Small blind: ")
-    bg_blind = helpers.force_gui_int_input("Big blind: ")
     players_chips = helpers.force_gui_int_input("Players chips: ")
     players = (player.Player(chips=players_chips), player.Player(chips=players_chips))
-    ai_index = helpers.force_gui_int_input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): ")
-    game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
+    first_dealer = helpers.force_gui_int_input("First dealer position (AI: 0, Opposite player: 1): ")
+    game_ui = ui.UI(players, target_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
     play_hand()
 
 def play_hand():
     global game_ui
     game_ui = game_ui.new_hand()
-    game_ui.play_preflop()
+    game_ui.start_round('pre-flop')
     if not game_ui.is_hand_over():
-        game_ui.play_flop()
+        game_ui.start_round('flop')
     if not game_ui.is_hand_over():
-        game_ui.play_turn()
+        game_ui.start_round('turn')
     if not game_ui.is_hand_over():
-        game_ui.play_river()
-    winner = helpers.force_gui_int_input(f"Winner (0 for P0, 1 for P1): ")
+        game_ui.start_round('river')
+    winner = helpers.force_gui_int_input(f"Winner (AI: 0, Opposite player: 1): ")
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
     if game_ui.is_game_over():
