@@ -17,13 +17,13 @@ def new_game():
 def play_hand():
     global game_ui
     game_ui = game_ui.new_hand()
-    game_ui.start_round('pre-flop')
+    game_ui.round('pre-flop')
     if not game_ui.is_hand_over():
-        game_ui.start_round('flop')
+        game_ui.round('flop')
     if not game_ui.is_hand_over():
-        game_ui.start_round('turn')
+        game_ui.round('turn')
     if not game_ui.is_hand_over():
-        game_ui.start_round('river')
+        game_ui.round('river')
     winner = helpers.force_gui_int_input(f"Winner (AI: 0, Opposite player: 1): ")
     game_ui.end_round(winner)
     game_ui.move_dealer_button()

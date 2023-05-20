@@ -110,12 +110,11 @@ class UI(gameState.GameState):
             self.next_player()
         self.reset_round()
 
-    def start_round(self, stage):
+    def round(self, stage):
         # (self.current_stage is already initialized to 'pre-flop')
         if stage != 'pre-flop':
             self.current_stage = stage
         self.print_round_info()
-        self.print_chips_info()
         if self.current_stage == 'pre-flop':
             self.determine_hole_cards()
             self.collect_blinds()
@@ -167,8 +166,6 @@ class UI(gameState.GameState):
     def print_round_info(self):
         print("\n-----------------------------------------------")
         print(f"\nRound: {self.current_stage}".upper())
-
-    def print_chips_info(self):
         x = 0
         for player in self.players:
             print(f"\nChips of player {x}: {player.chips}".upper())
