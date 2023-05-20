@@ -17,9 +17,6 @@ def new_game():
 
 def play_hand():
     global game_ui
-    if game_ui.is_game_over():
-        messagebox.showinfo("Game Over", f"Game is over! Winner is player {winner}.\nChips of player {winner}: {game_ui.players[winner].chips}")
-        return
     game_ui = game_ui.new_hand()
     game_ui.play_preflop()
     if not game_ui.is_hand_over():
@@ -31,7 +28,11 @@ def play_hand():
     winner = helpers.force_gui_int_input(f"Winner (0 for P0, 1 for P1): ")
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
+    if game_ui.is_game_over():
+        messagebox.showinfo("Game Over", f"Game is over! Winner is player {winner}.\nChips of player {winner}: {game_ui.players[winner].chips}")
+        return
     play_hand()
+
 
 root = tk.Tk()
 
