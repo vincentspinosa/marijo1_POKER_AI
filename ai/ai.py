@@ -1,5 +1,4 @@
 import time
-import numpy as np
 import copy
 
 def compute_probabilities(array):
@@ -9,7 +8,6 @@ def compute_probabilities(array):
     for el in array:
         el[1] /= sum
     return array
-
 
 def cfr(gameState, seconds):
     liste_actions = gameState.available_actions()
@@ -43,11 +41,3 @@ def cfr(gameState, seconds):
             iterations += 1
         probabilities[index][1] += 1
     return [compute_probabilities(probabilities), iterations]
-
-
-def get_play(array):
-    array = np.array(array, dtype=list)
-    indices = np.arange(len(array))
-    probabilities = array[:, 1].astype(float)
-    chosen_index = np.random.choice(indices, p=probabilities)
-    return array[chosen_index]

@@ -1,33 +1,43 @@
+import tkinter as tk
+from tkinter import messagebox
+from rules import player
 from ui import ui
 from rules import player
 from helper_functions import helpers
 
-sm_blind = helpers.force_int_input("Small blind: ")
-bg_blind = helpers.force_int_input("Big blind: ")
-ai_index = helpers.force_int_input("AI position (Starting as Dealer: 0, Starting as Small Blind: 1): ")
-p0_chips = helpers.force_int_input("Player 0 chips: ")
-p1_chips = helpers.force_int_input("Player 1 chips: ")
-players = (player.Player(chips=p0_chips), player.Player(chips=p1_chips))
-game_ui = ui.UI(players, ai_index, small_blind=sm_blind, big_blind=bg_blind)
+def new_game():
+    global game_ui
+    sm_blind = helpers.force_gui_int_input("Small blind: ")
+    players_chips = helpers.force_gui_int_input("Players chips: ")
+    players = (player.Player(chips=players_chips), player.Player(chips=players_chips))
+    first_dealer = helpers.force_gui_int_input("First dealer position (AI: 0, Opposite player: 1): ")
+    game_ui = ui.UI(players, target_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+    play_hand()
 
-while not game_ui.is_game_over():
+def play_hand():
+    global game_ui
     game_ui = game_ui.new_hand()
-    print("\nNew hand!")
-    x = 0
-    for p in game_ui.players:
-        print(f"\nChips of player {x}: {p.chips}")
-        x += 1
-    game_ui.play_preflop()
+    game_ui.round('pre-flop')
     if not game_ui.is_hand_over():
-        game_ui.play_flop()
+        game_ui.round('flop')
     if not game_ui.is_hand_over():
-        game_ui.play_turn()
+        game_ui.round('turn')
     if not game_ui.is_hand_over():
-        game_ui.play_river()
-    print("Hand done.\n")
-    winner = helpers.force_int_input(f"Winner (0 for P0, 1 for P1): ")
+        game_ui.round('river')
+    winner = helpers.force_gui_int_input(f"Winner (AI: 0, Opposite player: 1): ")
     game_ui.end_round(winner)
     game_ui.move_dealer_button()
+    if game_ui.is_game_over():
+        messagebox.showinfo("Game Over", f"Game is over! Winner is player {winner}.\nChips of player {winner}: {game_ui.players[winner].chips}")
+        return
+    play_hand()
 
-print(f"\nGame is over! Winner is player {winner}.")
-print(f"\nChips of player {winner}: {game_ui.players[winner].chips}\n")
+
+root = tk.Tk()
+
+button = tk.Button(root, 
+                   text="New Game", 
+                   command=new_game)
+button.pack(pady=100) 
+
+root.mainloop()
