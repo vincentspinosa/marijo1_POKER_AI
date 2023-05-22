@@ -16,12 +16,8 @@ def cfr(gameState, seconds):
     gameStateInitial = pickle.dumps(gameState)
     start_time = time.time()
     iterations = 0
-    time_for_copying = 0
     while (time.time() - start_time) < seconds:
-        t_cpy = time.time()
         gameStateTemp = pickle.loads(gameStateInitial)
-        t_cpy = time.time() - t_cpy
-        time_for_copying += t_cpy
         maxReward = None
         index = -1
         for action in liste_actions:
@@ -44,5 +40,4 @@ def cfr(gameState, seconds):
             index += 1
             iterations += 1
         probabilities[index][1] += 1
-    print(f"Time for copying: {time_for_copying}")
     return [compute_probabilities(probabilities), iterations]
