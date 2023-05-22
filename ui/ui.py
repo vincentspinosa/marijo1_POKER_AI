@@ -1,4 +1,3 @@
-from tkinter import simpledialog
 from gameState import gameState
 from eval import evalAgent
 from helper_functions import helpers
@@ -61,10 +60,11 @@ class UI(gameState.GameState):
         self.current_player = self.get_next_player(self.current_player)
     
     def get_action(self, actions):
-        action_strings = [f"{index} - {i}" for index, i in enumerate(actions)]
-        question = "Choose an action:\n" + "\n".join(action_strings)
-        index = helpers.force_gui_int_input(question)
-        return actions[index]
+        index = -1
+        for i in actions:
+            index += 1
+            print(f"{index} - {i}")
+        return actions[int(input("\nChosen action: "))]
 
     def player_action(self):
         actions = self.available_actions()
@@ -104,7 +104,7 @@ class UI(gameState.GameState):
             else:
                 action = self.opposite_player_action()
                 if action[0] == 'raise':
-                    raise_amount = helpers.force_gui_int_input("Raise amount:")
+                    raise_amount = helpers.force_int_input("Raise amount:")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
@@ -121,30 +121,6 @@ class UI(gameState.GameState):
         else:
             self.determine_community_cards()
         self.play_round()
-
-    def ask_card_input(self, nb_cards, hole_cards=True):
-        for x in range(nb_cards):
-            index = -1
-            for i in self.deck.cards:
-                index += 1
-                print(f"{index} - {i}")
-            y = helpers.force_gui_int_input(f"\nCard {x}: ")
-            if hole_cards == True:
-                self.target_player.hand.append(self.deck.cards[y])
-            else:
-                self.community_cards.append(self.deck.cards[y])
-            self.deck.cards.pop(y)
-
-    
-    def determine_hole_cards(self):
-        self.ask_card_input(2, hole_cards=True)
-
-    def determine_community_cards(self):
-        if self.current_stage == 'flop':
-            nb_cards = 3
-        elif self.current_stage in ['turn', 'river']:
-            nb_cards = 1
-        self.ask_card_input(nb_cards, hole_cards=False)
 
     def collect_blinds(self):
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
@@ -173,3 +149,28 @@ class UI(gameState.GameState):
         print(f"\nCurrent pot: {self.current_pot}".upper())
         print("\n-----------------------------------------------")
         print("\n")
+
+    # BELOW: ONLY FOR REMOTE_SOLVER
+
+    def ask_card_input(self, nb_cards, hole_cards=True):
+        for x in range(nb_cards):
+            index = -1
+            for i in self.deck.cards:
+                index += 1
+                print(f"{index} - {i}")
+            y = helpers.force_int_input(f"\nCard {x}: ")
+            if hole_cards == True:
+                self.target_player.hand.append(self.deck.cards[y])
+            else:
+                self.community_cards.append(self.deck.cards[y])
+            self.deck.cards.pop(y)
+    
+    def determine_hole_cards(self):
+        self.ask_card_input(2, hole_cards=True)
+
+    def determine_community_cards(self):
+        if self.current_stage == 'flop':
+            nb_cards = 3
+        elif self.current_stage in ['turn', 'river']:
+            nb_cards = 1
+        self.ask_card_input(nb_cards, hole_cards=False)

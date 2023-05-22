@@ -8,15 +8,16 @@ p1 = player.Player(chips=1000)
 p2 = player.Player(chips=1000)
 game_state = gameState.GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
-max_seconds = 10
+max_seconds = 3
 cfr_runs = 100
 strategyFound = False
 plot = [[], []]
-for second in range(1, max_seconds):
-    print(f"\n{second} seconds:")
+for i in range(1, max_seconds * 5):
+    seconds = i / 5
+    print(f"\n{seconds} seconds:")
     spreadTable = []
     for run in range(cfr_runs):
-        cfr_result = ai.cfr(copy.deepcopy(game_state), second)
+        cfr_result = ai.cfr(copy.deepcopy(game_state), seconds)
         print(f"\nRun n°{run}")
         print(f"Number of iterations inside the run: {cfr_result[1]}")
         if run == 0:
@@ -34,7 +35,7 @@ for second in range(1, max_seconds):
     for data in spreadTable:
         totalSpread += data[1][1] - data[1][0]
     print(f"\nTotal spread: {totalSpread}".upper())
-    plot[0].append(second)
+    plot[0].append(seconds)
     plot[1].append(totalSpread)
     if totalSpread < 0.1:
         strategyFound = True
