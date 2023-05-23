@@ -51,14 +51,6 @@ class UI(gameState.GameState):
     def move_dealer_button(self):
         self.dealer_position = (self.dealer_position + 1) % len(self.players)
 
-    def get_next_player(self, player):
-        position = self.get_player_position(player)
-        next_position = (position + 1) % len(self.players)
-        return self.players[next_position]
-
-    def next_player(self):
-        self.current_player = self.get_next_player(self.current_player)
-
     def collect_blinds(self):
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
         big_blind_player = self.players[(self.dealer_position + 2) % len(self.players)]

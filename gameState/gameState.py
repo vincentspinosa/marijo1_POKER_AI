@@ -1,29 +1,39 @@
-from rules import hand_evaluator, deck, player
+from rules.hand_evaluator import HandEvaluator
+from rules.deck import Deck
+from rules.player import Player
 
 
 class GameState:
-    def __init__(self, players:list[player.Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
+    def __init__(self, players:list[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
         self.players:list = players
-        self.ai_player:player.Player = players[ai_player_index]
+        self.ai_player:Player = players[ai_player_index]
         self.active_players:tuple = tuple(players)
         self.dealer_position:int = dealer_position
         self.small_blind:int = small_blind
         self.big_blind:int = big_blind
-        self.deck:deck.Deck = deck.Deck()
+        self.deck:Deck = Deck()
         self.community_cards:list = []
         self.current_pot:int = current_pot
         self.current_bets:dict = {player: 0 for player in players}
         self.current_stage:str = current_stage
         self.all_in_players:list = []
-        self.hand_evaluator:hand_evaluator.HandEvaluator = hand_evaluator.HandEvaluator()
-        self.current_player:player.Player = self.players[(self.dealer_position + 1) % len(players)]
+        self.hand_evaluator:HandEvaluator = HandEvaluator()
+        self.current_player:Player = self.players[(self.dealer_position + 1) % len(players)]
         self.round_turns:int = 0
         self.round_players:tuple = self.active_players
 
-    def get_player_position(self, player:player.Player) -> int:
+    def get_player_position(self, player:Player) -> int:
         return self.players.index(player)
 
-    def calculate_raise_buckets(self, player:player.Player, min_raise:int) -> list:
+    def get_next_player(self, player:Player) -> Player:
+        position = self.get_player_position(player)
+        next_position = (position + 1) % len(self.players)
+        return self.players[next_position]
+
+    def next_player(self):
+        self.current_player = self.get_next_player(self.current_player)
+
+    def calculate_raise_buckets(self, player:Player, min_raise:int) -> list:
         return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
 
     def available_actions(self) -> list:
@@ -87,7 +97,7 @@ class GameState:
     def go_to_showdown(self) -> None:
         self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
 
-    def showdown(self, players:list[player.Player]) -> player.Player or None:
+    def showdown(self, players:list[Player]) -> Player or None:
         # Calculate the hand ranks for each player
         player_hands = []
         for player in players:
