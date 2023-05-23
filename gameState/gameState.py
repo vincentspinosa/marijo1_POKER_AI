@@ -1,32 +1,32 @@
-from rules import hand_evaluator
-from rules import deck
+from rules import hand_evaluator, deck, player
+
 
 class GameState:
-    def __init__(self, players, target_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
-        self.players = players
-        self.target_player = players[target_player_index]
-        self.active_players = tuple(players)
-        self.dealer_position = dealer_position
-        self.small_blind = small_blind
-        self.big_blind = big_blind
-        self.deck = deck.Deck()
-        self.community_cards = []
-        self.current_pot = current_pot
-        self.current_bets = {player: 0 for player in players}
-        self.current_stage = current_stage
-        self.all_in_players = []
-        self.hand_evaluator = hand_evaluator.HandEvaluator()
-        self.current_player = self.players[(self.dealer_position + 1) % len(players)]
-        self.round_turns = 0
-        self.round_players = self.active_players
+    def __init__(self, players:list[player.Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
+        self.players:list = players
+        self.ai_player:player.Player = players[ai_player_index]
+        self.active_players:tuple = tuple(players)
+        self.dealer_position:int = dealer_position
+        self.small_blind:int = small_blind
+        self.big_blind:int = big_blind
+        self.deck:deck.Deck = deck.Deck()
+        self.community_cards:list = []
+        self.current_pot:int = current_pot
+        self.current_bets:dict = {player: 0 for player in players}
+        self.current_stage:str = current_stage
+        self.all_in_players:list = []
+        self.hand_evaluator:hand_evaluator.HandEvaluator = hand_evaluator.HandEvaluator()
+        self.current_player:player.Player = self.players[(self.dealer_position + 1) % len(players)]
+        self.round_turns:int = 0
+        self.round_players:tuple = self.active_players
 
-    def get_player_position(self, player):
+    def get_player_position(self, player:player.Player) -> int:
         return self.players.index(player)
 
-    def calculate_raise_buckets(self, player, min_raise):
+    def calculate_raise_buckets(self, player:player.Player, min_raise:int) -> list:
         return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
 
-    def available_actions(self):
+    def available_actions(self) -> list:
         actions = []
         actions.append(('fold', 0))
         if self.current_player not in self.active_players:
@@ -52,7 +52,7 @@ class GameState:
         actions.append(('all-in', self.current_player.chips))
         return actions
 
-    def handle_action(self, action, raise_amount=0):
+    def handle_action(self, action:str, raise_amount:int=0) -> None:
         print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
         if action == 'check':
             self.current_bets[self.current_player] = 0
@@ -84,10 +84,10 @@ class GameState:
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
-    def go_to_showdown(self):
+    def go_to_showdown(self) -> None:
         self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
 
-    def showdown(self, players):
+    def showdown(self, players:list[player.Player]) -> player.Player or None:
         # Calculate the hand ranks for each player
         player_hands = []
         for player in players:

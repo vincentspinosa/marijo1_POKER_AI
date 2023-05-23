@@ -1,7 +1,8 @@
 import time
 import pickle
+from gameState import gameState
 
-def compute_probabilities(array):
+def compute_probabilities(array:list) -> list:
     sum = 0
     for el in array:
         sum += el[1]
@@ -9,10 +10,10 @@ def compute_probabilities(array):
         el[1] /= sum
     return array
 
-def cfr(gameState, seconds):
+def cfr(gameState:gameState.GameState, seconds:int or float) -> list[list, int]:
     liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
-    opposite_player_index = (gameState.get_player_position(gameState.target_player) + 1) % len(gameState.players)
+    opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
     gameStateInitial = pickle.dumps(gameState)
     start_time = time.time()
     iterations = 0
@@ -30,7 +31,7 @@ def cfr(gameState, seconds):
                 gameStateTemp.go_to_showdown()
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
                 winner = gameStateTemp.showdown(gameStateTemp.players)
-                if winner == gameStateTemp.target_player:
+                if winner == gameStateTemp.ai_player:
                     reward += sumAction
                 elif winner == gameStateTemp.players[opposite_player_index]:
                     reward -= sumAction

@@ -1,3 +1,5 @@
+from rules import card
+
 HAND_RANKS = {
     'HIGH_CARD': 1,
     'PAIR': 2,
@@ -14,10 +16,10 @@ HAND_RANKS = {
 
 class HandEvaluator:
     def __init__(self):
-        self.rank = 0
-        self.hand = []
+        self.rank:int = 0
+        self.hand:list = []
 
-    def evaluate_hand(self, player_cards, community_cards):
+    def evaluate_hand(self, player_cards:list[card.Card], community_cards:list[card.Card]) -> tuple:
         all_cards = player_cards + community_cards
         all_cards.sort(key=lambda x: x.rank, reverse=True)
 
@@ -43,7 +45,7 @@ class HandEvaluator:
             self.hand = all_cards[:5]
             return (HAND_RANKS['HIGH_CARD'], self.hand)
 
-    def check_flush(self, cards):
+    def check_flush(self, cards:list[card.Card]) -> bool:
         # Determine if all cards have the same suit
         suits = [card.suit for card in cards]
         if len(set(suits)) == 1:
@@ -51,7 +53,7 @@ class HandEvaluator:
             return True
         return False
 
-    def check_straight(self, cards):
+    def check_straight(self, cards:list[card.Card]) -> bool:
         # Determine if the cards form a straight
         unique_ranks = sorted(set([card.rank for card in cards]), reverse=True)
         if len(unique_ranks) < 5:
@@ -62,7 +64,7 @@ class HandEvaluator:
         self.hand = [card for card in cards if card.rank in unique_ranks[:5]]
         return True
 
-    def check_n_of_a_kind(self, cards, n):
+    def check_n_of_a_kind(self, cards:list[card.Card], n:int) -> bool:
         # Determine if there are n cards with the same rank
         rank_counts = {card.rank: 0 for card in cards}
         for card in cards:
@@ -73,7 +75,7 @@ class HandEvaluator:
                 return True
         return False
 
-    def check_full_house(self, cards):
+    def check_full_house(self, cards:list[card.Card]) -> bool:
         # Determine if the cards form a full house (three of a kind and a pair)
         rank_counts = {card.rank: 0 for card in cards}
         for card in cards:
@@ -89,7 +91,7 @@ class HandEvaluator:
                 self.hand += [card for card in cards if card.rank == rank]
         return has_three and has_two
 
-    def check_two_pair(self, cards):
+    def check_two_pair(self, cards:list[card.Card]) -> bool:
         # Determine if the cards form two pairs
         rank_counts = {card.rank: 0 for card in cards}
         for card in cards:
@@ -100,13 +102,13 @@ class HandEvaluator:
         self.hand = [card for card in cards if card.rank in pairs]
         return True
 
-    def check_straight_flush(self, cards):
+    def check_straight_flush(self, cards:list[card.Card]) -> bool:
         # Determine if the cards form a straight flush
         if self.check_flush(cards) and self.check_straight(cards):
             return True
         return False
 
-    def check_royal_flush(self, cards):
+    def check_royal_flush(self, cards:list[card.Card]) -> bool:
         # Determine if the cards form a royal flush (A, K, Q, J, 10 of the same suit)
         if self.check_flush(cards):
             rank_set = set([card.rank for card in cards])
