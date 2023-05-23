@@ -1,9 +1,9 @@
 class Player:
-    def __init__(self, chips:int=1000):
-        self.chips:int = chips
-        self.hand:list = []
+    def __init__(self, chips: int=1000):
+        self.chips = chips
+        self.hand = []
 
-    def bet(self, amount:int) -> int:
+    def bet(self, amount: int) -> int:
         self.chips -= amount
         return amount
 
