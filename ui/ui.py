@@ -4,6 +4,7 @@ from helper_functions.helpers import force_int_input
 from rules.player import Player
 from ai import ai
 
+# new_hand() is declared below the UI class!
 
 class UI(GameState):
     def __init__(self, players:tuple[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
@@ -29,6 +30,8 @@ class UI(GameState):
             - human_action(self)
             - available_human_player_actions(self)
             - print_round_info(self)
+            - print_players_chips(self)
+            - print_community_cards(self)
     """
 
     def deal_hole_cards(self) -> None:
