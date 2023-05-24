@@ -1,4 +1,4 @@
-from ui.ui import UI
+from ui.ui import UI, new_hand
 from rules.player import Player
 from helper_functions.helpers import force_int_input
 
@@ -14,7 +14,7 @@ print(f"You are Player 1")
 print("\n")
 
 while not game_ui.is_game_over():
-    game_ui = game_ui.new_hand()
+    game_ui = new_hand(game_ui)
     game_ui.round(stage='pre-flop')
     if not game_ui.is_hand_over():
         game_ui.round(stage='flop')

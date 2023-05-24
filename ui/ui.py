@@ -4,6 +4,7 @@ from helper_functions.helpers import force_int_input
 from rules.player import Player
 from ai import ai
 
+
 class UI(GameState):
     def __init__(self, players:tuple[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
         super().__init__(players, ai_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
@@ -40,10 +41,6 @@ class UI(GameState):
             self.community_cards = [self.deck.deal() for _ in range(3)]
         elif self.current_stage in ['turn', 'river']:
             self.community_cards += [self.deck.deal()]
-
-    def new_hand(self) -> object:
-        new_hand = UI(self.players, self.get_player_position(self.ai_player), self.dealer_position, self.small_blind, self.big_blind, 0, 'pre-flop')
-        return new_hand
 
     def is_game_over(self) -> bool:
         if self.players[0].chips == 0 or self.players[1].chips == 0:
@@ -187,3 +184,8 @@ class UI(GameState):
         print("\nCommunity cards:")
         for card in self.community_cards:
             print(card.__str__())
+
+
+def new_hand(gameUI:UI) -> UI:
+    new_hand = UI(gameUI.players, gameUI.get_player_position(gameUI.ai_player), gameUI.dealer_position, gameUI.small_blind, gameUI.big_blind, 0, 'pre-flop')
+    return new_hand
