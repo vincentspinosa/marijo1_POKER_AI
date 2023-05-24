@@ -187,4 +187,3 @@ class UI(GameState):
         print("\nCommunity cards:")
         for card in self.community_cards:
             print(card.__str__())
-        print("\n")
