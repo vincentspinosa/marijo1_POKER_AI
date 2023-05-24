@@ -2,6 +2,7 @@ from gameState import gameState
 from eval import evalAgent
 from helper_functions import helpers
 from rules.player import Player
+from ai import ai
 
 class UI(gameState.GameState):
     def __init__(self, players:list[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
