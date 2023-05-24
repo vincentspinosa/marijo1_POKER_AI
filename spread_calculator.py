@@ -9,11 +9,13 @@ p2 = player.Player(chips=1000)
 game_state = gameState.GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
 max_seconds = 3
+# using 5 as a secondDivisor will create steps of 0.2 seconds
+secondDivisor = 5
 cfr_runs = 100
 strategyFound = False
 plot = [[], []]
-for i in range(1, max_seconds * 5):
-    seconds = i / 5
+for i in range(1, max_seconds * secondDivisor):
+    seconds = i / secondDivisor
     print(f"\n{seconds} seconds:")
     spreadTable = []
     for run in range(cfr_runs):
