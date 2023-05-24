@@ -30,32 +30,32 @@ class UI(GameState):
             - print_round_info(self)
     """
 
-    def deal_hole_cards(self):
+    def deal_hole_cards(self) -> None:
         self.deck.shuffle()
         for player in self.players:
             player.hand = [self.deck.deal(), self.deck.deal()]
 
-    def deal_community_cards(self):
+    def deal_community_cards(self) -> None:
         if self.current_stage == 'flop':
             self.community_cards = [self.deck.deal() for _ in range(3)]
         elif self.current_stage in ['turn', 'river']:
             self.community_cards += [self.deck.deal()]
 
-    def new_hand(self):
+    def new_hand(self) -> object:
         new_hand = UI(self.players, self.get_player_position(self.ai_player), self.dealer_position, self.small_blind, self.big_blind, 0, 'pre-flop')
         return new_hand
 
-    def is_game_over(self):
+    def is_game_over(self) -> bool:
         if self.players[0].chips == 0 or self.players[1].chips == 0:
             return True
         return False
 
-    def is_hand_over(self):
+    def is_hand_over(self) -> bool:
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             return True
         return False
 
-    def is_round_over(self):
+    def is_round_over(self) -> bool:
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             return True
         if self.round_turns >= len(self.round_players) or self.current_stage == 'pre-flop':
@@ -65,7 +65,7 @@ class UI(GameState):
                 return True 
         return False
 
-    def play_round(self):
+    def play_round(self) -> None:
         while not self.is_round_over():
             if self.current_player == self.ai_player:
                 action = self.ai_action()
@@ -78,7 +78,7 @@ class UI(GameState):
             self.next_player()
         self.reset_round()
 
-    def round(self, stage='pre-flop'):
+    def round(self, stage:str='pre-flop') -> None:
         if stage != 'pre-flop':
             self.current_stage = stage
         if self.current_stage == 'pre-flop':
@@ -89,23 +89,23 @@ class UI(GameState):
         self.print_round_info()
         self.play_round()
 
-    def reset_round(self):
+    def reset_round(self) -> None:
         self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
         self.round_turns = 0
         self.round_players = self.active_players
 
-    def end_round(self, winner):
-        if winner == 0 or winner == 1:
-            self.players[winner].chips += self.current_pot
+    def end_round(self, winnerIndex:int) -> None:
+        if winnerIndex == 0 or winnerIndex == 1:
+            self.players[winnerIndex].chips += self.current_pot
         else:
             self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
             self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
         self.current_pot = 0
 
-    def move_dealer_button(self):
+    def move_dealer_button(self) -> None:
         self.dealer_position = (self.dealer_position + 1) % len(self.players)
 
-    def collect_blinds(self):
+    def collect_blinds(self) -> None:
         small_blind_player = self.players[(self.dealer_position + 1) % len(self.players)]
         big_blind_player = self.players[(self.dealer_position + 2) % len(self.players)]
         small_blind_amount = min(small_blind_player.chips, self.small_blind)
@@ -122,7 +122,7 @@ class UI(GameState):
         if big_blind_player.chips == 0:
             self.all_in_players.append(big_blind_player)
 
-    def ai_action(self):
+    def ai_action(self) -> tuple:
         print("\nAI's TURN")
         # printing for testing
         print("\nAI's hand:")
@@ -132,14 +132,14 @@ class UI(GameState):
         print(f"\nAI's MOVE: {ai_move}\n")
         return ai_move
     
-    def get_action(self, actions):
+    def get_action(self, actions:list[tuple]) -> tuple:
         index = -1
         for i in actions:
             index += 1
             print(f"{index} - {i}")
         return actions[int(input("\nChosen action: "))]
     
-    def human_action(self):
+    def human_action(self) -> tuple:
         player = self.current_player
         print("\nYour hand:")
         for card in player.hand:
@@ -148,7 +148,7 @@ class UI(GameState):
         actions = self.available_human_player_actions()
         return self.get_action(actions)
     
-    def available_human_player_actions(self):
+    def available_human_player_actions(self) -> list[tuple]:
         actions = []
         if self.current_player not in self.active_players:
             return actions
@@ -167,7 +167,7 @@ class UI(GameState):
         actions.append(('all-in', self.current_player.chips))
         return actions
 
-    def print_round_info(self):
+    def print_round_info(self) -> None:
         print("\n-----------------------------------------------")
         print(f"\nRound: {self.current_stage}".upper())
         print(f"\nCurrent pot: {self.current_pot}".upper())
@@ -177,13 +177,13 @@ class UI(GameState):
         print("\n-----------------------------------------------")
         print("\n")
 
-    def print_players_chips(self):
+    def print_players_chips(self) -> None:
         x = 0
         for player in self.players:
             print(f"\nChips of player {x}: {player.chips}".upper())
             x += 1
 
-    def print_community_cards(self):
+    def print_community_cards(self) -> None:
         print("\nCommunity cards:")
         for card in self.community_cards:
             print(card.__str__())

@@ -29,7 +29,7 @@ while not game_ui.is_game_over():
         winner = game_ui.showdown(game_ui.players)
     else:
         winner = game_ui.active_players[0]
-    game_ui.end_round(winner)
+    game_ui.end_round(game_ui.get_player_position(winner))
     game_ui.move_dealer_button()
 
 print(f"\nGame is over! Winner is player {winner}.")
