@@ -22,6 +22,20 @@ class GameState:
         self.round_turns:int = 0
         self.round_players:tuple = self.active_players
 
+    """
+        Methods of the GameState class:
+
+            - get_player_position(self, player:Player) -> int
+            - get_next_player(self, player:Player) -> Player
+            - next_player(self) -> None
+            - eliminate_player(self, player:Player) -> None
+            - calculate_raise_buckets(self, player:Player, min_raise:int) -> list
+            - available_actions(self) -> list
+            - handle_action(self, action:str, raise_amount:int=0) -> None
+            - go_to_showdown(self) -> None
+            - showdown(self, players:list[Player]) -> Player or None
+    """
+
     def get_player_position(self, player:Player) -> int:
         return self.players.index(player)
 
