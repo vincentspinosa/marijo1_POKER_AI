@@ -13,14 +13,14 @@ print(f"\nAI is Player 0")
 print(f"You are Player 1")
 print("\n")
 
-while not game_ui.is_game_over():
+while game_ui.is_game_over() == False:
     game_ui = new_hand(game_ui)
     game_ui.round(stage='pre-flop')
-    if not game_ui.is_hand_over():
+    if game_ui.is_hand_over() == False:
         game_ui.round(stage='flop')
-    if not game_ui.is_hand_over():
+    if game_ui.is_hand_over() == False:
         game_ui.round(stage='turn')
-    if not game_ui.is_hand_over():
+    if game_ui.is_hand_over() == False:
         game_ui.round(stage='river')
     if len(game_ui.active_players) > 1:
         len_cc = len(game_ui.community_cards)
@@ -31,10 +31,10 @@ while not game_ui.is_game_over():
         winner = game_ui.active_players[0]
     if winner is not None:
         winner = game_ui.get_player_position(winner)
-    game_ui.end_round(winner)
+    game_ui.end_hand(winner)
     game_ui.move_dealer_button()
 
 winnerDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
-print(f"\nGame is over! Winner is player {winner}.")
+print(f"\nGame is over! Winner is player {winnerDict[winner]}.")
 print(f"\nChips of player {winner}: {game_ui.players[winner].chips}")
 print("\n")

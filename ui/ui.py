@@ -9,6 +9,7 @@ from ai import ai
 class UI(GameState):
     def __init__(self, players:tuple[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
         super().__init__(players, ai_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
+        self.handOver:bool = False
 
     """ 
         methods of the UI class:
@@ -51,7 +52,17 @@ class UI(GameState):
         return False
 
     def is_hand_over(self) -> bool:
+        print(f"Check after {self.current_stage}".upper())
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
+            self.handOver = True
+        if len(self.all_in_players) >= len(self.active_players) - 1 and self.round_turns > 0:
+            active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
+            print(f"\nActive bets: {active_bets}\n")
+            print(f"Len set active bets: {len(set(active_bets))}".upper())
+            if len(set(active_bets)) == 1:
+                print("1 player is all in but all bets are the same size".upper())
+                self.handOver = True
+        if self.handOver == True:
             return True
         return False
 
@@ -94,7 +105,7 @@ class UI(GameState):
         self.round_turns = 0
         self.round_players = self.active_players
 
-    def end_round(self, winnerIndex:int) -> None:
+    def end_hand(self, winnerIndex:int) -> None:
         if winnerIndex == 0 or winnerIndex == 1:
             self.players[winnerIndex].chips += self.current_pot
         else:
