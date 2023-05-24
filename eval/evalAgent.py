@@ -2,12 +2,12 @@ import numpy as np
 from ai import ai
 from gameState import gameState
 
-def get_play(array: list[tuple]) -> tuple:
-    array = np.array(array, dtype=list)
-    indices = np.arange(len(array))
-    probabilities = array[:, 1].astype(float)
+def get_play(probability_distribution: list[tuple]) -> tuple:
+    probability_distribution = np.array(probability_distribution, dtype=list)
+    indices = np.arange(len(probability_distribution))
+    probabilities = probability_distribution[:, 1].astype(float)
     chosen_index = np.random.choice(indices, p=probabilities)
-    return array[chosen_index]
+    return probability_distribution[chosen_index]
 
 def eval(gameState: gameState.GameState, seconds: int or float) -> tuple:
     cfr_result = ai.cfr(gameState, seconds)
