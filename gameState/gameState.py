@@ -7,7 +7,7 @@ class GameState:
     def __init__(self, players:tuple[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
         self.players:tuple = players
         self.ai_player:Player = players[ai_player_index]
-        self.active_players:tuple = tuple(players)
+        self.active_players:tuple = players
         self.dealer_position:int = dealer_position
         self.small_blind:int = small_blind
         self.big_blind:int = big_blind
