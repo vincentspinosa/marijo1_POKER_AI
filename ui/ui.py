@@ -1,9 +1,10 @@
 from gameState import gameState
 from eval import evalAgent
 from helper_functions import helpers
+from rules.player import Player
 
 class UI(gameState.GameState):
-    def __init__(self, players, ai_player_index, dealer_position=0, small_blind=10, big_blind=20, current_pot=0, current_stage='pre-flop'):
+    def __init__(self, players:list[Player], ai_player_index:int, dealer_position:int=0, small_blind:int=10, big_blind:int=20, current_pot:int=0, current_stage:str='pre-flop'):
         super().__init__(players, ai_player_index, dealer_position, small_blind, big_blind, current_pot, current_stage)
 
     def new_hand(self):
@@ -44,9 +45,6 @@ class UI(gameState.GameState):
             self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
             self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
         self.current_pot = 0
-
-    def eliminate_player(self, player):
-        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
     def move_dealer_button(self):
         self.dealer_position = (self.dealer_position + 1) % len(self.players)

@@ -30,8 +30,11 @@ class GameState:
         next_position = (position + 1) % len(self.players)
         return self.players[next_position]
 
-    def next_player(self):
+    def next_player(self) -> None:
         self.current_player = self.get_next_player(self.current_player)
+
+    def eliminate_player(self, player:Player) -> None:
+        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
     def calculate_raise_buckets(self, player:Player, min_raise:int) -> list:
         return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
@@ -98,27 +101,23 @@ class GameState:
         self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
 
     def showdown(self, players:list[Player]) -> Player or None:
-        # Calculate the hand ranks for each player
         player_hands = []
         for player in players:
             hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
-            player_hands.append((player, hand_rank, hand))
-        # Sort the player hands by rank and the actual hand in descending order
-        player_hands.sort(key=lambda x: (x[1], [card.rank for card in x[2]]), reverse=True)
-        # Find the highest rank and hands with the same highest rank
-        highest_rank = player_hands[0][1]
-        winning_hands = [player_hand for player_hand in player_hands if player_hand[1] == highest_rank]
-        # If there's only one winning hand, return the corresponding player
+            player_hands.append({"player": player, "hand_rank": hand_rank, "hand": hand})
+        player_hands.sort(key=lambda x: (x["hand_rank"], [card.rank for card in x["hand"]]), reverse=True)
+        highest_rank = player_hands[0]["hand_rank"]
+        winning_hands = [p for p in player_hands if p["hand_rank"] == highest_rank]
         if len(winning_hands) == 1:
-            return winning_hands[0][0]
+            return winning_hands[0]["player"]
         # If there are multiple winning hands, compare their high cards to determine the winner
-        winning_player = winning_hands[0][0]
-        winning_hand_high_card = winning_hands[0][2][0].rank
+        winning_player = winning_hands[0]["player"]
+        winning_hand_high_card = winning_hands[0]["hand"][0].rank
         winners = 1
         for i in range(1, len(winning_hands)):
-            current_hand_high_card = winning_hands[i][2][0].rank
+            current_hand_high_card = winning_hands[i]["hand"][0].rank
             if current_hand_high_card > winning_hand_high_card:
-                winning_player = winning_hands[i][0]
+                winning_player = winning_hands[i]["player"]
                 winning_hand_high_card = current_hand_high_card
                 winners = 1
             elif current_hand_high_card == winning_hand_high_card:
