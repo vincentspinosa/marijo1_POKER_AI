@@ -33,7 +33,6 @@ class GameState:
             - calculate_raise_buckets(self, player:Player, min_raise:int) -> list
             - available_actions(self) -> list
             - handle_action(self, action:str, raise_amount:int=0) -> None
-            - go_to_showdown(self) -> None
             - showdown(self, players:tuple[Player]) -> Player or None
     """
 
