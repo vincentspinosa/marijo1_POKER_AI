@@ -34,7 +34,7 @@ class GameState:
             - available_actions(self) -> list
             - handle_action(self, action:str, raise_amount:int=0) -> None
             - go_to_showdown(self) -> None
-            - showdown(self, players:list[Player]) -> Player or None
+            - showdown(self, players:tuple[Player]) -> Player or None
     """
 
     def get_player_position(self, player:Player) -> int:
@@ -112,7 +112,7 @@ class GameState:
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
-    def showdown(self, players:list[Player]) -> Player or None:
+    def showdown(self, players:tuple[Player]) -> Player or None:
         player_hands = []
         for player in players:
             hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
