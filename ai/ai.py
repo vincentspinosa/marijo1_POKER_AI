@@ -1,5 +1,6 @@
 import time
 import pickle
+import random
 from gameState.gameState import GameState
 
 def compute_probabilities(probabilities:list) -> list:
@@ -27,9 +28,10 @@ def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
             if action[0] == 'fold':
                 reward -= sumAction
             elif action[0] in ['call', 'raise', 'all-in']:
-                gameStateTemp.deck.shuffle()
-                gameStateTemp.go_to_showdown()
-                gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.deck.deal() for _ in range(2)]
+                gameStateTemp.ai_deck = gameStateTemp.deck.cards + gameStateTemp.players[opposite_player_index].hand
+                random.shuffle(gameStateTemp.ai_deck)
+                gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
+                gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
                 winner = gameStateTemp.showdown(gameStateTemp.players)
                 if winner == gameStateTemp.ai_player:
                     reward += sumAction

@@ -12,6 +12,7 @@ class GameState:
         self.small_blind:int = small_blind
         self.big_blind:int = big_blind
         self.deck:Deck = Deck()
+        self.ai_deck:list = []
         self.community_cards:list = []
         self.current_pot:int = current_pot
         self.current_bets:dict = {player: 0 for player in players}
@@ -110,9 +111,6 @@ class GameState:
             self.eliminate_player(self.current_player)
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
-
-    def go_to_showdown(self) -> None:
-        self.community_cards += [self.deck.deal() for _ in range(5 - len(self.community_cards))]
 
     def showdown(self, players:list[Player]) -> Player or None:
         player_hands = []

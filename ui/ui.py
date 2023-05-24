@@ -42,8 +42,8 @@ class UI(GameState):
         elif self.current_stage in ['turn', 'river']:
             self.community_cards += [self.deck.deal()]
 
-    def create_deck_to_send_to_ai(self, target_player_index):
-        return self.deck + self.get_next_player(target_player_index).hand
+    def create_deck_to_send_to_ai(self, ai_player_index):
+        return self.deck + self.get_next_player(ai_player_index).hand
 
     def new_hand(self):
         new_hand = UI(self.players, self.get_player_position(self.ai_player), self.dealer_position, self.small_blind, self.big_blind, 0, 'pre-flop')
@@ -73,7 +73,7 @@ class UI(GameState):
 
     def play_round(self):
         while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
-            if self.current_player == self.target_player:
+            if self.current_player == self.ai_player:
                 action = self.ai_action()
             else:
                 action = self.human_action()
@@ -141,8 +141,8 @@ class UI(GameState):
         return actions[int(input("\nChosen action: "))]
     
     def human_action(self):
-        print("\n Your hand:")
         player = self.current_player
+        print("\n Your hand:")
         for card in player.hand:
             print(card.__str__())
         actions = self.available_human_player_actions()
