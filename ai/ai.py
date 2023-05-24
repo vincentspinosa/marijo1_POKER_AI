@@ -2,13 +2,13 @@ import time
 import pickle
 from gameState import gameState
 
-def compute_probabilities(array:list) -> list:
+def compute_probabilities(probabilities:list) -> list:
     sum = 0
-    for el in array:
-        sum += el[1]
-    for el in array:
-        el[1] /= sum
-    return array
+    for proba in probabilities:
+        sum += proba[1]
+    for proba in probabilities:
+        proba[1] /= sum
+    return probabilities
 
 def cfr(gameState:gameState.GameState, seconds:int or float) -> list[list, int]:
     liste_actions = gameState.available_actions()
