@@ -16,12 +16,16 @@ print("\n")
 while game_ui.is_game_over() == False:
     game_ui = new_hand(game_ui)
     game_ui.round(stage='pre-flop')
-    if game_ui.is_hand_over() == False:
+    game_ui.set_if_hand_over()
+    if game_ui.handOver == False:
         game_ui.round(stage='flop')
-    if game_ui.is_hand_over() == False:
+        game_ui.set_if_hand_over()
+    if game_ui.handOver == False:
         game_ui.round(stage='turn')
-    if game_ui.is_hand_over() == False:
+        game_ui.set_if_hand_over()
+    if game_ui.handOver == False:
         game_ui.round(stage='river')
+    winner = None
     if len(game_ui.active_players) > 1:
         len_cc = len(game_ui.community_cards)
         if len_cc < 5:
@@ -31,6 +35,7 @@ while game_ui.is_game_over() == False:
         winner = game_ui.active_players[0]
     if winner is not None:
         winner = game_ui.get_player_position(winner)
+    print(f"\nWinner is Player {winner}".upper())
     game_ui.end_hand(winner)
     game_ui.move_dealer_button()
 

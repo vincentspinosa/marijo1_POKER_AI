@@ -51,10 +51,13 @@ class UI(GameState):
             return True
         return False
 
-    def is_hand_over(self) -> bool:
-        print(f"Check after {self.current_stage}".upper())
+    def set_if_hand_over(self) -> None:
+        if self.handOver == True:
+            return
+        print(f"Set after {self.current_stage}".upper())
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             self.handOver = True
+            return
         if len(self.all_in_players) >= len(self.active_players) - 1 and self.round_turns > 0:
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(f"\nActive bets: {active_bets}\n")
@@ -62,9 +65,6 @@ class UI(GameState):
             if len(set(active_bets)) == 1:
                 print("1 player is all in but all bets are the same size".upper())
                 self.handOver = True
-        if self.handOver == True:
-            return True
-        return False
 
     def is_round_over(self) -> bool:
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
@@ -77,6 +77,7 @@ class UI(GameState):
         return False
 
     def play_round(self) -> None:
+        self.reset_round()
         while not self.is_round_over():
             if self.current_player == self.ai_player:
                 action = self.ai_action()
@@ -87,7 +88,6 @@ class UI(GameState):
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
-        self.reset_round()
 
     def round(self, stage:str='pre-flop') -> None:
         if stage != 'pre-flop':
@@ -106,11 +106,14 @@ class UI(GameState):
         self.round_players = self.active_players
 
     def end_hand(self, winnerIndex:int) -> None:
-        if winnerIndex == 0 or winnerIndex == 1:
-            self.players[winnerIndex].chips += self.current_pot
+        if len(self.active_players) > 1:
+            if winnerIndex == 0 or winnerIndex == 1:
+                self.players[winnerIndex].chips += self.current_pot
+            else:
+                self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
+                self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
         else:
-            self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
-            self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
+            self.active_players[0].chips += self.current_pot
         self.current_pot = 0
 
     def move_dealer_button(self) -> None:
