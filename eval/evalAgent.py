@@ -1,6 +1,6 @@
 import numpy as np
 from ai import ai
-from gameState import gameState
+from gameState.gameState import GameState
 
 def get_play(probability_distribution: list[tuple]) -> tuple:
     probability_distribution = np.array(probability_distribution, dtype=list)
@@ -9,7 +9,7 @@ def get_play(probability_distribution: list[tuple]) -> tuple:
     chosen_index = np.random.choice(indices, p=probabilities)
     return probability_distribution[chosen_index]
 
-def eval(gameState: gameState.GameState, seconds: int or float) -> tuple:
+def eval(gameState: GameState, seconds: int or float) -> tuple:
     algorithm_result = ai.algorithm(gameState, seconds)
     print(f"\nNumber of iterations: {algorithm_result['iterations']}")
     print("Computed probabilities:")

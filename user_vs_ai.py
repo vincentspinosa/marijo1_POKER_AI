@@ -1,5 +1,5 @@
 from rules import player
-from ui import match
+from ui.ui import UI
 from rules import player
 from helper_functions import helpers
 
@@ -7,7 +7,7 @@ sm_blind = helpers.force_int_input("Small blind: ")
 players_chips = helpers.force_int_input("Players chips: ")
 players = (player.Player(chips=players_chips), player.Player(chips=players_chips))
 first_dealer = helpers.force_int_input("First dealer position (AI: 0, Opposite player: 1): ")
-game_ui = match.Match(players, target_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(players, target_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 while not game_ui.is_game_over():
     game_ui = game_ui.new_hand()

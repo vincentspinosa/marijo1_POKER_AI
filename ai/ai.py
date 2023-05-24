@@ -1,6 +1,6 @@
 import time
 import pickle
-from gameState import gameState
+from gameState.gameState import GameState
 
 def compute_probabilities(probabilities:list) -> list:
     sum = 0
@@ -10,7 +10,7 @@ def compute_probabilities(probabilities:list) -> list:
         proba[1] /= sum
     return probabilities
 
-def algorithm(gameState:gameState.GameState, seconds:int or float) -> dict[list, int]:
+def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
