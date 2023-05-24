@@ -1,6 +1,6 @@
 from gameState.gameState import GameState
 from eval import evalAgent
-from helper_functions import helpers
+from helper_functions.helpers import force_int_input
 from rules.player import Player
 from ai import ai
 
@@ -13,7 +13,6 @@ class UI(GameState):
 
             - deal_hole_cards(self)
             - deal_community_cards(self)
-            - create_deck_to_send_to_ai(self)
             - new_hand(self)
             - is_game_over(self)
             - is_hand_over(self)
@@ -42,9 +41,6 @@ class UI(GameState):
         elif self.current_stage in ['turn', 'river']:
             self.community_cards += [self.deck.deal()]
 
-    def create_deck_to_send_to_ai(self, ai_player_index):
-        return self.deck + self.get_next_player(ai_player_index).hand
-
     def new_hand(self):
         new_hand = UI(self.players, self.get_player_position(self.ai_player), self.dealer_position, self.small_blind, self.big_blind, 0, 'pre-flop')
         return new_hand
@@ -55,43 +51,42 @@ class UI(GameState):
         return False
 
     def is_hand_over(self):
-        if len(self.active_players) > 1 and len(self.all_in_players) + 1 < len(self.active_players):
-            return False
-        return True
+        if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
+            return True
+        return False
 
     def is_round_over(self):
-        if len(self.active_players) < 2:
+        if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             return True
         if self.round_turns >= len(self.round_players) or self.current_stage == 'pre-flop':
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(f"\nActive bets: {active_bets}\n")
             if len(set(active_bets)) == 1:
-                return True
-        if len(self.all_in_players) == len(self.active_players):
-            return True   
+                return True 
         return False
 
     def play_round(self):
-        while not self.is_round_over() and len(self.all_in_players) < len(self.active_players):
+        while not self.is_round_over():
             if self.current_player == self.ai_player:
                 action = self.ai_action()
             else:
                 action = self.human_action()
                 if action[0] == 'raise':
-                    raise_amount = helpers.force_int_input("Raise amount:")
+                    raise_amount = force_int_input("Raise amount:")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
         self.reset_round()
 
-    def round(self, stage):
-        self.print_round_info()
-        if self.current_stage == 'pre-flop':
-            self.deal_hole_cards()
-            self.collect_blinds()
-        else:
+    def round(self, stage='pre-flop'):
+        if stage != 'pre-flop':
             self.current_stage = stage
+        if self.current_stage == 'pre-flop':
+            self.collect_blinds()
+            self.deal_hole_cards()
+        else:
             self.deal_community_cards()
+        self.print_round_info()
         self.play_round()
 
     def reset_round(self):
@@ -129,7 +124,11 @@ class UI(GameState):
 
     def ai_action(self):
         print("\nAI's TURN")
-        ai_move = evalAgent.get_play(ai.algorithm(self, 1)['probability_distribution'])
+        # printing for testing
+        print("\nAI's hand:")
+        for card in self.current_player.hand:
+            print(card.__str__())
+        ai_move = evalAgent.get_play(ai.algorithm(self, 1)['probability_distribution'])[0]
         print(f"\nAI's MOVE: {ai_move}\n")
         return ai_move
     
@@ -142,9 +141,10 @@ class UI(GameState):
     
     def human_action(self):
         player = self.current_player
-        print("\n Your hand:")
+        print("\nYour hand:")
         for card in player.hand:
             print(card.__str__())
+        print("\nAvailable actions:")
         actions = self.available_human_player_actions()
         return self.get_action(actions)
     
@@ -170,10 +170,21 @@ class UI(GameState):
     def print_round_info(self):
         print("\n-----------------------------------------------")
         print(f"\nRound: {self.current_stage}".upper())
+        print(f"\nCurrent pot: {self.current_pot}".upper())
+        self.print_players_chips()
+        if len(self.community_cards) > 0:
+            self.print_community_cards()
+        print("\n-----------------------------------------------")
+        print("\n")
+
+    def print_players_chips(self):
         x = 0
         for player in self.players:
             print(f"\nChips of player {x}: {player.chips}".upper())
             x += 1
-        print(f"\nCurrent pot: {self.current_pot}".upper())
-        print("\n-----------------------------------------------")
+
+    def print_community_cards(self):
+        print("\nCommunity cards:")
+        for card in self.community_cards:
+            print(card.__str__())
         print("\n")

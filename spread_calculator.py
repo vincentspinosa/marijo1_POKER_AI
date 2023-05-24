@@ -1,12 +1,12 @@
 import copy
 import plotext as plt
-from rules import player
-from gameState import gameState
+from rules.player import Player
+from gameState.gameState import GameState
 from ai import ai
 
-p1 = player.Player(chips=1000)
-p2 = player.Player(chips=1000)
-game_state = gameState.GameState((p1, p2), 1, small_blind=10, big_blind=20)
+p1 = Player(chips=1000)
+p2 = Player(chips=1000)
+game_state = GameState((p1, p2), 1, small_blind=10, big_blind=20)
 
 max_seconds = 3
 # using 5 as a secondDivisor will create steps of 0.2 seconds
