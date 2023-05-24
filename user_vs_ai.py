@@ -29,9 +29,12 @@ while not game_ui.is_game_over():
         winner = game_ui.showdown(game_ui.players)
     else:
         winner = game_ui.active_players[0]
-    game_ui.end_round(game_ui.get_player_position(winner))
+    if winner is not None:
+        winner = game_ui.get_player_position(winner)
+    game_ui.end_round(winner)
     game_ui.move_dealer_button()
 
+winnerDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 print(f"\nGame is over! Winner is player {winner}.")
-print(f"\Chips of player {winner}: {game_ui.players[winner].chips}")
+print(f"\nChips of player {winner}: {game_ui.players[winner].chips}")
 print("\n")
