@@ -10,9 +10,9 @@ def get_play(probability_distribution: list[tuple]) -> tuple:
     return probability_distribution[chosen_index]
 
 def eval(gameState: gameState.GameState, seconds: int or float) -> tuple:
-    cfr_result = ai.cfr(gameState, seconds)
-    print(f"\nNumber of iterations: {cfr_result[1]}")
+    algorithm_result = ai.algorithm(gameState, seconds)
+    print(f"\nNumber of iterations: {algorithm_result['iterations']}")
     print("Computed probabilities:")
-    for action in cfr_result[0]:
+    for action in algorithm_result['probability_distribution']:
         print(f"Action: {action[0]}, Probability: {action[1]}")
-    return get_play(cfr_result[0])
+    return get_play(algorithm_result['probability_distribution'])

@@ -10,7 +10,7 @@ def compute_probabilities(probabilities:list) -> list:
         proba[1] /= sum
     return probabilities
 
-def cfr(gameState:gameState.GameState, seconds:int or float) -> list[list, int]:
+def algorithm(gameState:gameState.GameState, seconds:int or float) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
@@ -41,4 +41,4 @@ def cfr(gameState:gameState.GameState, seconds:int or float) -> list[list, int]:
             index += 1
             iterations += 1
         probabilities[index][1] += 1
-    return [compute_probabilities(probabilities), iterations]
+    return {'probability_distribution': compute_probabilities(probabilities), 'iterations': iterations}
