@@ -38,7 +38,7 @@ while game_ui.is_game_over() == False:
         game_ui.round(stage='river', print_ai_cards=print_ai_crds)
         time.sleep(1)
     winner = None
-    if len(game_ui.active_players) > 1:
+    if len(game_ui.active_players) > 1 and game_ui.lastActionIsCheck == False:
         print("Going to showdown!".upper())
         len_cc = len(game_ui.community_cards)
         if len_cc < 5:

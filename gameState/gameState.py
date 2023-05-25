@@ -22,6 +22,7 @@ class GameState:
         self.current_player:Player = self.players[(self.dealer_position + 1) % len(players)]
         self.round_turns:int = 0
         self.round_players:tuple = self.active_players
+        self.lastActionIsCheck:bool = False
 
     """
         Methods of the GameState class:
@@ -83,6 +84,7 @@ class GameState:
         print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
         if action == 'check':
             self.current_bets[self.current_player] = 0
+            self.lastActionIsCheck = True
         elif action == 'call':
             call_amount = max(self.current_bets.values()) - self.current_bets[self.current_player]
             print(f"\nCall amount: {call_amount}\n")
@@ -90,11 +92,13 @@ class GameState:
             self.current_pot += call_amount
             self.current_bets[self.current_player] = 0
             self.current_bets[self.get_next_player(self.current_player)] = 0
+            self.lastActionIsCheck = False
         elif action == 'raise':
             raise_amount = min(raise_amount, self.current_player.chips)
             self.current_player.bet(raise_amount)
             self.current_pot += raise_amount
             self.current_bets[self.current_player] += raise_amount
+            self.lastActionIsCheck = False
         elif action == 'all-in':
             bet_adversary = self.current_bets[self.get_next_player(self.current_player)]
             bet_amount = self.current_player.chips
@@ -107,8 +111,10 @@ class GameState:
             self.current_pot += bet_amount
             self.current_bets[self.current_player] += bet_amount
             self.all_in_players.append(self.current_player)
+            self.lastActionIsCheck = False
         elif action == 'fold':
             self.eliminate_player(self.current_player)
+            self.lastActionIsCheck = False
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 

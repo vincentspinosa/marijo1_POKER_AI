@@ -105,16 +105,22 @@ class UI(GameState):
         self.round_turns = 0
         self.round_players = self.active_players
 
-    def end_hand(self, winnerIndex:int) -> None:
+    def first_to_act_rule(self) -> None:
+        if self.current_pot % 2 == 1:
+            self.players[(self.dealer_position + 1) % 2].chips += 1
+            self.current_pot -= 1
+
+    def split_pot(self) -> None:
+        self.first_to_act_rule()
+        self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
+        self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
+
+    def end_hand(self, winnerIndex:int or None) -> None:
         if len(self.active_players) > 1:
-            if winnerIndex == 0 or winnerIndex == 1:
-                self.players[winnerIndex].chips += self.current_pot
+            if self.lastActionIsCheck == True or not (winnerIndex == 0 or winnerIndex == 1):
+                self.split_pot()
             else:
-                if self.current_pot % 2 == 1:
-                    self.players[(self.dealer_position + 1) % 2].chips += 1
-                    self.current_pot -= 1
-                self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
-                self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
+                self.players[winnerIndex].chips += self.current_pot
         else:
             self.active_players[0].chips += self.current_pot
         self.current_pot = 0
