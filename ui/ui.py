@@ -76,11 +76,11 @@ class UI(GameState):
                 return True 
         return False
 
-    def play_round(self) -> None:
+    def play_round(self, print_ai_cards=False) -> None:
         self.reset_round()
         while not self.is_round_over():
             if self.current_player == self.ai_player:
-                action = self.ai_action()
+                action = self.ai_action(print_ai_cards=print_ai_cards)
             else:
                 action = self.human_action()
                 if action[0] == 'raise':
@@ -89,7 +89,7 @@ class UI(GameState):
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
 
-    def round(self, stage:str='pre-flop') -> None:
+    def round(self, stage:str='pre-flop', print_ai_cards=False) -> None:
         if stage != 'pre-flop':
             self.current_stage = stage
         if self.current_stage == 'pre-flop':
@@ -98,7 +98,7 @@ class UI(GameState):
         else:
             self.deal_community_cards()
         self.print_round_info()
-        self.play_round()
+        self.play_round(print_ai_cards=print_ai_cards)
 
     def reset_round(self) -> None:
         self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
@@ -135,15 +135,16 @@ class UI(GameState):
             self.all_in_players.append(small_blind_player)
         if big_blind_player.chips == 0:
             self.all_in_players.append(big_blind_player)
+        print("\nBlinds collected!")
 
-    def ai_action(self) -> tuple:
-        print("\nAI's TURN")
-        # printing for testing
-        print("\nAI's hand:")
-        for card in self.current_player.hand:
-            print(card.__str__())
+    def ai_action(self, print_ai_cards=False) -> tuple:
+        print("\nMarijo1's TURN")
+        if print_ai_cards == True:
+            print("\nMarijo1's hand:")
+            for card in self.current_player.hand:
+                print(card.__str__())
         ai_move = evalAgent.get_play(ai.algorithm(self, 1)['probability_distribution'])[0]
-        print(f"\nAI's MOVE: {ai_move}\n")
+        print(f"\nMarijo1's MOVE: {ai_move}\n")
         return ai_move
     
     def get_action(self, actions:list[tuple]) -> tuple:
@@ -189,7 +190,10 @@ class UI(GameState):
         if len(self.community_cards) > 0:
             self.print_community_cards()
         print("\n-----------------------------------------------")
-        print("\n")
+
+    def print_showdown_info(self) -> None:
+        print("\nShowdown!".upper())
+        self.print_community_cards()
 
     def print_players_chips(self) -> None:
         x = 0

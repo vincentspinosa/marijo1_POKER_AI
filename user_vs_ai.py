@@ -1,32 +1,40 @@
+import time
 from ui.ui import UI, new_hand
 from rules.player import Player
 from helper_functions.helpers import force_int_input
 
-sm_blind = force_int_input("Small blind: ")
+playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
+print_ai_crds = False
+
+sm_blind = force_int_input("\nSmall blind: ")
 players_chips = force_int_input("Players chips: ")
 players = (Player(chips=players_chips), Player(chips=players_chips))
-playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
-first_dealer = force_int_input("First dealer position (AI: 0, Opposite player: 1): ")
+print("\nIn this game, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
+first_dealer = force_int_input("First dealer of the game (Marijo1: 0, You: 1): ")
 game_ui = UI(players, ai_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
-print(f"\nAI is Player 0")
-print(f"You are Player 1")
-print("\n")
+
+time.sleep(1)
 
 while game_ui.is_game_over() == False:
-    print("Starting a new hand".upper())
+    print("\nStarting a new hand!")
     game_ui = new_hand(game_ui)
-    game_ui.round(stage='pre-flop')
+    time.sleep(1)
+    game_ui.round(stage='pre-flop', print_ai_cards=print_ai_crds)
+    time.sleep(1)
     game_ui.set_if_hand_over()
     if game_ui.handOver == False:
-        game_ui.round(stage='flop')
+        game_ui.round(stage='flop', print_ai_cards=print_ai_crds)
         game_ui.set_if_hand_over()
+        time.sleep(1)
     if game_ui.handOver == False:
-        game_ui.round(stage='turn')
+        game_ui.round(stage='turn', print_ai_cards=print_ai_crds)
         game_ui.set_if_hand_over()
+        time.sleep(1)
     if game_ui.handOver == False:
-        game_ui.round(stage='river')
+        game_ui.round(stage='river', print_ai_cards=print_ai_crds)
+        time.sleep(1)
     winner = None
     if len(game_ui.active_players) > 1:
         len_cc = len(game_ui.community_cards)
@@ -37,10 +45,13 @@ while game_ui.is_game_over() == False:
         winner = game_ui.active_players[0]
     if winner is not None:
         winner = game_ui.get_player_position(winner)
-    print(f"\nWinner is {playersDict[winner]}".upper())
+        print(f"\nHand is over! {playersDict[winner]} won the hand".upper())
+    else:
+        print("\nHands are equal! The pot is split between both players.")
+    time.sleep(1)
     game_ui.end_hand(winner)
     game_ui.move_dealer_button()
 
-print(f"\nGame is over! Winner is {playersDict[winner]}.")
-print(f"\nChips of {playersDict[winner]}: {game_ui.players[winner].chips}")
+print(f"\nGame is over! The winner is {playersDict[winner]}.".upper())
+print(f"\nChips of {playersDict[winner]}: {game_ui.players[winner].chips}".upper())
 print("\n")
