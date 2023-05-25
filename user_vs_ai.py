@@ -5,6 +5,7 @@ from helper_functions.helpers import force_int_input
 sm_blind = force_int_input("Small blind: ")
 players_chips = force_int_input("Players chips: ")
 players = (Player(chips=players_chips), Player(chips=players_chips))
+playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 first_dealer = force_int_input("First dealer position (AI: 0, Opposite player: 1): ")
 game_ui = UI(players, ai_player_index=0, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
@@ -14,6 +15,7 @@ print(f"You are Player 1")
 print("\n")
 
 while game_ui.is_game_over() == False:
+    print("Starting a new hand".upper())
     game_ui = new_hand(game_ui)
     game_ui.round(stage='pre-flop')
     game_ui.set_if_hand_over()
@@ -35,11 +37,10 @@ while game_ui.is_game_over() == False:
         winner = game_ui.active_players[0]
     if winner is not None:
         winner = game_ui.get_player_position(winner)
-    print(f"\nWinner is Player {winner}".upper())
+    print(f"\nWinner is {playersDict[winner]}".upper())
     game_ui.end_hand(winner)
     game_ui.move_dealer_button()
 
-winnerDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
-print(f"\nGame is over! Winner is player {winnerDict[winner]}.")
-print(f"\nChips of player {winner}: {game_ui.players[winner].chips}")
+print(f"\nGame is over! Winner is {playersDict[winner]}.")
+print(f"\nChips of {playersDict[winner]}: {game_ui.players[winner].chips}")
 print("\n")

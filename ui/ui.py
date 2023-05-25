@@ -18,7 +18,7 @@ class UI(GameState):
             - deal_community_cards(self)
             - new_hand(self)
             - is_game_over(self)
-            - is_hand_over(self)
+            - set_if_hand_over(self)
             - is_round_over(self)
             - play_round(self)
             - round(self, stage)
