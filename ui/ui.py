@@ -110,7 +110,7 @@ class UI(GameState):
             if winnerIndex == 0 or winnerIndex == 1:
                 self.players[winnerIndex].chips += self.current_pot
             else:
-                self.players[(self.dealer_position + 1) % 2] += 1
+                self.players[(self.dealer_position + 1) % 2].chips += 1
                 self.current_pot -= 1
                 self.players[0].chips = int(self.players[0].chips + (self.current_pot / 2))
                 self.players[1].chips = int(self.players[1].chips + (self.current_pot / 2))
