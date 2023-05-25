@@ -194,7 +194,7 @@ class UI(GameState):
 
     def print_showdown_info(self) -> None:
         print("\nShowdown!".upper())
-        players_dict = {0: "Marijo1", 1: "You"}
+        players_dict = {0: "Marijo1", 1: "Your"}
         self.print_community_cards()
         self.print_players_cards(players_dict)
 
