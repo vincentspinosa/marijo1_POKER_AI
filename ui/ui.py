@@ -55,11 +55,10 @@ class UI(GameState):
     def set_if_hand_over(self) -> None:
         if self.handOver == True:
             return
-        print(f"Set after {self.current_stage}".upper())
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             self.handOver = True
             return
-        if len(self.all_in_players) >= len(self.active_players) - 1 and self.round_turns > 0:
+        if len(self.all_in_players) == len(self.active_players) - 1 and self.round_turns > 0:
             active_bets = [bet for player, bet in self.current_bets.items() if player in self.active_players]
             print(f"\nActive bets: {active_bets}\n")
             print(f"Len set active bets: {len(set(active_bets))}".upper())

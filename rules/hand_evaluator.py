@@ -1,3 +1,4 @@
+import collections
 from rules.card import Card
 
 HAND_RANKS = {
@@ -45,7 +46,12 @@ class HandEvaluator:
             return (HAND_RANKS['HIGH_CARD'], self.hand)
 
     def check_flush(self, cards: list[Card]) -> bool:
-        # Determine if all cards have the same suit
+        # Determine if 5 cards have the same suit
+        """ suitsCount = {card.suit: 0 for card in cards}
+        suitsCounter = collections.Counter([card.suit for card in cards])
+        for count in suitsCounter:
+            if count >= 5:
+                return True """
         suits = [card.suit for card in cards]
         if len(set(suits)) == 1:
             self.hand = cards[:5]
