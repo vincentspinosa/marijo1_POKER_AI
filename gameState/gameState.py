@@ -104,7 +104,7 @@ class GameState:
                 self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += bet_diff
             self.current_player.bet(bet_amount)
             self.current_pot += bet_amount
-            self.current_bets[self.current_player] = bet_amount
+            self.current_bets[self.current_player] += bet_amount
             self.all_in_players.append(self.current_player)
         elif action == 'fold':
             self.eliminate_player(self.current_player)

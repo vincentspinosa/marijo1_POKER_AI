@@ -63,7 +63,7 @@ class UI(GameState):
             print(f"\nActive bets: {active_bets}\n")
             print(f"Len set active bets: {len(set(active_bets))}".upper())
             if len(set(active_bets)) == 1:
-                print("1 player is all in but all bets are the same size".upper())
+                print("1 player is all in but all bets are the same size.".upper())
                 self.handOver = True
 
     def is_round_over(self) -> bool:
@@ -186,19 +186,31 @@ class UI(GameState):
         print("\n-----------------------------------------------")
         print(f"\nRound: {self.current_stage}".upper())
         print(f"\nCurrent pot: {self.current_pot}".upper())
-        self.print_players_chips()
+        players_dict = {0: "Marijo1", 1: "You"}
+        self.print_players_chips(players_dict)
         if len(self.community_cards) > 0:
             self.print_community_cards()
         print("\n-----------------------------------------------")
 
     def print_showdown_info(self) -> None:
         print("\nShowdown!".upper())
+        players_dict = {0: "Marijo1", 1: "You"}
         self.print_community_cards()
+        self.print_players_cards(players_dict)
 
-    def print_players_chips(self) -> None:
+    def print_players_chips(self, players_dict:dict) -> None:
         x = 0
         for player in self.players:
-            print(f"\nChips of player {x}: {player.chips}".upper())
+            print(f"\nChips of {players_dict[x]}: {player.chips}".upper())
+            x += 1
+
+    def print_players_cards(self, players_dict:dict) -> None:
+        print("\nPlayers's card:")
+        x = 0
+        for p in self.players:
+            print(f"\n{players_dict[x]} cards:")
+            for c in p.hand:
+                print(c.__str__())
             x += 1
 
     def print_community_cards(self) -> None:
