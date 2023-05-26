@@ -3,7 +3,7 @@ from ui.ui import UI, new_hand
 from rules.player import Player
 from helper_functions.helpers import force_int_input
 
-ai_thinking_time = 1.2
+ai_thinking_time = 9
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
 print_ai_crds = False
