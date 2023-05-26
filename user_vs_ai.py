@@ -52,12 +52,13 @@ while game_ui.is_game_over() == False:
         else:
             winner = game_ui.active_players[0]
     if winner is not None:
-        winner = game_ui.get_player_position(winner)
-        print(f"\nHand is over! {playersDict[winner]} won the hand.".upper())
+        winnerIndex = game_ui.get_player_position(winner)
+        print(f"\nHand is over! {playersDict[winnerIndex]} won the hand.".upper())
     else:
+        winnerIndex = None
         print("\nHands are equal! The pot is split between both players.")
     time.sleep(1)
-    game_ui.end_hand(winner)
+    game_ui.end_hand(winnerIndex)
     game_ui.move_dealer_button()
 
 print(f"\nGame is over! The winner is {playersDict[winner]}.".upper())
