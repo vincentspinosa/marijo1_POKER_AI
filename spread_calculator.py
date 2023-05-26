@@ -1,16 +1,19 @@
 import copy
 import plotext as plt
 from rules.player import Player
-from gameState.gameState import GameState
+from ui.ui import UI
 from ai import ai
 
 p1 = Player(chips=1000)
 p2 = Player(chips=1000)
-game_state = GameState((p1, p2), 1, small_blind=10, big_blind=20)
+game_state = UI(ai_thinking_time=None, players=(p1, p2), ai_player_index=0, dealer_position=1, small_blind=10, big_blind=20)
+game_state.deal_hole_cards()
+game_state.collect_blinds()
 
-max_seconds = 3
-# using 5 as a secondDivisor will create steps of 0.2 seconds
-secondDivisor = 5
+max_seconds = 50
+# using 1 as a secondDivisor will create steps of 1 second
+# using 5 as a secondDivisor will create steps of 0.2 second
+secondDivisor = 1
 algorithm_runs = 100
 strategyFound = False
 plot = [[], []]
