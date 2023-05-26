@@ -47,7 +47,10 @@ while game_ui.is_game_over() == False:
         winner = game_ui.showdown(game_ui.players)
     else:
         print("Not going to showdown!".upper())
-        winner = game_ui.active_players[0]
+        if len(game_ui.active_players) > 1:
+            winner = None
+        else:
+            winner = game_ui.active_players[0]
     if winner is not None:
         winner = game_ui.get_player_position(winner)
         print(f"\nHand is over! {playersDict[winner]} won the hand.".upper())
