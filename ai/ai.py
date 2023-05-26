@@ -1,6 +1,7 @@
 import time
 import pickle
 import random
+from treys import Card
 from gameState.gameState import GameState
 
 def compute_probabilities(probabilities:list) -> list:
@@ -11,7 +12,7 @@ def compute_probabilities(probabilities:list) -> list:
         proba[1] /= sum
     return probabilities
 
-def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
+def algorithm(gameState:GameState, seconds:int or float, verbose:bool=False, verboseSteps:int=50) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
@@ -32,6 +33,13 @@ def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
                 random.shuffle(gameStateTemp.ai_deck)
                 gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
+                if verbose == True:
+                    if iterations % verboseSteps == 0:
+                        print(f"\nIteration {iterations}")
+                        print(f"Community cards:")
+                        Card.print_pretty_cards(gameStateTemp.community_cards)
+                        print(f"Opposite player cards:")
+                        Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
                 winner = gameStateTemp.showdown(gameStateTemp.players)
                 if winner == gameStateTemp.ai_player:
                     reward += sumAction

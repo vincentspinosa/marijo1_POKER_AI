@@ -6,7 +6,7 @@ from ai import ai
 
 p1 = Player(chips=1000)
 p2 = Player(chips=1000)
-game_state = UI(ai_thinking_time=None, players=(p1, p2), ai_player_index=0, dealer_position=1, small_blind=10, big_blind=20)
+game_state = UI(ai_thinking_time=None, players=(p1, p2), ai_player_index=0, ai_verbose=False, dealer_position=1, small_blind=10, big_blind=20)
 game_state.deal_hole_cards()
 game_state.collect_blinds()
 
@@ -23,7 +23,7 @@ for i in range(1, max_seconds * secondDivisor):
     #spreadTable will store, for each action, its lowest and highest probability distribution
     spreadTable = []
     for run in range(algorithm_runs):
-        algorithm_result = ai.algorithm(copy.deepcopy(game_state), seconds)
+        algorithm_result = ai.algorithm(copy.deepcopy(game_state), seconds=seconds, verbose=game_state.ai_verbose)
         print(f"\nRun n°{run}")
         print(f"Number of iterations inside the run: {algorithm_result['iterations']}")
         if run == 0:
