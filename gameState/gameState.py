@@ -1,4 +1,4 @@
-from rules.hand_evaluator import HandEvaluator
+from treys import Evaluator
 from rules.deck import Deck
 from rules.player import Player
 
@@ -18,7 +18,7 @@ class GameState:
         self.current_bets:dict = {player: 0 for player in players}
         self.current_stage:str = current_stage
         self.all_in_players:list = []
-        self.hand_evaluator:HandEvaluator = HandEvaluator()
+        self.hand_evaluator:Evaluator = Evaluator()
         self.current_player:Player = self.players[(self.dealer_position + 1) % len(players)]
         self.round_turns:int = 0
         self.round_players:tuple = self.active_players
@@ -119,27 +119,11 @@ class GameState:
         self.round_turns += 1
 
     def showdown(self, players:tuple[Player]) -> Player or None:
-        player_hands = []
-        for player in players:
-            hand_rank, hand = self.hand_evaluator.evaluate_hand(list(player.hand), list(self.community_cards))
-            player_hands.append({"player": player, "hand_rank": hand_rank, "hand": hand})
-        player_hands.sort(key=lambda x: (x["hand_rank"], [card.rank for card in x["hand"]]), reverse=True)
-        highest_rank = player_hands[0]["hand_rank"]
-        winning_hands = [p for p in player_hands if p["hand_rank"] == highest_rank]
-        if len(winning_hands) == 1:
-            return winning_hands[0]["player"]
-        # If there are multiple winning hands, compare their high cards to determine the winner
-        winning_player = winning_hands[0]["player"]
-        winning_hand_high_card = winning_hands[0]["hand"][0].rank
-        winners = 1
-        for i in range(1, len(winning_hands)):
-            current_hand_high_card = winning_hands[i]["hand"][0].rank
-            if current_hand_high_card > winning_hand_high_card:
-                winning_player = winning_hands[i]["player"]
-                winning_hand_high_card = current_hand_high_card
-                winners = 1
-            elif current_hand_high_card == winning_hand_high_card:
-                winners = 2
-        if winners < 2:
-            return winning_player  
+        #print(self.community_cards)
+        x = self.hand_evaluator.evaluate(players[0].hand, self.community_cards)
+        y = self.hand_evaluator.evaluate(players[1].hand, self.community_cards)
+        if x < y:
+            return players[0]
+        if y < x:
+            return players[1]
         return None

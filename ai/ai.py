@@ -16,10 +16,10 @@ def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
     probabilities = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
     gameStateInitial = pickle.dumps(gameState)
+    gameStateTemp = pickle.loads(gameStateInitial)
     start_time = time.time()
     iterations = 0
     while (time.time() - start_time) < seconds:
-        gameStateTemp = pickle.loads(gameStateInitial)
         maxReward = None
         index = -1
         for action in liste_actions:
@@ -42,5 +42,6 @@ def algorithm(gameState:GameState, seconds:int or float) -> dict[list, int]:
             maxReward = reward
             index += 1
             iterations += 1
+            gameStateTemp = pickle.loads(gameStateInitial)
         probabilities[index][1] += 1
     return {'probability_distribution': compute_probabilities(probabilities), 'iterations': iterations}
