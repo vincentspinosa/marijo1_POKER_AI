@@ -61,6 +61,6 @@ while game_ui.is_game_over() == False:
     game_ui.end_hand(winnerIndex)
     game_ui.move_dealer_button()
 
-print(f"\nGame is over! The winner is {playersDict[winner]}.".upper())
-print(f"\nChips of {playersDict[winner]}: {game_ui.players[winner].chips}".upper())
+print(f"\nGame is over! The winner is {playersDict[winnerIndex]}.".upper())
+print(f"\nChips of {playersDict[winnerIndex]}: {game_ui.players[winnerIndex].chips}".upper())
 print("\n")
