@@ -3,6 +3,7 @@ from eval import evalAgent
 from helper_functions.helpers import force_int_input
 from rules.player import Player
 from ai import ai
+from treys import Card
 
 # new_hand() is declared below the UI class!
 
@@ -151,7 +152,7 @@ class UI(GameState):
         if print_ai_cards == True:
             print("\nMarijo1's hand:")
             for card in self.current_player.hand:
-                print(card.__str__())
+                print(card.print_pretty_card)
         ai_move = evalAgent.get_play(ai.algorithm(self, self.ai_thinking_time)['probability_distribution'])[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
         return ai_move
@@ -166,8 +167,9 @@ class UI(GameState):
     def human_action(self) -> tuple:
         player = self.current_player
         print("\nYour hand:")
-        for card in player.hand:
-            print(card.__str__())
+        Card.print_pretty_cards(player.hand)
+        """ for card in player.hand:
+            print(card.__str__()) """
         print("\nAvailable actions:")
         actions = self.available_human_player_actions()
         return self.get_action(actions)
@@ -218,14 +220,16 @@ class UI(GameState):
         x = 0
         for p in self.players:
             print(f"\n{players_dict[x]} cards:")
-            for c in p.hand:
-                print(c.__str__())
+            Card.print_pretty_cards(p.hand)
+            """ for c in p.hand:
+                print(c.__str__()) """
             x += 1
 
     def print_community_cards(self) -> None:
         print("\nCommunity cards:")
-        for card in self.community_cards:
-            print(card.__str__())
+        Card.print_pretty_cards(self.community_cards)
+        """ for card in self.community_cards:
+            print(card.__str__()) """
 
 
 def new_hand(gameUI:UI) -> UI:
