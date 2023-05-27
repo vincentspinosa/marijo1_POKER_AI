@@ -164,7 +164,7 @@ class UI(GameState):
         for i in actions:
             index += 1
             print(f"{index} - {i}")
-        return actions[int(input("\nChosen action: "))]
+        return actions[force_int_input("\nChosen action: ")]
     
     def human_action(self) -> tuple:
         player = self.current_player
