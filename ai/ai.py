@@ -12,7 +12,7 @@ def compute_probabilities(probabilities:list) -> list:
         proba[1] /= sum
     return probabilities
 
-def algorithm(gameState:GameState, seconds:int or float, verbose:bool=False, verboseSteps:int=50) -> dict[list, int]:
+def algorithm(gameState:GameState, seconds:int or float, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     probabilities = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
@@ -33,8 +33,8 @@ def algorithm(gameState:GameState, seconds:int or float, verbose:bool=False, ver
                 random.shuffle(gameStateTemp.ai_deck)
                 gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
                 gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
-                if verbose == True:
-                    if iterations % verboseSteps == 0:
+                if verboseLevel > 1:
+                    if iterations % verboseIterationsSteps == 0:
                         print(f"\nIteration {iterations}")
                         print(f"Community cards:")
                         Card.print_pretty_cards(gameStateTemp.community_cards)
@@ -52,4 +52,9 @@ def algorithm(gameState:GameState, seconds:int or float, verbose:bool=False, ver
             iterations += 1
             gameStateTemp = pickle.loads(gameStateInitial)
         probabilities[index][1] += 1
-    return {'probability_distribution': compute_probabilities(probabilities), 'iterations': iterations}
+    result = {'probability_distribution': compute_probabilities(probabilities), 'iterations': iterations}
+    if verboseLevel > 0:
+        for action_distribution in result['probability_distribution']:
+            print("\nAction distribution:")
+            print(action_distribution)
+    return result

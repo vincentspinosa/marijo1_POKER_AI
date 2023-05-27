@@ -13,7 +13,7 @@ players_chips = force_int_input("Players chips (both players will start wih the 
 players = (Player(chips=players_chips), Player(chips=players_chips))
 print("\nIn this game, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
 first_dealer = force_int_input("First dealer of the game (Marijo1: 0, You: 1): ")
-game_ui = UI(ai_thinking_time=ai_thinking_time, players=players, ai_player_index=0, ai_verbose=False, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(ai_thinking_time=ai_thinking_time, players=players, ai_player_index=0, ai_verbose=1, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 

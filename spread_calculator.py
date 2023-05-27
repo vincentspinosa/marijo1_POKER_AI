@@ -6,7 +6,7 @@ from ai import ai
 
 p1 = Player(chips=1000)
 p2 = Player(chips=1000)
-game_state = UI(ai_thinking_time=None, players=(p1, p2), ai_player_index=0, ai_verbose=False, dealer_position=1, small_blind=10, big_blind=20)
+game_state = UI(ai_thinking_time=None, players=(p1, p2), ai_player_index=0, ai_verbose=0, dealer_position=1, small_blind=10, big_blind=20)
 game_state.deal_hole_cards()
 game_state.collect_blinds()
 
