@@ -23,7 +23,7 @@ for i in range(1, max_seconds * secondDivisor):
     #spreadTable will store, for each action, its lowest and highest probability distribution
     spreadTable = []
     for run in range(algorithm_runs):
-        algorithm_result = ai.algorithm(copy.deepcopy(game_state), seconds=seconds, verbose=game_state.ai_verbose)
+        algorithm_result = ai.algorithm2(copy.deepcopy(game_state), seconds=seconds, verboseLevel=game_state.ai_verbose)
         print(f"\nRun n°{run}")
         print(f"Number of iterations inside the run: {algorithm_result['iterations']}")
         if run == 0:
