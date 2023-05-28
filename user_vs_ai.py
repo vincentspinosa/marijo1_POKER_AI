@@ -7,13 +7,14 @@ ai_thinking_time = 9
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
 print_ai_crds = False
+ai_verbose_lvl = 0
 
 sm_blind = force_int_input("\nSmall blind: ")
 players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
 players = (Player(chips=players_chips), Player(chips=players_chips))
 print("\nIn this game, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
 first_dealer = force_int_input("First dealer of the game (Marijo1: 0, You: 1): ")
-game_ui = UI(ai_thinking_time=ai_thinking_time, players=players, ai_player_index=0, ai_verbose=1, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(ai_thinking_time=ai_thinking_time, players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 
@@ -56,7 +57,9 @@ while game_ui.is_game_over() == False:
         print(f"\nHand is over! {playersDict[winnerIndex]} won the hand.".upper())
     else:
         winnerIndex = None
-        print("\nHands are equal! The pot is split between both players.")
+        if len(game_ui.active_players) > 1 and game_ui.lastActionIsCheck == False:
+            print("\nHands are equal!")
+        print("\nThe pot is split between both players.")
     time.sleep(1)
     game_ui.end_hand(winnerIndex)
     game_ui.move_dealer_button()

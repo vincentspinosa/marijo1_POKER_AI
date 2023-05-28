@@ -88,7 +88,7 @@ class UI(GameState):
             else:
                 action = self.human_action()
                 if action[0] == 'raise':
-                    raise_amount = force_int_input("Raise amount:")
+                    raise_amount = force_int_input("Raise amount: ")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
