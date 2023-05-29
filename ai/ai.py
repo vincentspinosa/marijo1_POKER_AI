@@ -5,14 +5,6 @@ import copy
 from treys import Card
 from gameState.gameState import GameState
 
-def compute_probabilities(probabilities:list) -> list:
-    sum = 0
-    for proba in probabilities:
-        sum += proba[1]
-    for proba in probabilities:
-        proba[1] /= sum
-    return probabilities
-
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
     for data in regrets:
@@ -23,7 +15,15 @@ def find_max_regret(regrets:list) -> int or float:
 def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
-        data[1] = maxR / data[1] if data[1] > 0 else 1
+        data[1] = maxR / data[1] if data[1] > 0 else maxR
+    return regrets
+
+def compute_probabilities(regrets:list) -> list:
+    sum = 0
+    for rg in regrets:
+        sum += rg[1]
+    for rg in regrets:
+        rg[1] /= sum
     return regrets
 
 def compute_regrets_probabilities(regrets:list) -> list:
@@ -90,11 +90,11 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
         gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
         potSave = copy.copy(gameStateTemp.current_pot)
-        aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
+        """ aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
         if gameStateTemp.ai_player.chips < gameStateTemp.players[opposite_player_index].chips:
             bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips - (gameStateTemp.players[opposite_player_index].chips - gameStateTemp.ai_player.chips))
         else:
-            bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips)
+            bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips) """
         winner = gameStateTemp.showdown(gameStateTemp.players)
         if verboseLevel > 1:
             if iterations % verboseIterationsSteps == 0:
@@ -106,8 +106,6 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
         index = -1
         for action in liste_actions:
             index += 1
-            """ print(action)
-            print(regrets[index]) """
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
                     #regrets[index][1] += bestReward
@@ -125,12 +123,13 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
                     regrets[index][1] += action[1]
             iterations += 1
         gameStateTemp = pickle.loads(gameStateInitial)
-    print("Regrets before computing them:")
-    for r in regrets:
-        print(r)
+    if verboseLevel > 0:
+        print("\nRegrets before computing them:")
+        for r in regrets:
+            print(r)
     result = {'probability_distribution': compute_regrets_probabilities(regrets), 'iterations': iterations}
     if verboseLevel > 0:
+        print("\nAction distribution:")
         for action_distribution in result['probability_distribution']:
-            print("\nAction distribution:")
             print(action_distribution)
     return result
