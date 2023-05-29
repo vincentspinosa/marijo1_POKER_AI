@@ -92,7 +92,7 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
         potSave = copy.copy(gameStateTemp.current_pot)
         aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
         if gameStateTemp.ai_player.chips < gameStateTemp.players[opposite_player_index].chips:
-            bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.opposite_player_index.chips - (gameStateTemp.players[opposite_player_index].chips - gameStateTemp.ai_player.chips))
+            bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips - (gameStateTemp.players[opposite_player_index].chips - gameStateTemp.ai_player.chips))
         else:
             bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips)
         winner = gameStateTemp.showdown(gameStateTemp.players)
@@ -110,15 +110,17 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
             print(regrets[index]) """
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += bestReward
+                    #regrets[index][1] += bestReward
+                    regrets[index][1] += potSave
                 elif winner == None:
                     regrets[index][1] += (potSave / 2)
             if action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += bestReward
+                    #regrets[index][1] += bestReward
+                    regrets[index][1] += (potSave / 2)
             elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (bestReward - action[1] - potSave)
+                """ if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += (bestReward - (action[1] * 2) - potSave) """
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += action[1]
             iterations += 1

@@ -3,11 +3,11 @@ from ui.ui import UI, new_hand
 from rules.player import Player
 from helper_functions.helpers import force_int_input
 
-ai_thinking_time = 9
+ai_thinking_time = 1
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
 print_ai_crds = False
-ai_verbose_lvl = 0
+ai_verbose_lvl = 1
 
 sm_blind = force_int_input("\nSmall blind: ")
 players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
