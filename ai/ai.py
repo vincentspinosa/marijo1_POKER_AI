@@ -29,21 +29,23 @@ def compute_probabilities(regrets:list) -> list:
 def compute_regrets_probabilities(regrets:list) -> list:
     return compute_probabilities(turn_regrets_to_value(regrets))
 
-def algorithm(gameState:GameState, seconds:int or float, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
+def algorithm(gameState:GameState, maxIterations:int, seconds:int or float, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     regrets = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
+    gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
+    potSave = gameState.current_pot
+    oppChipsSave = gameState.players[opposite_player_index].chips
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
-    start_time = time.time()
+    #start_time = time.time()
     iterations = 0
-    while (time.time() - start_time) < seconds:
-        gameStateTemp.ai_deck = gameStateTemp.deck.cards + gameStateTemp.players[opposite_player_index].hand
+    traversals = int(maxIterations / len(liste_actions))
+    #while (time.time() - start_time) < seconds:
+    for _ in range(traversals):
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
         gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
-        potSave = copy.copy(gameStateTemp.current_pot)
-        aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
         """ if gameStateTemp.ai_player.chips < gameStateTemp.players[opposite_player_index].chips:
             bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips - (gameStateTemp.players[opposite_player_index].chips - gameStateTemp.ai_player.chips))
         else:
@@ -70,10 +72,10 @@ def algorithm(gameState:GameState, seconds:int or float, verboseLevel:int=0, ver
                     #regrets[index][1] += bestReward
                     regrets[index][1] += (potSave / 2)
             elif action[0] in ['call', 'raise', 'all-in']:
-                """ if winner == gameStateTemp.ai_player and action[1] <= aiChipsSave:
+                """ if winner == gameStateTemp.ai_player and action[1] <= oppChipsSave:
                     regrets[index][1] += (bestReward - (action[1] * 2) - potSave """
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += action[1] if action[1] <= aiChipsSave else aiChipsSave
+                    regrets[index][1] += action[1] if action[1] <= oppChipsSave else oppChipsSave
             iterations += 1
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
