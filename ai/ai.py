@@ -117,8 +117,8 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += bestReward
             elif action[0] in ['call', 'raise', 'all-in']:
-                """ if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (aiChipsSave - action[1]) """
+                if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += (bestReward - action[1] - potSave)
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += action[1]
             iterations += 1
