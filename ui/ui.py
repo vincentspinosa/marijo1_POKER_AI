@@ -156,7 +156,7 @@ class UI(GameState):
             print("\nMarijo1's hand:")
             for card in self.current_player.hand:
                 print(card.print_pretty_card)
-        ai_move = evalAgent.get_play(ai.algorithm2(self, self.ai_thinking_time, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps)['probability_distribution'])[0]
+        ai_move = evalAgent.get_play(ai.algorithm(self, self.ai_thinking_time, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps)['probability_distribution'])[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
         return ai_move
     
