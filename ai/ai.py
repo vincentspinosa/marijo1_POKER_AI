@@ -90,6 +90,7 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
         gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
         potSave = copy.copy(gameStateTemp.current_pot)
+        aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
         """ aiChipsSave = copy.copy(gameStateTemp.ai_player.chips)
         if gameStateTemp.ai_player.chips < gameStateTemp.players[opposite_player_index].chips:
             bestReward = copy.copy(gameStateTemp.current_pot + gameStateTemp.players[opposite_player_index].chips - (gameStateTemp.players[opposite_player_index].chips - gameStateTemp.ai_player.chips))
@@ -120,7 +121,7 @@ def algorithm2(gameState:GameState, seconds:int or float, verboseLevel:int=0, ve
                 """ if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (bestReward - (action[1] * 2) - potSave) """
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += action[1]
+                    regrets[index][1] += action[1] if action[1] <= aiChipsSave else aiChipsSave
             iterations += 1
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
