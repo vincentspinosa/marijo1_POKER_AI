@@ -29,7 +29,7 @@ def compute_probabilities(regrets:list) -> list:
 def compute_regrets_probabilities(regrets:list) -> list:
     return compute_probabilities(turn_regrets_to_value(regrets))
 
-def algorithm(gameState:GameState, maxIterations:int, seconds:int or float, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
+def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     liste_actions = gameState.available_actions()
     regrets = [[el, 0] for el in liste_actions]
     opposite_player_index = (gameState.get_player_position(gameState.ai_player) + 1) % len(gameState.players)
@@ -38,10 +38,7 @@ def algorithm(gameState:GameState, maxIterations:int, seconds:int or float, verb
     oppChipsSave = gameState.players[opposite_player_index].chips
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
-    #start_time = time.time()
-    iterations = 0
-    traversals = int(maxIterations / len(liste_actions))
-    #while (time.time() - start_time) < seconds:
+    traversals = int(iterations / len(liste_actions)) + 1
     for _ in range(traversals):
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
@@ -76,7 +73,6 @@ def algorithm(gameState:GameState, maxIterations:int, seconds:int or float, verb
                     regrets[index][1] += (bestReward - (action[1] * 2) - potSave """
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += action[1] if action[1] <= oppChipsSave else oppChipsSave
-            iterations += 1
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
@@ -84,9 +80,9 @@ def algorithm(gameState:GameState, maxIterations:int, seconds:int or float, verb
         print("\nRegrets before computing them:")
         for r in regrets:
             print(r)
-    result = {'probability_distribution': compute_regrets_probabilities(regrets), 'iterations': iterations}
+    result = compute_regrets_probabilities(regrets)
     if verboseLevel > 1:
         print("\nAction distribution:")
-        for action_distribution in result['probability_distribution']:
+        for action_distribution in result:
             print(action_distribution)
     return result

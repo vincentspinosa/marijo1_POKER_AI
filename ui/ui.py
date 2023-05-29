@@ -8,9 +8,9 @@ from treys import Card
 # new_hand() is declared below the UI class!
 
 class UI(GameState):
-    def __init__(self, ai_thinking_time: int or float, players: tuple[Player], ai_player_index: int, ai_verbose: int=0, ai_verbose_steps: int=50, dealer_position: int=0, small_blind: int=10, big_blind: int=20, current_pot: int=0, current_stage: str='pre-flop'):
+    def __init__(self, ai_iterations: int, players: tuple[Player], ai_player_index: int, ai_verbose: int=0, ai_verbose_steps: int=50, dealer_position: int=0, small_blind: int=10, big_blind: int=20, current_pot: int=0, current_stage: str='pre-flop'):
         super().__init__(players=players, ai_player_index=ai_player_index, dealer_position=dealer_position, small_blind=small_blind, big_blind=big_blind, current_pot=current_pot, current_stage=current_stage)
-        self.ai_thinking_time = ai_thinking_time
+        self.ai_iterations = ai_iterations
         self.hand_is_over:bool = False
         self.ai_verbose = ai_verbose
         self.ai_verbose_steps = ai_verbose_steps
@@ -156,7 +156,7 @@ class UI(GameState):
             print("\nMarijo1's hand:")
             for card in self.current_player.hand:
                 print(card.print_pretty_card)
-        ai_move = evalAgent.get_play(ai.algorithm(self, self.ai_thinking_time, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps)['probability_distribution'])[0]
+        ai_move = evalAgent.get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
         return ai_move
     
@@ -236,5 +236,5 @@ class UI(GameState):
 
 
 def new_hand(gameUI:UI) -> UI:
-    new_hand = UI(ai_thinking_time=gameUI.ai_thinking_time, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')
+    new_hand = UI(ai_iterations=gameUI.ai_iterations, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')
     return new_hand
