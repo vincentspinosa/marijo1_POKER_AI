@@ -109,6 +109,8 @@ class GameState:
                 bet_diff = bet_adversary - bet_total
                 self.current_pot -= bet_diff
                 self.players[self.get_player_position(self.get_next_player(self.current_player))].chips += bet_diff
+            elif bet_adversary < self.current_player.chips:
+                bet_amount -= (self.current_player.chips - bet_adversary)
             self.current_player.bet(bet_amount)
             self.current_pot += bet_amount
             self.current_bets[self.current_player] += bet_amount
