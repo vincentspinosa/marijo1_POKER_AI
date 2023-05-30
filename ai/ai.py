@@ -61,7 +61,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for action in liste_actions:
             index += 1
             if action[0] == 'fold':
-                if winner in [gameStateTemp.ai_player, None]:
+                if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += (potSave - oppCB)
+                if winner == None:
                     regrets[index][1] += ((potSave - oppCB) / 2)
                 """ if winner == gameStateTemp.ai_player:
                     if aiChipsSave + aiCB < oppCB:

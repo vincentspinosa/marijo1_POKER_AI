@@ -15,7 +15,7 @@ if default == False:
     players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
 else:
     iterations = 30000
-    ai_verbose_lvl = 1
+    ai_verbose_lvl = 2
     sm_blind = 10
     players_chips = 1000
 

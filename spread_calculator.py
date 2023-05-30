@@ -25,8 +25,8 @@ for iterations in range(min_iterations, max_iterations, iterations_step):
     spreadTable = []
     for run in range(algorithm_runs):
         algorithm_result = ai.algorithm(copy.deepcopy(game_state), iterations=iterations, verboseLevel=game_state.ai_verbose)
-        """ print(f"\nRun n°{run}")
-        print(f"Number of iterations inside the run: {iterations}") """
+        print(f"\nRun n°{run}")
+        print(f"Number of iterations inside the run: {iterations}")
         if run == 0:
             for action in algorithm_result:
                 spreadTable.append([action[0], [action[1], action[1]]])
@@ -39,8 +39,8 @@ for iterations in range(min_iterations, max_iterations, iterations_step):
                 # if the highest probability distribution is lower that the one in algorithm_result, we replace it
                 elif spreadTable[i][1][1] < algorithm_result[i][1]:
                     spreadTable[i][1][1] = copy.copy(algorithm_result[i][1])
-        """ for data in spreadTable:
-            print(data) """
+        for data in spreadTable:
+            print(data)
     totalSpread = 0
     for data in spreadTable:
         #totalSpread += highest probability distribution for the action - lowest probability distribution for the action
