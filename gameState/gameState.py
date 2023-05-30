@@ -23,6 +23,7 @@ class GameState:
         self.round_turns:int = 0
         self.round_players:tuple = self.active_players
         self.lastActionIsCheck:bool = False
+        self.dontHaveToAnswer = False
 
     """
         Methods of the GameState class:
@@ -110,6 +111,7 @@ class GameState:
                 bet_diff = bet_adversary - bet_total
                 self.current_pot -= bet_diff
                 self.get_next_player(self.current_player).chips += bet_diff
+                self.dontHaveToAnswer = True
             elif opp.chips + bet_adversary < bet_amount:
                 bet_amount -= (bet_amount - opp.chips - bet_adversary)
             self.current_player.bet(bet_amount)

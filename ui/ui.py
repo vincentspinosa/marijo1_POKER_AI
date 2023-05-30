@@ -59,6 +59,9 @@ class UI(GameState):
     def set_if_hand_over(self) -> None:
         if self.hand_is_over == True:
             return
+        if self.dontHaveToAnswer == True:
+            self.hand_is_over = True
+            return
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
             self.hand_is_over = True
             return
@@ -69,8 +72,10 @@ class UI(GameState):
             if len(set(active_bets)) == 1:
                 print("1 player is all in but all bets are the same size.".upper())
                 self.hand_is_over = True
+                return
         if self.ai_player.chips == 0 or self.get_next_player(self.ai_player).chips == 0:
-            return True
+            self.hand_is_over = True
+            return
 
     def is_round_over(self) -> bool:
         if len(self.active_players) < 2 or len(self.all_in_players) == len(self.active_players):
