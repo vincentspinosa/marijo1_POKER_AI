@@ -42,6 +42,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         maxBetAmount = oppChipsSave + oppCB
     else:
         maxBetAmount = gameState.ai_player.chips
+    if aiChipsSave + aiCB < oppCB:
+        potSave -= (oppCB - (aiChipsSave + aiCB))
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
@@ -62,15 +64,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    if aiChipsSave + aiCB < oppCB:
-                        regrets[index][1] += potSave - (oppCB - (aiChipsSave + aiCB))
-                    else:
-                        regrets[index][1] += potSave
+                    regrets[index][1] += potSave
                 elif winner == None:
-                    if aiChipsSave + aiCB < oppCB:
-                        regrets[index][1] += ((potSave - (oppCB - (aiChipsSave + aiCB))) / 2)
-                    else:
-                        regrets[index][1] += (potSave / 2)
+                    regrets[index][1] += (potSave / 2)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (potSave / 2)
