@@ -94,11 +94,13 @@ class GameState:
             self.current_bets[self.get_next_player(self.current_player)] = 0
             self.lastActionIsCheck = False
         elif action == 'raise':
-            raise_amount = min(raise_amount, self.current_player.chips)
-            self.current_player.bet(raise_amount)
-            self.current_pot += raise_amount
-            self.current_bets[self.current_player] += raise_amount
-            self.lastActionIsCheck = False
+            if raise_amount >= self.current_player.chips:
+                self.handle_action('all-in', raise_amount=raise_amount)
+            else:
+                self.current_player.bet(raise_amount)
+                self.current_pot += raise_amount
+                self.current_bets[self.current_player] += raise_amount
+                self.lastActionIsCheck = False
         elif action == 'all-in':
             bet_adversary = self.current_bets[self.get_next_player(self.current_player)]
             bet_amount = self.current_player.chips
