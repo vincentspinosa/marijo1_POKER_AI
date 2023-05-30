@@ -37,7 +37,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     oppChipsSave = gameState.players[opposite_player_index].chips
     aiCB = gameState.current_bets[gameState.ai_player]
     oppCB = gameState.current_bets[gameState.players[opposite_player_index]]
-    maxBetAmount = oppChipsSave - (oppCB - aiCB)
+    if gameState.ai_player.chips > oppChipsSave + oppCB:
+        maxBetAmount = oppChipsSave + oppCB
+    else:
+        maxBetAmount = gameState.ai_player.chips
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
