@@ -34,6 +34,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
     gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
     potSave = gameState.current_pot
+    aiChipsSave = gameState.ai_player.chips
     oppChipsSave = gameState.players[opposite_player_index].chips
     aiCB = gameState.current_bets[gameState.ai_player]
     oppCB = gameState.current_bets[gameState.players[opposite_player_index]]
@@ -61,7 +62,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potSave
+                    if aiChipsSave + aiCB < oppCB:
+                        regrets[index][1] += potSave - (oppCB - (aiChipsSave + aiCB))
+                    else:
+                        regrets[index][1] += potSave
                 elif winner == None:
                     regrets[index][1] += (potSave / 2)
             elif action[0] == 'check':
