@@ -67,7 +67,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     else:
                         regrets[index][1] += potSave
                 elif winner == None:
-                    regrets[index][1] += (potSave / 2)
+                    if aiChipsSave + aiCB < oppCB:
+                        regrets[index][1] += ((potSave - (oppCB - (aiChipsSave + aiCB))) / 2)
+                    else:
+                        regrets[index][1] += (potSave / 2)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (potSave / 2)
