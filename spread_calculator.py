@@ -4,10 +4,13 @@ from rules.player import Player
 from ui.ui import UI
 from ai import ai
 
-max_iterations = 15001
+min_iterations = 1000
+max_iterations = 31001
+iterations_step = 3000
 algorithm_runs = 100
-strategyFound = False
 stopAtStratFound = False
+# stratFoundCeiling is on a scale of 0 to 1
+stratFoundCeiling = 0.1
 plot = [[], []]
 
 p1 = Player(chips=1000)
@@ -16,7 +19,7 @@ game_state = UI(ai_iterations=max_iterations, players=(p1, p2), ai_player_index=
 game_state.deal_hole_cards()
 game_state.collect_blinds()
 
-for iterations in range(15000, max_iterations, 500):
+for iterations in range(min_iterations, max_iterations, iterations_step):
     print(f"\n{iterations} iterations:")
     #spreadTable will store, for each action, its lowest and highest probability distribution
     spreadTable = []
@@ -45,9 +48,8 @@ for iterations in range(15000, max_iterations, 500):
     print(f"\nTotal spread: {totalSpread}".upper())
     plot[0].append(iterations)
     plot[1].append(totalSpread)
-    if totalSpread < 0.1:
-        strategyFound = True
-        if stopAtStratFound == True:
+    if stopAtStratFound == True:
+        if totalSpread < stratFoundCeiling:
             break
 
 plt.bar(plot[0], plot[1])
