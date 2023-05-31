@@ -1,7 +1,11 @@
 import pickle
 import random
+import numpy as np
 from treys import Card
 from gameState.gameState import GameState
+
+def sig(n):
+    return 1 / (1 + np.exp(-n))
 
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
@@ -14,6 +18,7 @@ def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
+        data[1] /= sig(data[1])
     return regrets
 
 def compute_probabilities(regrets:list) -> list:
@@ -28,6 +33,14 @@ def compute_regrets_probabilities(regrets:list) -> list:
     return compute_probabilities(turn_regrets_to_value(regrets))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
+    coeffL1 = 4
+    """ if gameState.current_stage == 'flop':
+        coeffL1 = 3
+    elif gameState.current_stage == 'turn':
+        coeffL1 = 2
+    elif gameState.current_stage == 'river':
+        coeffL1 = 1 """
+    coeffL2 = 1
     liste_actions = gameState.available_actions()
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
@@ -63,31 +76,31 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             # LAYER 1 - DEFENSIVE
             if action[0] == 'fold':
                 if winner in [gameStateTemp.ai_player, None]:
-                    regrets[index][1] += ((potSave - oppCB) / 2)
+                    regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (potSave / 2)
+                    regrets[index][1] += ((potSave / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += min(action[1], maxBetAmount)
+                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
             # LAYER 2 - OFFENSIVE
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
                     if aiChipsSave + aiCB >= oppCB + oppChipsSave:
-                        regrets[index][1] += potSave + oppChipsSave
+                        regrets[index][1] += ((potSave + oppChipsSave) * coeffL2)
                     else:
-                        regrets[index][1] += potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB))
+                        regrets[index][1] += ((potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB))) * coeffL2)
                 elif winner == None:
-                    regrets[index][1] += ((potSave - aiCB) / 2)
+                    regrets[index][1] += (((potSave - aiCB) / 2) * coeffL2)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (potSave / 2) + min(oppChipsSave, aiChipsSave)
+                    regrets[index][1] += (((potSave / 2) + min(oppChipsSave, aiChipsSave)) * coeffL2)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += min(action[1], maxBetAmount)
+                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL2)
                 elif winner == gameStateTemp.ai_player:
                     if action[1] < aiChipsSave:
-                        regrets[index][1] += (aiChipsSave - action[1])
+                        regrets[index][1] += ((aiChipsSave - action[1]) * coeffL2)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")

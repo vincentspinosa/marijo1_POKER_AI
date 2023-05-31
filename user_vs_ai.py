@@ -6,7 +6,7 @@ from helper_functions.helpers import force_int_input
 default = True
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
-print_ai_crds = False
+print_ai_crds = True
 
 if default == False:
     iterations = force_int_input("Number of iterations: ")
