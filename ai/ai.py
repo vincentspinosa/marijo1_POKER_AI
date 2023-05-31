@@ -7,6 +7,11 @@ from gameState.gameState import GameState
 def sig(n):
     return 1 / (1 + np.exp(-n))
 
+""" def multiple_sig(iterations, n):
+    for _ in range(iterations):
+        n = sig(n)
+    return n """
+
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
     for data in regrets:
@@ -18,22 +23,31 @@ def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
-        data[1] /= (sig(data[1]) * sig(data[1]))
+        data[1] /= sig(data[1])
+        #data[1] /= (sig(data[1]) * sig(data[1]))
     return regrets
 
 def compute_probabilities(regrets:list) -> list:
     sum = 0
+    computeAgain = False
     for rg in regrets:
         sum += rg[1]
     for rg in regrets:
         rg[1] /= sum
-    return regrets
+        if rg[1] < 0.1 and rg[1] > 0:
+            rg[1] = 0
+            computeAgain = True
+    if computeAgain == True:
+        return compute_probabilities(regrets)
+    else:
+        return regrets
 
 def compute_regrets_probabilities(regrets:list) -> list:
     return compute_probabilities(turn_regrets_to_value(regrets))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
-    coeffL1 = 4
+    # SETTING-UP EVERYTHING
+    coeffL1 = 42
     """ if gameState.current_stage == 'flop':
         coeffL1 = 3
     elif gameState.current_stage == 'turn':
@@ -58,6 +72,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
+    # TRAVERSAL OF THE GAME TREE
     for _ in range(traversals):
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
@@ -108,6 +123,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         print("\nRegrets before computing them:")
         for r in regrets:
             print(r)
+    # COMPUTATION OF THE RESULTS
     result = compute_regrets_probabilities(regrets)
     if verboseLevel > 1:
         print("\nAction distribution:")
