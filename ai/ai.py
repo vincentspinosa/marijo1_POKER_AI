@@ -4,7 +4,7 @@ import numpy as np
 from treys import Card
 from gameState.gameState import GameState
 
-def sig(n):
+def sig(n:int or float) -> float:
     return 1 / (1 + np.exp(-n))
 
 """ def multiple_sig(iterations, n):
@@ -27,23 +27,23 @@ def turn_regrets_to_value(regrets:list) -> list:
         #data[1] /= (sig(data[1]) * sig(data[1]))
     return regrets
 
-def compute_probabilities(regrets:list) -> list:
+def compute_probabilities(regrets:list, floor: float) -> list:
     sum = 0
     computeAgain = False
     for rg in regrets:
         sum += rg[1]
     for rg in regrets:
         rg[1] /= sum
-        if rg[1] < 0.1 and rg[1] > 0:
+        if rg[1] < floor and rg[1] > 0:
             rg[1] = 0
             computeAgain = True
     if computeAgain == True:
-        return compute_probabilities(regrets)
+        return compute_probabilities(regrets, floor)
     else:
         return regrets
 
-def compute_regrets_probabilities(regrets:list) -> list:
-    return compute_probabilities(turn_regrets_to_value(regrets))
+def compute_regrets_probabilities(regrets:list, floor: float) -> list:
+    return compute_probabilities(regrets=turn_regrets_to_value(regrets), floor=floor)
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -124,7 +124,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    result = compute_regrets_probabilities(regrets)
+    result = compute_regrets_probabilities(regrets=regrets, floor=0.1)
     if verboseLevel > 1:
         print("\nAction distribution:")
         for action_distribution in result:
