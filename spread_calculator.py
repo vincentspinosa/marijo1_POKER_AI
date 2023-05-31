@@ -4,8 +4,8 @@ from rules.player import Player
 from ui.ui import UI
 from ai import ai
 
-min_iterations = 10000
-max_iterations = 34001
+min_iterations = 1000
+max_iterations = 31001
 iterations_step = 3000
 algorithm_runs = 100
 stopAtStratFound = False

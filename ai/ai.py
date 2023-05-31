@@ -80,7 +80,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 elif winner == None:
                     regrets[index][1] += ((potSave - aiCB) / 2)
             elif action[0] == 'check':
-                #if action == 'check' there can't be any current bet
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (potSave / 2) + min(oppChipsSave, aiChipsSave)
             elif action[0] in ['call', 'raise', 'all-in']:
