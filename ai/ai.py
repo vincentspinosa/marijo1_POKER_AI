@@ -124,7 +124,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    result = compute_regrets_probabilities(regrets=regrets, floor=0.1)
+    #result = compute_regrets_probabilities(regrets=regrets, floor=0.1)
+    floorAlgo = 1 / len(liste_actions)
+    result = compute_regrets_probabilities(regrets=regrets, floor=floorAlgo)
     if verboseLevel > 1:
         print("\nAction distribution:")
         for action_distribution in result:
