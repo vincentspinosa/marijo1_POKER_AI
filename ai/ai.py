@@ -52,15 +52,9 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
-    coeffL1 = 42
-    """ if gameState.current_stage == 'flop':
-        coeffL1 = 3
-    elif gameState.current_stage == 'turn':
-        coeffL1 = 2
-    elif gameState.current_stage == 'river':
-        coeffL1 = 1 """
-    coeffL2 = 1
     liste_actions = gameState.available_actions()
+    coeffL1 = 100
+    coeffL2 = 1
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
