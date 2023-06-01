@@ -53,7 +53,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    coeffL1 = 100
+    coeffL1 = 42
     coeffL2 = 1
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
@@ -124,7 +124,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             print(r)
     # COMPUTATION OF THE RESULTS
     #result = compute_regrets_probabilities(regrets=regrets, floor=0.1)
-    floorAlgo = 1 / len(liste_actions)
+    floorAlgo = 1 / len(liste_actions) / 1.5
     result = compute_regrets_probabilities(regrets=regrets, floor=floorAlgo)
     if verboseLevel > 1:
         print("\nAction distribution:")
