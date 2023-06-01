@@ -7,11 +7,6 @@ from gameState.gameState import GameState
 def sig(n:int or float) -> float:
     return 1 / (1 + np.exp(-n))
 
-""" def multiple_sig(iterations, n):
-    for _ in range(iterations):
-        n = sig(n)
-    return n """
-
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
     for data in regrets:
@@ -24,7 +19,6 @@ def turn_regrets_to_value(regrets:list) -> list:
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
         data[1] /= sig(data[1])
-        #data[1] /= (sig(data[1]) * sig(data[1]))
     return regrets
 
 def compute_probabilities(regrets:list, floor: float) -> list:
@@ -41,11 +35,6 @@ def compute_probabilities(regrets:list, floor: float) -> list:
         return compute_probabilities(regrets, floor)
     else:
         return regrets
-    
-""" def compute_normalized_probabilities(regrets:list) -> list:
-    for rg in regrets:
-        rg[1] /= sig(rg[1])
-    return compute_probabilities(regrets=regrets, floor=0.0) """
 
 def compute_regrets_probabilities(regrets:list, floor: float) -> list:
     return compute_probabilities(regrets=turn_regrets_to_value(regrets), floor=floor)
@@ -123,7 +112,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    #result = compute_regrets_probabilities(regrets=regrets, floor=0.1)
     floorAlgo = 1 / len(liste_actions) / 1.5
     result = compute_regrets_probabilities(regrets=regrets, floor=floorAlgo)
     if verboseLevel > 1:
