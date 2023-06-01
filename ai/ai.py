@@ -41,6 +41,11 @@ def compute_probabilities(regrets:list, floor: float) -> list:
         return compute_probabilities(regrets, floor)
     else:
         return regrets
+    
+""" def compute_normalized_probabilities(regrets:list) -> list:
+    for rg in regrets:
+        rg[1] /= sig(rg[1])
+    return compute_probabilities(regrets=regrets, floor=0.0) """
 
 def compute_regrets_probabilities(regrets:list, floor: float) -> list:
     return compute_probabilities(regrets=turn_regrets_to_value(regrets), floor=floor)
