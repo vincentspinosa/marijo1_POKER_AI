@@ -18,6 +18,7 @@ def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
+        data[1] *= sig(data[1])
     return regrets
 
 def compute_probabilities(regrets:list, floor: float) -> list:
