@@ -7,6 +7,16 @@ from gameState.gameState import GameState
 def sig(n:int or float) -> float:
     return 1 / (1 + np.exp(-n))
 
+def min_regret_action(pre_comp_regrets:list) -> tuple:
+    minRegret = None
+    minRegretAction = None
+    for regret in pre_comp_regrets:
+        # if we really take this route : corner case 2 or more equal regrets -> np.random.choice() on equal regrets
+        if minRegret is None or regret[1] < minRegret:
+            minRegret = regret[1]
+            minRegretAction = regret
+    return minRegretAction
+
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
     for data in regrets:
