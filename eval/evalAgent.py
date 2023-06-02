@@ -15,14 +15,3 @@ def eval(gameState: GameState, seconds: int or float) -> tuple:
     for action in algorithm_result:
         print(f"Action: {action[0]}, Probability: {action[1]}")
     return get_play(algorithm_result)
-
-def get_max_probability_action(regrets:list[tuple]) -> tuple:
-    highestProba = -1
-    minRegretIndex = -1
-    index = -1
-    for r in regrets:
-        index += 1
-        if r[1] > highestProba:
-            highestProba = r[1]
-            minRegretIndex = index
-    return regrets[minRegretIndex]

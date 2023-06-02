@@ -178,8 +178,6 @@ class UI(GameState):
         player = self.current_player
         print("\nYour hand:")
         Card.print_pretty_cards(player.hand)
-        """ for card in player.hand:
-            print(card.__str__()) """
         print("\nAvailable actions:")
         actions = self.available_human_player_actions()
         return self.get_action(actions)
@@ -231,16 +229,11 @@ class UI(GameState):
         for p in self.players:
             print(f"\n{players_dict[x]} cards:")
             Card.print_pretty_cards(p.hand)
-            """ for c in p.hand:
-                print(c.__str__()) """
             x += 1
 
     def print_community_cards(self) -> None:
         print("\nCommunity cards:")
         Card.print_pretty_cards(self.community_cards)
-        """ for card in self.community_cards:
-            print(card.__str__()) """
-
 
 def new_hand(gameUI:UI) -> UI:
     new_hand = UI(ai_iterations=gameUI.ai_iterations, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')

@@ -126,7 +126,6 @@ class GameState:
         self.round_turns += 1
 
     def showdown(self, players:tuple[Player]) -> Player or None:
-        #print(self.community_cards)
         x = self.hand_evaluator.evaluate(players[0].hand, self.community_cards)
         y = self.hand_evaluator.evaluate(players[1].hand, self.community_cards)
         if x < y:
