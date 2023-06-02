@@ -53,7 +53,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     coeffL1 = 1
-    coeffL2 = 1
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -100,20 +99,20 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
                     if aiChipsSave + aiCB >= oppCB + oppChipsSave:
-                        regrets[index][1] += ((potSave + oppChipsSave) * coeffL2)
+                        regrets[index][1] += (potSave + oppChipsSave)
                     else:
-                        regrets[index][1] += ((potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB))) * coeffL2)
+                        regrets[index][1] += (potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB)))
                 elif winner == None:
-                    regrets[index][1] += (((potSave - aiCB) / 2) * coeffL2)
+                    regrets[index][1] += ((potSave - aiCB) / 2)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (((potSave / 2) + min(oppChipsSave, aiChipsSave)) * coeffL2)
+                    regrets[index][1] += ((potSave / 2) + min(oppChipsSave, aiChipsSave))
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL2)
+                    regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player:
-                    if action[1] < aiChipsSave:
-                        regrets[index][1] += ((aiChipsSave - action[1]) * coeffL2)
+                    if action[1] < maxBetAmount:
+                        regrets[index][1] += (maxBetAmount - action[1])
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
