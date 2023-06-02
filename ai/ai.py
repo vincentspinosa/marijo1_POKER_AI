@@ -4,8 +4,8 @@ import numpy as np
 from treys import Card
 from gameState.gameState import GameState
 
-def sig(n:int or float) -> float:
-    return 1 / (1 + np.exp(-n))
+""" def sig(n:int or float) -> float:
+    return 1 / (1 + np.exp(-n)) """
 
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
@@ -18,7 +18,6 @@ def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
-        data[1] *= sig(data[1])
     return regrets
 
 def compute_probabilities(regrets:list, floor: float) -> list:
@@ -45,7 +44,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     if gameState.current_stage == 'pre-flop':
         coeffL1 = 20
     else:
-        coeffL1 = 90
+        coeffL1 = 80
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
