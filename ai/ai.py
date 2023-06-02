@@ -18,7 +18,7 @@ def turn_regrets_to_value(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
-        data[1] /= sig(data[1])
+        #data[1] /= sig(data[1])
     return regrets
 
 def compute_probabilities(regrets:list, floor: float) -> list:
@@ -42,7 +42,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    coeffL1 = 42
+    coeffL1 = 1
     coeffL2 = 1
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
