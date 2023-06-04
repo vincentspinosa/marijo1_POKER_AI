@@ -78,7 +78,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for action in liste_actions:
             index += 1
             # LAYER 1 - DEFENSIVE
-            if action[0] == 'fold':
+            """ if action[0] == 'fold':
                 if winner in [gameStateTemp.ai_player, None]:
                     regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
             elif action[0] == 'check':
@@ -86,16 +86,22 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     regrets[index][1] += ((potSave / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
+                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1) """
             # LAYER 2 - OFFENSIVE
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    if aiChipsSave + aiCB >= oppCB + oppChipsSave:
+                    regrets[index][1] += (potSave + (maxBetAmount - oppCB))
+                    """ if aiChipsSave + aiCB >= oppCB + oppChipsSave:
                         regrets[index][1] += (potSave + oppChipsSave)
                     else:
-                        regrets[index][1] += (potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB)))
+                        regrets[index][1] += (potSave + oppChipsSave - (oppChipsSave + oppCB - (aiChipsSave + aiCB))) """
                 elif winner == None:
-                    regrets[index][1] += ((potSave - aiCB) / 2)
+                    #regrets[index][1] += ((potSave - aiCB) / 2)
+                    if gameStateTemp.current_stage == 'pre-flop':
+                        # vu que c'est le pre-flop, tout le pot moins ce que l'opp a mis en ce moment est à nous
+                        regrets[index][1] += (potSave - oppCB)
+                    else:
+                        regrets[index][1] += ((potSave - oppCB) / 2)
             elif action[0] == 'check':
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += ((potSave / 2) + min(oppChipsSave, aiChipsSave))

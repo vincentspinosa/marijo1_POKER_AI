@@ -1,0 +1,134 @@
+Une zone de 3 dimensions, avec comme dimensions :
+
+    D1 - le nombre de cartes connues
+
+    D2 - l'écart entre la meilleure main possible (avec les cartes sur la table (ce qui nous protège pour le pré-flop)) et la meilleure main connue du joueur cible 
+
+    D3 - le % de chancce que le joueur cible ait la meilleure main sur la table à la fin de la main
+
+Abstraction :
+
+    D1 : Non - 4 buckets (2, 5, 6, 7)
+
+    D2 : Oui - 7 buckets (linspace de 0 à 1)
+
+    D3 : Oui - 7 buckets (linspace de 0 à 1)
+
+Trouver les coefficients = remplier les cases du cube créé par les trois dimensions
+
+Cases : 4 * 7 * 7 = 196 coefficients / cases à remplir
+
+
+OU 
+
+Si on part du principe que D2 et D3 sont déjà calculée par l'algo, on peut tenter, pour Marijo 0.2, de calculer seulement avec D1.
+
+En faisant ça -> on a seulement 4 coefficients à trouver
+
+Si on part du principe que chaque coef est un int sera entre 1 et 120 -> 119 * 119 * 119 * 119 = 200 533 921 possibilités
+
+
+ET SI OPTION 2, POUR CALCULER:
+
+On fait des boucles / traversées sur l'ensemble des coefficients, tants que les 4 coefficients de deux traversées d'affilées ne sont pas exactement les mêmes
+
+
+1 traversée: 
+
+    Dummy values pour chaque Bucket, puis on part de l'arrière :
+
+        On trouve le coeff pour RIVER
+
+        Puis on trouve le coeff pour le TURN
+
+        Puis on trouve le coeff pour le FLOP
+
+        Puis on trouve le coeff pour le PRE-FLOP
+
+
+TRAVERSÉE 1, Pour trouver un coeff :
+
+valeur min : 1
+
+valeur max : 200
+
+Si après un calcul, un valeur est à min ou max, ou élargira le range
+
+valeurA = min 
+
+valeurB = max
+
+Tant que l'écart entre A est B est supérieur à 1
+
+    Match entre IA (valeurA) et IA (valeurB)
+
+    Si vainqueur est A :
+
+        valeurA = valeurA 
+
+        valeurB =  int(A + ((B - A) / 2))
+
+    Si vainqueur est B :
+
+        valeurA = int(A + ((B - A) / 2))
+
+        valeurB = valeurB
+
+Match entre valeurA et valeurB finales
+
+Coeff = vainqueur
+
+
+Traversée 2 et + : PAS DE DUMMY VALUES :    
+
+    ON TESTE CONTRE VALEURS DE BASES +1.
+
+        Si on perd on continue pas.
+
+        Si on gagne on s'éloing e de l'écart * 2. 
+
+        Si on perd on revient de moitie, si on gagne on s'éloigne de *2.
+
+    ON TESTE CONTRE VALEURS DE BASES -1.
+
+        Si on perd on continue pas.
+
+        Si on gagne on s'éloing e de l'écart * 2. 
+
+        Si on perd on revient de moitie, si on gagne on s'éloigne de *2.
+
+    SI + ET - sont mieux, on les fait joueur l'un contre l'autre jusqu'à trouver le vainqueur
+
+
+
+
+1 Match = 1 ensemble de matchs jusqu'à ce que le vainqueur soit trouvé
+
+Vainqueur est trouvé si :
+
+    90% de 10 matchs 
+
+    80% de 100 matchs
+
+    50.1% de 1000 matchs
+
+
+-------------------------------------------
+
+Choses à trouver en + :
+
+    Coef Floor (à trouver après coefs Rounds)
+
+Pour chaque traversée :
+
+    2 - Boucle coefs L1 
+
+    3 - Boucle coefs floor
+
+
+Trouver coefs floor : même principe que coef L1 (trouver 1 coef par round en partant de l'arrière)
+
+--------------------------------------------------
+
+Pour chaque ensemble de coefficient, avant chaque match, on lance spread calculator? Sinon, on a vu que 30.000 iterations sont normalement toujours suffisantes
+
