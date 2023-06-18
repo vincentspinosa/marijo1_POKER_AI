@@ -1,11 +1,7 @@
 import pickle
 import random
-import numpy as np
 from treys import Card
 from gameState.gameState import GameState
-
-""" def sig(n:int or float) -> float:
-    return 1 / (1 + np.exp(-n)) """
 
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
@@ -50,9 +46,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
     gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
     potSave = gameState.current_pot
-    aiChipsSave = gameState.ai_player.chips
     oppChipsSave = gameState.players[opposite_player_index].chips
-    aiCB = gameState.current_bets[gameState.ai_player]
     oppCB = gameState.current_bets[gameState.players[opposite_player_index]]
     if gameState.ai_player.chips > oppChipsSave + oppCB:
         maxBetAmount = oppChipsSave + oppCB
@@ -78,15 +72,14 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for action in liste_actions:
             index += 1
             # LAYER 1 - DEFENSIVE
-            # In this Layer, the only goal is to not loose money
+            # In this Layer, the goal is to not loose money
             if (action[0] == 'fold' and winner in [gameStateTemp.ai_player, None]) or (action[0] == 'check' and winner == gameStateTemp.ai_player):
                 if gameStateTemp.current_stage == 'pre-flop':
                     regrets[index][1] += ((potSave - oppCB) * coeffL1)
                 else:
                     regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
-            elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
+            elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
+                regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
             # LAYER 2 - OFFENSIVE
             # In this Layer, the goal is to win the max amount of money
             if action[0] == 'fold':
@@ -97,15 +90,13 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                         regrets[index][1] += (potSave - oppCB)
                     else:
                         regrets[index][1] += ((potSave - oppCB) / 2)
-            elif action[0] == 'check':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potSave / 2) + (maxBetAmount - oppCB))
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
+                regrets[index][1] += ((potSave / 2) + (maxBetAmount - oppCB))
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
-                elif winner == gameStateTemp.ai_player:
-                    if action[1] < maxBetAmount:
-                        regrets[index][1] += (maxBetAmount - action[1])
+                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
+                    regrets[index][1] += (maxBetAmount - action[1])
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
@@ -114,8 +105,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    floorAlgo = 1 / len(liste_actions)
-    result = compute_regrets_probabilities(regrets=regrets, floor=floorAlgo)
+    result = compute_regrets_probabilities(regrets=regrets, floor=0.05)
     if verboseLevel > 1:
         print("\nAction distribution:")
         for action_distribution in result:
