@@ -37,15 +37,17 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
+    floorAlgo = 0.01
+    foldMultiplier = 1
     if gameState.current_stage == 'pre-flop':
         coeffL1 = 3
+        foldMultiplier = 3
     elif gameState.current_stage == 'flop':
-        coeffL1 = 100
+        coeffL1 = 120
     elif gameState.current_stage == 'turn':
-        coeffL1 = 84
+        coeffL1 = 100
     elif gameState.current_stage == 'river':
-        coeffL1 = 68
-    floorAlgo = 0.01
+        coeffL1 = 80
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -57,6 +59,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         maxBetAmount = oppChipsSave + oppCB
     else:
         maxBetAmount = gameState.ai_player.chips
+    diff = 0
+    if maxBetAmount < oppCB:
+        diff = oppCB - maxBetAmount
+    potMinusDiff = potSave - diff
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
@@ -66,37 +72,29 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
         gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
         winner = gameStateTemp.showdown(gameStateTemp.players)
-        if verboseLevel > 2:
-            if iterations % verboseIterationsSteps == 0:
-                print(f"\nIteration {iterations}")
-                print(f"Community cards:")
-                Card.print_pretty_cards(gameStateTemp.community_cards)
-                print(f"Opposite player cards:")
-                Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
+        if verboseLevel > 2 and iterations % verboseIterationsSteps == 0:
+            print(f"\nIteration {iterations}")
+            print(f"Community cards:")
+            Card.print_pretty_cards(gameStateTemp.community_cards)
+            print(f"Opposite player cards:")
+            Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
         index = -1
         for action in liste_actions:
             index += 1
             # LAYER 1 - DEFENSIVE
             # In this Layer, the goal is to not loose money
-            if (action[0] == 'fold' and winner in [gameStateTemp.ai_player, None]) or (action[0] == 'check' and winner == gameStateTemp.ai_player):
-                if gameStateTemp.current_stage == 'pre-flop':
-                    #regrets[index][1] += ((potSave - oppCB) * coeffL1)
-                    regrets[index][1] += (potSave * coeffL1)
-                else:
-                    #regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
-                    regrets[index][1] += ((potSave / 2) * coeffL1)
+            if action[0] == 'fold' and winner == gameStateTemp.ai_player:
+                regrets[index][1] += ((potMinusDiff * coeffL1) * foldMultiplier)
+            elif (action[0] == 'fold' and winner == None) or (action[0] == 'check' and winner == gameStateTemp.ai_player):
+                regrets[index][1] += ((potMinusDiff / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
                 regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
             # LAYER 2 - OFFENSIVE
             # In this Layer, the goal is to win the max amount of money
-            if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += (potSave + (maxBetAmount - oppCB))
-                elif winner == None:
-                    #regrets[index][1] += ((potSave - oppCB) / 2)
-                    regrets[index][1] += (potSave / 2)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potSave / 2) + maxBetAmount)
+            if action[0] == 'fold' and winner == gameStateTemp.ai_player:
+                regrets[index][1] += ((potMinusDiff + maxBetAmount) * foldMultiplier)
+            elif (action[0] == 'check' and winner == gameStateTemp.ai_player) or (action[0] == 'fold' and winner == None):
+                regrets[index][1] += (potMinusDiff / 2)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
