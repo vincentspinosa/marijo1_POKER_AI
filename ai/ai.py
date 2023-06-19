@@ -39,9 +39,13 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     liste_actions = gameState.available_actions()
     if gameState.current_stage == 'pre-flop':
         coeffL1 = 3
-    else:
+    elif gameState.current_stage == 'flop':
+        coeffL1 = 100
+    elif gameState.current_stage == 'turn':
         coeffL1 = 84
-    floorAlgo = 0.05
+    elif gameState.current_stage == 'river':
+        coeffL1 = 68
+    floorAlgo = 0.01
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -76,9 +80,11 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             # In this Layer, the goal is to not loose money
             if (action[0] == 'fold' and winner in [gameStateTemp.ai_player, None]) or (action[0] == 'check' and winner == gameStateTemp.ai_player):
                 if gameStateTemp.current_stage == 'pre-flop':
-                    regrets[index][1] += ((potSave - oppCB) * coeffL1)
+                    #regrets[index][1] += ((potSave - oppCB) * coeffL1)
+                    regrets[index][1] += (potSave * coeffL1)
                 else:
-                    regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
+                    #regrets[index][1] += (((potSave - oppCB) / 2) * coeffL1)
+                    regrets[index][1] += ((potSave / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
                 regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
             # LAYER 2 - OFFENSIVE
@@ -87,7 +93,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (potSave + (maxBetAmount - oppCB))
                 elif winner == None:
-                    regrets[index][1] += ((potSave - oppCB) / 2)
+                    #regrets[index][1] += ((potSave - oppCB) / 2)
+                    regrets[index][1] += (potSave / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += ((potSave / 2) + maxBetAmount)
             elif action[0] in ['call', 'raise', 'all-in']:
