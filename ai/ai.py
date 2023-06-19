@@ -40,7 +40,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     floorAlgo = 0.01
     foldMultiplier = 1
     if gameState.current_stage == 'pre-flop':
-        coeffL1 = 3
+        coeffL1 = 8
         foldMultiplier = 3
     elif gameState.current_stage == 'flop':
         coeffL1 = 120
