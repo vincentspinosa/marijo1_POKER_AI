@@ -38,11 +38,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     if gameState.current_stage == 'pre-flop':
-        coeffL1 = 12
-        floorAlgo = 0.1
+        coeffL1 = 3
     else:
         coeffL1 = 84
-        floorAlgo = 0.05
+    floorAlgo = 0.05
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -88,12 +87,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += (potSave + (maxBetAmount - oppCB))
                 elif winner == None:
-                    if gameStateTemp.current_stage == 'pre-flop':
-                        regrets[index][1] += (potSave - oppCB)
-                    else:
-                        regrets[index][1] += ((potSave - oppCB) / 2)
+                    regrets[index][1] += ((potSave - oppCB) / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potSave / 2) + (maxBetAmount - oppCB))
+                regrets[index][1] += ((potSave / 2) + maxBetAmount)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
