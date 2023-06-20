@@ -10,33 +10,33 @@ def find_max_regret(regrets:list) -> int or float:
             maxR = data[1]
     return maxR
 
-def turn_regrets_to_value(regrets:list) -> list:
+def turn_regrets_to_values(regrets:list) -> list:
     maxR = find_max_regret(regrets)
     for data in regrets:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
     return regrets
 
-def clean_values(regrets:list, floor:float) -> list:
+def clean_values(values:list, floor:float) -> list:
     sum = 0
-    for rg in regrets:
-        sum += rg[1]
-    for rg in regrets:
-        rg[1] -= (sum * floor)
-    for rg in regrets:
-        rg[1] = 0 if rg[1] < 0 else rg[1]
-    return regrets
+    for vl in values:
+        sum += vl[1]
+    for vl in values:
+        vl[1] -= (sum * floor)
+    for vl in values:
+        vl[1] = 0 if vl[1] < 0 else vl[1]
+    return values
 
-def compute_probabilities(regrets:list) -> list:
+def compute_probabilities(values:list) -> list:
     sum = 0
-    for rg in regrets:
-        sum += rg[1]
-    for rg in regrets:
-        if rg[1] > 0:
-            rg[1] /= sum
-    return regrets
+    for vl in values:
+        sum += vl[1]
+    for vl in values:
+        if vl[1] > 0:
+            vl[1] /= sum
+    return values
 
 def compute_regrets_probabilities(regrets:list, floor: float) -> list:
-    return compute_probabilities(clean_values(regrets=turn_regrets_to_value(regrets), floor=floor))
+    return compute_probabilities(clean_values(values=turn_regrets_to_values(regrets), floor=floor))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
