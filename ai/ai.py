@@ -42,8 +42,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     floorAlgo = 0.1
-    #isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
-    #coeffL1 = 80
     prediction_round = gameState.current_stage
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
@@ -64,8 +62,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
-    games = 0
-    wins = 0
+    games = 0.01
+    wins = 0.01
     # TRAVERSAL OF THE GAME TREE
     for _ in range(traversals):
         games += 1
@@ -87,47 +85,25 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             # LAYER 0
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    #regrets[index][1] += potMinusDiff * isPreflopFoldMultiplier
                     regrets[index][1] += potMinusDiff
                 elif winner == None:
-                    #regrets[index][1] += (potMinusDiff / 2) * isPreflopFoldMultiplier
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 if prediction_round != 'river':
-                    pass
-                    #regrets[index][1] += potMinusDiff / 2
+                    regrets[index][1] += potMinusDiff / 2
                 else:
                     regrets[index][1] += (potMinusDiff / 2) + maxBetAmount
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += min(action[1], maxBetAmount)
+                    if (action[1] > oppCB - aiCB) and games >= 10:
+                        regrets[index][1] += (min(action[1], maxBetAmount) / (wins / games))
+                    else:
+                        regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
-                    regrets[index][1] += (maxBetAmount - action[1])
-            """ # LAYER 1 - DEFENSIVE
-            # In this Layer, the goal is to not loose money
-            if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff * coeffL1) * isPreflopFoldMultiplier)
-                elif winner == None:
-                    regrets[index][1] += (((potMinusDiff / 2) * coeffL1) * isPreflopFoldMultiplier)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potMinusDiff / 2) * coeffL1)
-            elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
-                regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
-            # LAYER 2 - OFFENSIVE
-            # In this Layer, the goal is to win the max amount of money
-            if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * isPreflopFoldMultiplier)
-                elif winner == None:
-                    regrets[index][1] += ((potMinusDiff / 2) * isPreflopFoldMultiplier)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2)
-            elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += min(action[1], maxBetAmount)
-                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (maxBetAmount - action[1]) """
+                    if games >= 10:
+                        regrets[index][1] += ((maxBetAmount - action[1]) * (wins / games))
+                    else:
+                        regrets[index][1] += (maxBetAmount - action[1])
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
