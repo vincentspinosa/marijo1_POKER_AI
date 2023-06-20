@@ -38,16 +38,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     prediction_stage = gameState.current_stage
-    floorAlgo = 0.01
+    floorAlgo = 0.07
     isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     if gameState.current_stage == 'pre-flop':
         coeffL1 = 12
     elif gameState.current_stage == 'flop':
         coeffL1 = 120
     elif gameState.current_stage == 'turn':
-        coeffL1 = 110
+        coeffL1 = 105
     elif gameState.current_stage == 'river':
-        coeffL1 = 100
+        coeffL1 = 90
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
