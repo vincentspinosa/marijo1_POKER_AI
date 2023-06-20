@@ -41,7 +41,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.05
+    floorAlgo = 0.1
     #isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     #coeffL1 = 80
     prediction_round = gameState.current_stage
@@ -102,7 +102,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
-                    regrets[index][1] += ((maxBetAmount - action[1]) * (wins / games))
+                    regrets[index][1] += (maxBetAmount - action[1])
             """ # LAYER 1 - DEFENSIVE
             # In this Layer, the goal is to not loose money
             if action[0] == 'fold':
