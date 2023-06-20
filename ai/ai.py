@@ -41,7 +41,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.07
+    floorAlgo = 0.1
     isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     coeffL1 = 1000
     regrets = [[el, 0] for el in liste_actions]
