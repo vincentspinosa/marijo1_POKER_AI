@@ -37,11 +37,10 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    prediction_stage = gameState.current_stage
-    floorAlgo = 0.07
+    floorAlgo = 0.05
     isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     if gameState.current_stage == 'pre-flop':
-        coeffL1 = 12
+        coeffL1 = 20
     elif gameState.current_stage == 'flop':
         coeffL1 = 120
     elif gameState.current_stage == 'turn':
@@ -88,7 +87,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     regrets[index][1] += ((potMinusDiff * coeffL1) * isPreflopFoldMultiplier)
                 elif winner == None:
                     regrets[index][1] += (((potMinusDiff / 2) * coeffL1) * isPreflopFoldMultiplier)
-            elif action[0] == 'check' and prediction_stage == 'river' and winner == gameStateTemp.ai_player:
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += ((potMinusDiff / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
                 regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
