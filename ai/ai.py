@@ -89,8 +89,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 if prediction_round != 'river':
-                    pass
-                    #regrets[index][1] += potMinusDiff / 2
+                    regrets[index][1] += potMinusDiff / 2
                 else:
                     regrets[index][1] += (potMinusDiff / 2) + maxBetAmount
             elif action[0] in ['call', 'raise', 'all-in']:
