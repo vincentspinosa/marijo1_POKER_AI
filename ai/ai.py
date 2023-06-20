@@ -44,6 +44,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     floorAlgo = 0.02
     isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     coeffL1 = 80
+    prediction_round = gameState.current_stage
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -78,7 +79,26 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         index = -1
         for action in liste_actions:
             index += 1
-            # LAYER 1 - DEFENSIVE
+            # LAYER 0
+            if action[0] == 'fold':
+                if winner == gameStateTemp.ai_player:
+                    #regrets[index][1] += potMinusDiff * isPreflopFoldMultiplier
+                    regrets[index][1] += potMinusDiff
+                elif winner == None:
+                    #regrets[index][1] += (potMinusDiff / 2) * isPreflopFoldMultiplier
+                    regrets[index][1] += (potMinusDiff / 2)
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
+                if prediction_round != 'river':
+                    pass
+                    #regrets[index][1] += potMinusDiff / 2
+                else:
+                    regrets[index][1] += (potMinusDiff / 2) + maxBetAmount
+            elif action[0] in ['call', 'raise', 'all-in']:
+                if winner == gameStateTemp.players[opposite_player_index]:
+                    regrets[index][1] += min(action[1], maxBetAmount)
+                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
+                    regrets[index][1] += (maxBetAmount - action[1])
+            """ # LAYER 1 - DEFENSIVE
             # In this Layer, the goal is to not loose money
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
@@ -102,7 +122,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (maxBetAmount - action[1])
+                    regrets[index][1] += (maxBetAmount - action[1]) """
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
