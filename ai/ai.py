@@ -83,17 +83,23 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             # LAYER 1 - DEFENSIVE
             # In this Layer, the goal is to not loose money
-            if action[0] == 'fold' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potMinusDiff * coeffL1) * foldMultiplier)
-            elif (action[0] == 'fold' and winner == None) or (action[0] == 'check' and winner == gameStateTemp.ai_player):
+            if action[0] == 'fold':
+                if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += ((potMinusDiff * coeffL1) * foldMultiplier)
+                elif winner == None:
+                    regrets[index][1] += (((potMinusDiff / 2) * coeffL1) * foldMultiplier)
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += ((potMinusDiff / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
                 regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
             # LAYER 2 - OFFENSIVE
             # In this Layer, the goal is to win the max amount of money
-            if action[0] == 'fold' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potMinusDiff + maxBetAmount) * foldMultiplier)
-            elif (action[0] == 'check' and winner == gameStateTemp.ai_player) or (action[0] == 'fold' and winner == None):
+            if action[0] == 'fold':
+                if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * foldMultiplier)
+                elif winner == None:
+                    regrets[index][1] += ((potMinusDiff / 2) * foldMultiplier)
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += (potMinusDiff / 2)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
