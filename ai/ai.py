@@ -38,30 +38,29 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     floorAlgo = 0.01
-    foldMultiplier = 1
+    isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
     if gameState.current_stage == 'pre-flop':
-        coeffL1 = 10
-        foldMultiplier = 3
+        coeffL1 = 12
     elif gameState.current_stage == 'flop':
         coeffL1 = 120
     elif gameState.current_stage == 'turn':
-        coeffL1 = 100
+        coeffL1 = 110
     elif gameState.current_stage == 'river':
-        coeffL1 = 80
+        coeffL1 = 100
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
     gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
     potSave = gameState.current_pot
     oppChipsSave = gameState.players[opposite_player_index].chips
+    aiChipsSave = gameState.ai_player.chips
     oppCB = gameState.current_bets[gameState.players[opposite_player_index]]
-    if gameState.ai_player.chips > oppChipsSave + oppCB:
-        maxBetAmount = oppChipsSave + oppCB
+    aiCB = gameState.current_bets[gameState.ai_player]
+    if aiChipsSave + aiCB >= oppChipsSave + oppCB:
+        maxBetAmount = oppChipsSave + oppCB - aiCB
     else:
-        maxBetAmount = gameState.ai_player.chips
-    diff = 0
-    if maxBetAmount < oppCB:
-        diff = oppCB - maxBetAmount
+        maxBetAmount = aiChipsSave
+    diff = oppCB - maxBetAmount if maxBetAmount < oppCB else 0
     potMinusDiff = potSave - diff
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
@@ -85,10 +84,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             # In this Layer, the goal is to not loose money
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff * coeffL1) * foldMultiplier)
+                    regrets[index][1] += ((potMinusDiff * coeffL1) * isPreflopFoldMultiplier)
                 elif winner == None:
-                    regrets[index][1] += (((potMinusDiff / 2) * coeffL1) * foldMultiplier)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
+                    regrets[index][1] += (((potMinusDiff / 2) * coeffL1) * isPreflopFoldMultiplier)
+            elif action[0] == 'check' and gameStateTemp.current_stage == 'river' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += ((potMinusDiff / 2) * coeffL1)
             elif action[0] in ['call', 'raise', 'all-in'] and winner == gameStateTemp.players[opposite_player_index]:
                 regrets[index][1] += (min(action[1], maxBetAmount) * coeffL1)
@@ -96,10 +95,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             # In this Layer, the goal is to win the max amount of money
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * foldMultiplier)
+                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * isPreflopFoldMultiplier)
                 elif winner == None:
-                    regrets[index][1] += ((potMinusDiff / 2) * foldMultiplier)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
+                    regrets[index][1] += ((potMinusDiff / 2) * isPreflopFoldMultiplier)
+            elif action[0] == 'check' and gameStateTemp.current_stage == 'river' and winner == gameStateTemp.ai_player:
                 regrets[index][1] += (potMinusDiff / 2)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
