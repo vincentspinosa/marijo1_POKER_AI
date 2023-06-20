@@ -16,37 +16,34 @@ def turn_regrets_to_value(regrets:list) -> list:
         data[1] = maxR / data[1] if data[1] >= 1 else maxR
     return regrets
 
-def compute_probabilities(regrets:list, floor: float) -> list:
+def clean_values(regrets:list, floor:float) -> list:
     sum = 0
-    computeAgain = False
     for rg in regrets:
         sum += rg[1]
     for rg in regrets:
-        rg[1] /= sum
-        if rg[1] < floor and rg[1] > 0:
-            rg[1] = 0
-            computeAgain = True
-    if computeAgain == True:
-        return compute_probabilities(regrets, floor)
-    else:
-        return regrets
+        rg[1] -= (sum * floor)
+    for rg in regrets:
+        rg[1] = 0 if rg[1] < 0 else rg[1]
+    return regrets
+
+def compute_probabilities(regrets:list) -> list:
+    sum = 0
+    for rg in regrets:
+        sum += rg[1]
+    for rg in regrets:
+        if rg[1] > 0:
+            rg[1] /= sum
+    return regrets
 
 def compute_regrets_probabilities(regrets:list, floor: float) -> list:
-    return compute_probabilities(regrets=turn_regrets_to_value(regrets), floor=floor)
+    return compute_probabilities(regrets=clean_values(turn_regrets_to_value(regrets), floor=floor))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.05
+    floorAlgo = 0.07
     isPreflopFoldMultiplier = 3 if gameState.current_stage == 'pre-flop' else 1
-    if gameState.current_stage == 'pre-flop':
-        coeffL1 = 20
-    elif gameState.current_stage == 'flop':
-        coeffL1 = 120
-    elif gameState.current_stage == 'turn':
-        coeffL1 = 105
-    elif gameState.current_stage == 'river':
-        coeffL1 = 90
+    coeffL1 = 1000
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -56,10 +53,11 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     aiChipsSave = gameState.ai_player.chips
     oppCB = gameState.current_bets[gameState.players[opposite_player_index]]
     aiCB = gameState.current_bets[gameState.ai_player]
+    maxBetAmount = 0
     if aiChipsSave + aiCB >= oppChipsSave + oppCB:
-        maxBetAmount = oppChipsSave + oppCB - aiCB
+        maxBetAmount += oppChipsSave + oppCB - aiCB
     else:
-        maxBetAmount = aiChipsSave
+        maxBetAmount += aiChipsSave
     diff = oppCB - maxBetAmount if maxBetAmount < oppCB else 0
     potMinusDiff = potSave - diff
     gameStateInitial = pickle.dumps(gameState)
