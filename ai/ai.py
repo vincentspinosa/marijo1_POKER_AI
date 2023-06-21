@@ -41,7 +41,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.03
+    floorAlgo = 0.0001
     prediction_round = gameState.current_stage
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
@@ -64,6 +64,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     traversals = int(iterations / len(liste_actions)) + 1
     games = 0.01
     wins = 0.01
+    # PRE-TRAVERSAL
+    for _ in range(500):
+        games += 1
+        random.shuffle(gameStateTemp.ai_deck)
+        gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
+        gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
+        winner = gameStateTemp.showdown(gameStateTemp.players)
+        if winner == gameStateTemp.ai_player:
+            wins += 1
+        gameStateTemp = pickle.loads(gameStateInitial)
     # TRAVERSAL OF THE GAME TREE
     for _ in range(traversals):
         games += 1
@@ -95,15 +105,12 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     regrets[index][1] += (potMinusDiff / 2) + maxBetAmount
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    if (action[1] > oppCB - aiCB) and games >= 10:
+                    if (action[1] > oppCB - aiCB):
                         regrets[index][1] += (min(action[1], maxBetAmount) / (wins / games))
                     else:
                         regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
-                    if games >= 10:
-                        regrets[index][1] += ((maxBetAmount - action[1]) * (wins / games))
-                    else:
-                        regrets[index][1] += (maxBetAmount - action[1])
+                    regrets[index][1] += ((maxBetAmount - action[1]) * (wins / games))
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
