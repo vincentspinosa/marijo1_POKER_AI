@@ -65,7 +65,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     games = 0.01
     wins = 0.01
     # PRE-TRAVERSAL
-    for _ in range(500):
+    for _ in range(2000):
         games += 1
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
