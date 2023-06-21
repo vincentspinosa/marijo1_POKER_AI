@@ -41,7 +41,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.01
+    floorAlgo = 0.03
     prediction_round = gameState.current_stage
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
