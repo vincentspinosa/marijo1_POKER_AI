@@ -1,5 +1,6 @@
 import pickle
 import random
+import copy
 from treys import Card
 from gameState.gameState import GameState
 
@@ -42,7 +43,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     floorAlgo = 0.0001
-    prediction_round = gameState.current_stage
+    prediction_round = copy.copy(gameState.current_stage)
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -97,12 +98,14 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += potMinusDiff
+                    if prediction_round == 'river':
+                        regrets[index][1] += maxBetAmount
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potMinusDiff / 2) * coefWins)
+                regrets[index][1] += (potMinusDiff / 2)
                 if prediction_round == 'river':
-                    regrets[index][1] += (maxBetAmount * coefWins)
+                    regrets[index][1] += maxBetAmount
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     if action[0] == 'call':
