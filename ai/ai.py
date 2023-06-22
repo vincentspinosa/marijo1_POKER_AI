@@ -100,16 +100,15 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2)
+                regrets[index][1] += ((potMinusDiff / 2) * coefWins)
                 if prediction_round == 'river':
                     regrets[index][1] += (maxBetAmount * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
-                    """ if (action[1] > oppCB - aiCB):
-                        regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
+                    if action[0] == 'call':
+                        regrets[index][1] += action[1]
                     else:
-                        regrets[index][1] += min(action[1], maxBetAmount) """
+                        regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
                     regrets[index][1] += ((maxBetAmount - action[1]) * coefWins)
         gameStateTemp = pickle.loads(gameStateInitial)
