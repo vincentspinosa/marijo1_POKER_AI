@@ -97,11 +97,11 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potMinusDiff + (maxBetAmount * coefWins)
+                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * coefWins)
                 elif winner == None:
-                    regrets[index][1] += (potMinusDiff / 2)
+                    regrets[index][1] += ((potMinusDiff / 2) * coefWins)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2)
+                regrets[index][1] += ((potMinusDiff / 2) * coefWins)
                 if prediction_round == 'river':
                     regrets[index][1] += (maxBetAmount * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
