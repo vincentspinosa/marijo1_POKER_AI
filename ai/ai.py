@@ -83,6 +83,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         winner = gameStateTemp.showdown(gameStateTemp.players)
         if winner == gameStateTemp.ai_player:
             wins += 1
+        coefWins = wins / games
         if verboseLevel > 2 and iterations % verboseIterationsSteps == 0:
             print(f"\nIteration {iterations}")
             print(f"Community cards:")
@@ -99,18 +100,18 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                if prediction_round != 'river':
-                    regrets[index][1] += potMinusDiff / 2
-                else:
-                    regrets[index][1] += (potMinusDiff / 2) + maxBetAmount
+                regrets[index][1] += (potMinusDiff / 2)
+                if prediction_round == 'river':
+                    regrets[index][1] += (maxBetAmount * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    if (action[1] > oppCB - aiCB):
-                        regrets[index][1] += (min(action[1], maxBetAmount) / (wins / games))
+                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
+                    """ if (action[1] > oppCB - aiCB):
+                        regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
                     else:
-                        regrets[index][1] += min(action[1], maxBetAmount)
+                        regrets[index][1] += min(action[1], maxBetAmount) """
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
-                    regrets[index][1] += ((maxBetAmount - action[1]) * (wins / games))
+                    regrets[index][1] += ((maxBetAmount - action[1]) * coefWins)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
