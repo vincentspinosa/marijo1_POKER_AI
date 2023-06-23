@@ -58,7 +58,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         maxBetAmount += oppChipsSave + oppCB - aiCB
     else:
         maxBetAmount += aiChipsSave
-    diff = oppCB - maxBetAmount if maxBetAmount < oppCB else 0
+    aiMaxChipsInGame = maxBetAmount + aiCB
+    diff = oppCB - aiMaxChipsInGame if aiMaxChipsInGame < oppCB else 0
     potMinusDiff = potSave - diff
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
@@ -95,7 +96,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         index = -1
         for action in liste_actions:
             index += 1
-            """ if action[0] == 'fold':
+            if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
                     regrets[index][1] += ((potMinusDiff + maxBetAmount) * coefWins)
                 elif winner == None:
@@ -106,20 +107,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     regrets[index][1] += (maxBetAmount * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
+                    regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount and prediction_round == 'river':
-                    regrets[index][1] += ((maxBetAmount - action[1]) * coefWins) """
-            if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * coefWins)
-                elif winner == None:
-                    regrets[index][1] += ((potMinusDiff / 2) * coefWins)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (((potMinusDiff / 2) + maxBetAmount) * coefWins)
-            elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
-                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
                     regrets[index][1] += ((maxBetAmount - action[1]) * coefWins)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
