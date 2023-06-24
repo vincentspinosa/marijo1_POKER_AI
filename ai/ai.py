@@ -45,8 +45,7 @@ def compute_regrets_probabilities(regrets:list, floor: float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    #floorAlgo = 0.0001
-    floorAlgo = 0.1
+    floorAlgo = 0.0001
     prediction_round = copy.copy(gameState.current_stage)
     cardsToFind = 2
     if prediction_round == 'pre-flop':
@@ -75,10 +74,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
     traversals = int(iterations / len(liste_actions)) + 1
-    """ games = 0.01
-    wins = 0.01 """
+    games = 0.01
+    wins = 0.01
     # PRE-TRAVERSAL
-    """ for _ in range(2000):
+    for _ in range(2000):
         games += 1
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
@@ -86,17 +85,17 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         winner = gameStateTemp.showdown(gameStateTemp.players)
         if winner == gameStateTemp.ai_player:
             wins += 1
-        gameStateTemp = pickle.loads(gameStateInitial) """
+        gameStateTemp = pickle.loads(gameStateInitial)
     # TRAVERSAL OF THE GAME TREE
     for _ in range(traversals):
-        #games += 1
+        games += 1
         random.shuffle(gameStateTemp.ai_deck)
         gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
         gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
         winner = gameStateTemp.showdown(gameStateTemp.players)
-        """ if winner == gameStateTemp.ai_player:
+        if winner == gameStateTemp.ai_player:
             wins += 1
-        coefWins = wins / games """
+        coefWins = wins / games
         if verboseLevel > 2 and iterations % verboseIterationsSteps == 0:
             print(f"\nIteration {iterations}")
             print(f"Community cards:")
@@ -109,28 +108,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potMinusDiff + (maxBetAmount / cardsToFind)
+                    regrets[index][1] += potMinusDiff + ((maxBetAmount / cardsToFind) * coefWins)
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2) + (maxBetAmount / sq(cardsToFind))
+                regrets[index][1] += (potMinusDiff / 2) + ((maxBetAmount / sq(cardsToFind)) * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     regrets[index][1] += min(action[1], maxBetAmount)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += ((maxBetAmount - action[1]) / sq(cardsToFind))
-            """ if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += ((potMinusDiff + (maxBetAmount / cardsToFind)) * coefWins)
-                elif winner == None:
-                    regrets[index][1] += ((potMinusDiff / 2) * coefWins)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += ((potMinusDiff / 2) + (maxBetAmount / (cardsToFind ** cardsToFind)) * coefWins)
-            elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += min(action[1], maxBetAmount)
-                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (((maxBetAmount - action[1]) / (cardsToFind ** cardsToFind)) * coefWins) """
+                    regrets[index][1] += (((maxBetAmount - action[1]) / sq(cardsToFind)) * coefWins)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
