@@ -4,8 +4,8 @@ import copy
 from treys import Card
 from gameState.gameState import GameState
 
-def sq(x):
-    return x ** x
+def pow2(x):
+    return x ** 2
 
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
@@ -112,15 +112,12 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2) + ((maxBetAmount / sq(cardsToFind)) * coefWins)
+                regrets[index][1] += (potMinusDiff / 2) + ((maxBetAmount / pow2(cardsToFind)) * coefWins)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    if action[0] == 'raise':
-                        regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
-                    else:
-                        regrets[index][1] += min(action[1], maxBetAmount)
+                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (((maxBetAmount - action[1]) / sq(cardsToFind)) * coefWins)
+                    regrets[index][1] += (((maxBetAmount - action[1]) / pow2(cardsToFind)) * coefWins)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
