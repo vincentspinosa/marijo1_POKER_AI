@@ -2,7 +2,7 @@ import pickle
 import random
 import copy
 from treys import Card
-from gameState.gameState import GameState
+from .gameState.gameState import GameState
 
 def pow2(x):
     return x ** 2
