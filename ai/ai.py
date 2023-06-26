@@ -47,13 +47,14 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     liste_actions = gameState.available_actions()
     floorAlgo = 0.0001
     prediction_round = copy.copy(gameState.current_stage)
-    cardsToFind = 2
+    # missingParametersWeight is 1 for each card to compute
+    missingParametersWeight = 2
     if prediction_round == 'pre-flop':
-        cardsToFind += 5
+        missingParametersWeight += 5
     elif prediction_round == 'flop':
-        cardsToFind += 2
+        missingParametersWeight += 2
     elif prediction_round == 'turn':
-        cardsToFind += 1
+        missingParametersWeight += 1
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -95,7 +96,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         winner = gameStateTemp.showdown(gameStateTemp.players)
         if winner == gameStateTemp.ai_player:
             wins += 1
-        coefWins = wins / games
+        winsCoefficient = wins / games
         if verboseLevel > 2 and iterations % verboseIterationsSteps == 0:
             print(f"\nIteration {iterations}")
             print(f"Community cards:")
@@ -108,28 +109,19 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potMinusDiff + maxBetAmount
+                    regrets[index][1] += potMinusDiff + ((maxBetAmount / missingParametersWeight) * winsCoefficient)
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2) + (maxBetAmount / cardsToFind)
+                regrets[index][1] += (potMinusDiff / 2) + ((maxBetAmount / pow2(missingParametersWeight)) * winsCoefficient)
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
+                    if action[0] != 'raise':
+                        regrets[index][1] += min(action[1], maxBetAmount)
+                    else:
+                        regrets[index][1] += (min(action[1], maxBetAmount) / winsCoefficient)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += ((maxBetAmount - action[1]) / cardsToFind)
-            """ if action[0] == 'fold':
-                if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potMinusDiff + ((maxBetAmount / cardsToFind) * coefWins)
-                elif winner == None:
-                    regrets[index][1] += (potMinusDiff / 2)
-            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
-                regrets[index][1] += (potMinusDiff / 2) + ((maxBetAmount / pow2(cardsToFind)) * coefWins)
-            elif action[0] in ['call', 'raise', 'all-in']:
-                if winner == gameStateTemp.players[opposite_player_index]:
-                    regrets[index][1] += (min(action[1], maxBetAmount) / coefWins)
-                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (((maxBetAmount - action[1]) / pow2(cardsToFind)) * coefWins) """
+                    regrets[index][1] += (((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient)
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
