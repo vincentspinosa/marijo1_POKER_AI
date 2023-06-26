@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from api.evalAgent import eval, get_play
-from .helper_functions.helpers import force_int_input
+from helper_functions.helpers import force_int_input
 from ai.rules.player import Player
 from ai import ai
 from ai.gameState.gameState import GameState
