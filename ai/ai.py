@@ -49,7 +49,7 @@ def compute_regrets_probabilities(regrets:list, floor:float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.1
+    floorAlgo = 1 / len(liste_actions)
     prediction_round = copy.copy(gameState.current_stage)
     # missingParametersWeight is 1 for each card to compute
     missingParametersWeight = 2
