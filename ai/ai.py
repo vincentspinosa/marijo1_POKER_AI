@@ -8,8 +8,8 @@ from .gameState.gameState import GameState
 def pow2(x):
     return x ** 2
 
-""" def sig(x):
-    return 1 / (1 + np.exp(-x)) """
+def sig(x):
+    return 1 / (1 + np.exp(-x))
 
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
@@ -25,8 +25,11 @@ def turn_regrets_to_values(regrets:list) -> list:
     return regrets
 
 def clean_values(values:list, floor:float) -> list:
+    sum = 0
     for vl in values:
-        if vl[1] < floor:
+        sum += vl[1]
+    for vl in values:
+        if vl[1] < (sum * floor):
             vl[1] = 0
     return values
 
@@ -45,7 +48,8 @@ def compute_regrets_probabilities(regrets:list, floor:float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    floorAlgo = 0.0001
+    #floorAlgo = 0.0001
+    floorAlgo = 0.1
     prediction_round = copy.copy(gameState.current_stage)
     # missingParametersWeight is 1 for each card to compute
     missingParametersWeight = 2
@@ -117,9 +121,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     if action[0] != 'raise':
-                        regrets[index][1] += min(action[1], maxBetAmount)
-                    else:
                         regrets[index][1] += (min(action[1], maxBetAmount) / winsCoefficient)
+                    else:
+                        regrets[index][1] += ((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
                     regrets[index][1] += (((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient)
         gameStateTemp = pickle.loads(gameStateInitial)
