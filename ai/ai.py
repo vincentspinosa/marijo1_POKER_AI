@@ -29,7 +29,8 @@ def clean_values(values:list, floor:float) -> list:
     for vl in values:
         sum += vl[1]
     for vl in values:
-        if vl[1] < (sum * floor):
+        vl[1] -= (sum * floor)
+        if vl[1] < 0:
             vl[1] = 0
     return values
 
@@ -48,7 +49,6 @@ def compute_regrets_probabilities(regrets:list, floor:float) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    #floorAlgo = 0.0001
     floorAlgo = 0.1
     prediction_round = copy.copy(gameState.current_stage)
     # missingParametersWeight is 1 for each card to compute
