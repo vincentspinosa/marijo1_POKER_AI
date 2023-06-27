@@ -53,9 +53,7 @@ class GameState:
         self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
     def calculate_raise_buckets(self, player:Player, min_raise:int) -> list:
-        return [min_raise + int((player.chips - min_raise) / 4)]
-        #return [min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
-        #return [min_raise, min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
+        return [min_raise, min_raise + int((player.chips - min_raise) / 8), min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
 
     def available_actions(self) -> list:
         actions = []
