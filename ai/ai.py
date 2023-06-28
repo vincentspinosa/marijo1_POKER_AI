@@ -44,7 +44,8 @@ def compute_probabilities(values:list) -> list:
     return values
 
 def compute_regrets_probabilities(regrets:list, floor:float) -> list:
-    return compute_probabilities(clean_values(values=turn_regrets_to_values(regrets), floor=floor))
+    return compute_probabilities(turn_regrets_to_values(regrets))
+    #return compute_probabilities(clean_values(values=turn_regrets_to_values(regrets), floor=floor))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
