@@ -31,14 +31,15 @@ def find_max_regret(regrets:list) -> int or float:
 def turn_regrets_to_values(regrets:list) -> list:
     minR = find_min_regret(regrets)
     maxR = find_max_regret(regrets)
+    minSqrt = math.sqrt(minR)
     for data in regrets:
-        data[1] -= math.sqrt(minR)
         if data[1] < 1:
             data[1] = maxR
         else:
-            if data[1] >= (minR * 2):
+            if data[1] >= (minR * 10):
                 data[1] = 0
             else:
+                data[1] -= minSqrt
                 data[1] = maxR / data[1]
     return regrets
 
