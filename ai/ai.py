@@ -1,3 +1,4 @@
+import math
 import pickle
 import random
 import copy
@@ -28,13 +29,14 @@ def find_max_regret(regrets:list) -> int or float:
     return maxR
 
 def turn_regrets_to_values(regrets:list) -> list:
-    maxR = find_max_regret(regrets)
     minR = find_min_regret(regrets)
+    maxR = find_max_regret(regrets)
     for data in regrets:
+        data[1] -= math.sqrt(minR)
         if data[1] < 1:
             data[1] = maxR
         else:
-            if data[1] >= (minR * 10):
+            if data[1] >= (minR * 2):
                 data[1] = 0
             else:
                 data[1] = maxR / data[1]
@@ -56,7 +58,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
     prediction_round = copy.copy(gameState.current_stage)
-    # missingParametersWeight is 1 for each card to compute
+    # missingParametersWeight is :
+    #   1 for each hole card of the opposing player
+    #   1 for each community card to compute
     missingParametersWeight = 2
     if prediction_round == 'pre-flop':
         missingParametersWeight += 5
@@ -126,10 +130,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             elif action[0] in ['call', 'raise', 'all-in']:
                 if winner == gameStateTemp.players[opposite_player_index]:
                     if action[0] != 'raise':
-                        regrets[index][1] += min(action[1], maxBetAmount)
-                    else:
-                        #regrets[index][1] += ((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient)
                         regrets[index][1] += (min(action[1], maxBetAmount) / winsCoefficient)
+                    else:
+                        regrets[index][1] += ((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
                     regrets[index][1] += (((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient)
         gameStateTemp = pickle.loads(gameStateInitial)
