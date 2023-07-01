@@ -11,6 +11,15 @@ def pow2(x):
 def sig(x):
     return 1 / (1 + np.exp(-x))
 
+def find_min_regret(regrets:list) -> int or float:
+    minR = None
+    for data in regrets:
+        if minR == None:
+            minR = data[1]
+        elif data[1] < minR:
+            minR = data[1]
+    return minR
+
 def find_max_regret(regrets:list) -> int or float:
     maxR = 0
     for data in regrets:
@@ -20,8 +29,15 @@ def find_max_regret(regrets:list) -> int or float:
 
 def turn_regrets_to_values(regrets:list) -> list:
     maxR = find_max_regret(regrets)
+    minR = find_min_regret(regrets)
     for data in regrets:
-        data[1] = maxR / data[1] if data[1] >= 1 else maxR
+        if data[1] < 1:
+            data[1] = maxR
+        else:
+            if data[1] >= (minR * 10):
+                data[1] = 0
+            else:
+                data[1] = maxR / data[1]
     return regrets
 
 def compute_probabilities(values:list) -> list:
