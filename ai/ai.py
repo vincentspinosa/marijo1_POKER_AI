@@ -39,7 +39,7 @@ def turn_regrets_to_values(regrets:list) -> list:
             if data[1] >= (minR * 10):
                 data[1] = 0
             else:
-                data[1] -= minSqrt
+                #data[1] -= minSqrt
                 data[1] = maxR / data[1]
     return regrets
 
@@ -123,6 +123,21 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
+                    regrets[index][1] += ((potMinusDiff + maxBetAmount) * winsCoefficient)
+                elif winner == None:
+                    regrets[index][1] += ((potMinusDiff / 2) * winsCoefficient)
+            elif action[0] == 'check' and winner == gameStateTemp.ai_player:
+                regrets[index][1] += (((potMinusDiff / 2) + (maxBetAmount / missingParametersWeight)) * winsCoefficient)
+            elif action[0] in ['call', 'raise', 'all-in']:
+                if winner == gameStateTemp.players[opposite_player_index]:
+                    if action[0] != 'raise':
+                        regrets[index][1] += (min(action[1], maxBetAmount) / winsCoefficient)
+                    else:
+                        regrets[index][1] += ((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient)
+                elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
+                    regrets[index][1] += (((maxBetAmount - action[1]) / missingParametersWeight) * winsCoefficient)
+            """ if action[0] == 'fold':
+                if winner == gameStateTemp.ai_player:
                     regrets[index][1] += potMinusDiff + ((maxBetAmount / missingParametersWeight) * winsCoefficient)
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
@@ -135,7 +150,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                     else:
                         regrets[index][1] += ((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient)
                 elif winner == gameStateTemp.ai_player and action[1] < maxBetAmount:
-                    regrets[index][1] += (((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient)
+                    regrets[index][1] += (((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient) """
         gameStateTemp = pickle.loads(gameStateInitial)
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
