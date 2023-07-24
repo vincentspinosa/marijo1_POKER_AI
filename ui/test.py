@@ -5,7 +5,7 @@ from helper_functions.helpers import force_int_input
 
 # The goal of this script is to test the level of the AI
 # Here, only hands are played, not full games
-# For each hand, bot the AI and the Player have 1000 chips
+# For each hand, both the AI and the Player have 1000 chips
 # The small blind is 10, the big blind 20, there is no ante
 
 numberOfHandsPlayed = 0
