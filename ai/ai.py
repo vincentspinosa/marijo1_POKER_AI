@@ -1,3 +1,4 @@
+import math
 import pickle
 import random
 import copy
@@ -38,6 +39,8 @@ def turn_regrets_to_values(regrets:list) -> list:
                 data[1] = 0
             else:
                 data[1] = maxR / data[1]
+        if data[1] > 0:
+            data[1] -= math.sqrt(minR)
     return regrets
 
 def compute_probabilities(values:list) -> list:
