@@ -3,33 +3,41 @@ from ui import UI, new_hand
 from ai.rules.player import Player
 from helper_functions.helpers import force_int_input
 
-default = True
+# The goal of this script is to test the level of the AI
+# Here, only hands are played, not full games
+# For each hand, bot the AI and the Player have 1000 chips
+# The small blind is 10, the big blind 20, there is no ante
+
+numberOfHandsPlayed = 0
+Marijo1Return = 0
+
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
 print_ai_crds = False
 
-if default == False:
-    iterations = force_int_input("Number of iterations: ")
-    ai_verbose_lvl = force_int_input("\nAI verbose level: ")
-    sm_blind = force_int_input("\nSmall blind: ")
-    players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
-else:
-    iterations = 30000
-    ai_verbose_lvl = 0
-    sm_blind = 10
-    players_chips = 1000
+iterations = 30000
+ai_verbose_lvl = 0
+sm_blind = 10
+players_chips = 1000
 
 players = (Player(chips=players_chips), Player(chips=players_chips))
-print("\nIn this game, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
-first_dealer = force_int_input("First dealer of the game (Marijo1: 0, You: 1): ")
+print("\nFor this test, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
+first_dealer = force_int_input("First dealer of the test (Marijo1: 0, You: 1): ")
 game_ui = UI(ai_iterations=iterations, players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 time.sleep(1)
 
-while game_ui.is_game_over() == False:
+play = True
+while play == True:
+    # SPECIFIC TO TEST.PY
+    print(f"\nHand n°{numberOfHandsPlayed + 1}")
+    print(f"Current return of Marijo1: {Marijo1Return}")
+    # SAME AS USER_VS_AI.PY
     print("\nStarting a new hand!")
     game_ui = new_hand(game_ui)
+    game_ui.players[0].chips = players_chips
+    game_ui.players[1].chips = players_chips
     time.sleep(1)
     game_ui.round(stage='pre-flop', print_ai_cards=print_ai_crds)
     time.sleep(1)
@@ -70,7 +78,12 @@ while game_ui.is_game_over() == False:
     time.sleep(1)
     game_ui.end_hand(winnerIndex)
     game_ui.move_dealer_button()
+    # SPECIFIC TO TEST.PY
+    numberOfHandsPlayed += 1
+    Marijo1Return += game_ui.ai_player.chips - 1000
+    if force_int_input(f"\nPlay again ? 0 = Yes ; 1 = No : ") == 1:
+        play = False
 
-print(f"\nGame is over! The winner is {playersDict[winnerIndex]}.".upper())
-print(f"\nChips of {playersDict[winnerIndex]}: {game_ui.players[winnerIndex].chips}".upper())
+print(f"\nTest over !")
+print(f"\nMarijo1 had a return of {Marijo1Return} in {numberOfHandsPlayed} hands.")
 print("\n")
