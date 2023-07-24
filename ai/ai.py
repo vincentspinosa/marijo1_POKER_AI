@@ -34,7 +34,10 @@ def turn_regrets_to_values(regrets:list) -> list:
         if data[1] < 1:
             data[1] = maxR
         else:
-            data[1] = maxR / data[1]
+            if data[1] > minR * 100:
+                data[1] = 0
+            else:
+                data[1] = maxR / data[1]
     return regrets
 
 def compute_probabilities(values:list) -> list:
