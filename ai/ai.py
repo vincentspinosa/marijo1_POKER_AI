@@ -1,4 +1,3 @@
-import math
 import pickle
 import random
 import copy
@@ -12,7 +11,7 @@ def pow2(x):
 def sig(x):
     return 1 / (1 + np.exp(-x))
 
-def find_min_regret(regrets:list) -> int or float:
+def find_min_regret(regrets:list) -> float:
     minR = None
     for data in regrets:
         if minR == None:
@@ -21,7 +20,7 @@ def find_min_regret(regrets:list) -> int or float:
             minR = data[1]
     return minR
 
-def find_max_regret(regrets:list) -> int or float:
+def find_max_regret(regrets:list) -> float:
     maxR = 0
     for data in regrets:
         if data[1] > maxR:
@@ -117,7 +116,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             index += 1
             if action[0] == 'fold':
                 if winner == gameStateTemp.ai_player:
-                    regrets[index][1] += potMinusDiff + ((maxBetAmount / missingParametersWeight) * winsCoefficient)
+                    regrets[index][1] += potMinusDiff + (maxBetAmount * winsCoefficient)
                 elif winner == None:
                     regrets[index][1] += (potMinusDiff / 2)
             elif action[0] == 'check' and winner == gameStateTemp.ai_player:
