@@ -1,7 +1,0 @@
-1 - Nettoyer le code 
-
-2 - Implémenter le multiprocessing
-
-3 - Améliorer spread_calculator (pour faire les matchs avec les bonnes iterations pour chaque ensemble de coefficients)
-
-4 - Implémenter find_weights.py
