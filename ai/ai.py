@@ -55,13 +55,15 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # missingParametersWeight is :
     #   1 for each hole card of the opposing player
     #   1 for each community card to compute
-    missingParametersWeight = 2
+    """ missingParametersWeight = 2
     if prediction_round == 'pre-flop':
         missingParametersWeight += 5
     elif prediction_round == 'flop':
         missingParametersWeight += 2
     elif prediction_round == 'turn':
-        missingParametersWeight += 1
+        missingParametersWeight += 1 """
+    #TEST VALUE
+    missingParametersWeight = 10
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -84,17 +86,52 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     traversals = int(iterations / len(liste_actions)) + 1
     games = 0.01
     wins = 0.01
+    draws = 0.01
+    loses = 0.01
+    cc_to_deal = 5 - len(gameStateTemp.community_cards)
     # PRE-TRAVERSAL
-    for _ in range(2000):
+    for _ in range(iterations):
         games += 1
-        random.shuffle(gameStateTemp.ai_deck)
-        gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
-        gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
+        sampleList = random.sample(gameStateTemp.ai_deck, cc_to_deal + 2)
+        gameStateTemp.community_cards = gameState.community_cards + sampleList[:cc_to_deal]
+        #gameStateTemp.community_cards += [gameStateTemp.ai_deck.pop() for _ in range(5 - len(gameStateTemp.community_cards))]
+        gameStateTemp.players[opposite_player_index].hand = sampleList[cc_to_deal:]
+        #gameStateTemp.players[opposite_player_index].hand = [gameStateTemp.ai_deck.pop() for _ in range(2)]
+        #del gameStateTemp.ai_deck[:cc_to_deal + 2]
         winner = gameStateTemp.showdown(gameStateTemp.players)
         if winner == gameStateTemp.ai_player:
             wins += 1
-        gameStateTemp = pickle.loads(gameStateInitial)
-    # TRAVERSAL OF THE GAME TREE
+        elif winner is None:
+            draws += 1
+        else:
+            loses += 1
+        #gameStateTemp = pickle.loads(gameStateInitial)
+    # START TRY IN ONE TREATMENT
+    index = -1
+    winsCoefficient = wins / games
+    for action in liste_actions:
+        index += 1
+        if action[0] == 'fold':
+            if wins > 0.01:
+                regrets[index][1] += ((potMinusDiff + (maxBetAmount * winsCoefficient)) * wins)
+            if draws > 0.01:
+                regrets[index][1] += ((potMinusDiff / 2) * draws)
+        if action[0] == 'check' and wins > 0.01:
+            regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / pow2(missingParametersWeight)) * winsCoefficient) * wins)
+        if action[0] in ['call', 'raise', 'all-in']:
+            if loses > 0.01:
+                if action[0] != 'raise':
+                    regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
+                else:
+                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient) * loses)
+            if wins > 0.01:
+                regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
+                if action[1] < maxBetAmount:
+                    regrets[index][1] += ((((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient) * wins)
+            if draws > 0.01:
+                regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
+    # END TRY IN ONE TREATMENT
+    """ # TRAVERSAL OF THE GAME TREE
     for _ in range(traversals):
         games += 1
         random.shuffle(gameStateTemp.ai_deck)
@@ -139,7 +176,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     if verboseLevel > 1:
         print("\nRegrets before computing them:")
         for r in regrets:
-            print(r)
+            print(r) """
     # COMPUTATION OF THE RESULTS
     result = compute_regrets_probabilities(regrets)
     if verboseLevel > 1:

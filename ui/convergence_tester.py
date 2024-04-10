@@ -5,13 +5,13 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import copy
 import plotext as plt
 
-from ui.ui import UI
+from ui import UI
 from ai import ai
 from ai.rules.player import Player
 
-min_iterations = 1000
-max_iterations = 16001
-iterations_step = 3000
+min_iterations = 3000
+max_iterations = 10000
+iterations_step = 1000
 algorithm_runs = 100
 stopAtStratFound = False
 # stratFoundCeiling is on a scale of 0 to 1
