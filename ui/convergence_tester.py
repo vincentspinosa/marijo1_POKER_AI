@@ -10,8 +10,8 @@ from ai import ai
 from ai.rules.player import Player
 
 min_iterations = 3000
-max_iterations = 10000
-iterations_step = 1000
+max_iterations = 11001
+iterations_step = 2000
 algorithm_runs = 100
 stopAtStratFound = False
 # stratFoundCeiling is on a scale of 0 to 1
