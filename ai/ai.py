@@ -27,7 +27,15 @@ def find_max_regret(regrets:list) -> float:
             maxR = data[1]
     return maxR
 
+def normalize_regrets(regrets:list, min_regret:float) -> list:
+    for data in regrets:
+        data[1] += min_regret
+    return regrets
+
 def turn_regrets_to_values(regrets:list) -> list:
+    minR = find_min_regret(regrets)
+    if minR < 0:
+        regrets = normalize_regrets(regrets, (minR * -1))
     maxR = find_max_regret(regrets)
     for data in regrets:
         if data[1] < 1:
@@ -51,17 +59,7 @@ def compute_regrets_probabilities(regrets:list) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    prediction_round = copy.copy(gameState.current_stage)
-    # missingParametersWeight is :
-    #   1 for each hole card of the opposing player
-    #   1 for each community card to compute
-    missingParametersWeight = 2
-    if prediction_round == 'pre-flop':
-        missingParametersWeight += 5
-    elif prediction_round == 'flop':
-        missingParametersWeight += 2
-    elif prediction_round == 'turn':
-        missingParametersWeight += 1
+    uncertaintyValue = 10
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -118,17 +116,17 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((potMinusDiff / 2) * draws)
         if action[0] == 'check':
             if wins > 0.01:
-                regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / pow2(missingParametersWeight)) * winsCoefficient) * wins)
+                regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / pow2(uncertaintyValue)) * winsCoefficient) * wins)
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
                 if action[0] != 'raise':
                     regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
                 else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient) * loses)
+                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses)
             if wins > 0.01:
                 #regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
                 if action[1] < maxBetAmount:
-                    regrets[index][1] += ((((maxBetAmount - action[1]) / pow2(missingParametersWeight)) * winsCoefficient) * wins)
+                    regrets[index][1] += ((((maxBetAmount - action[1]) / pow2(uncertaintyValue)) * winsCoefficient) * wins)
             #if draws > 0.01:
                 #regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
     # VERBOSE
@@ -147,3 +145,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             print(action_distribution)
     # RETURN
     return result
+
+
+def algorithm_EXPERIMENTAL(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
+    """ Create your own algorithm here """

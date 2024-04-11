@@ -104,6 +104,16 @@ class UI(GameState):
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
 
+    def play_round_2AI(self, print_ai_cards=False) -> None:
+        self.reset_round()
+        while not self.is_round_over():
+            if self.current_player == self.ai_player:
+                action = self.ai_action(print_ai_cards=print_ai_cards)
+            else:
+                action = self.ai_action_ALGO2(print_ai_cards=print_ai_cards)
+            self.handle_action(action[0], raise_amount=action[1])
+            self.next_player()
+
     def round(self, stage:str='pre-flop', print_ai_cards=False) -> None:
         if stage != 'pre-flop':
             self.current_stage = stage
@@ -114,6 +124,17 @@ class UI(GameState):
             self.deal_community_cards()
         self.print_round_info()
         self.play_round(print_ai_cards=print_ai_cards)
+
+    def round_2AI(self, stage:str='pre-flop', print_ai_cards=False) -> None:
+        if stage != 'pre-flop':
+            self.current_stage = stage
+        if self.current_stage == 'pre-flop':
+            self.collect_blinds()
+            self.deal_hole_cards()
+        else:
+            self.deal_community_cards()
+        self.print_round_info()
+        self.play_round_2AI(print_ai_cards=print_ai_cards)
 
     def reset_round(self) -> None:
         self.current_player = self.players[(self.dealer_position + 1) % len(self.players)]
@@ -169,6 +190,16 @@ class UI(GameState):
                 print(Card.print_pretty_card(card))
         ai_move = get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
+        return ai_move
+
+    def ai_action_ALGO2(self, print_ai_cards=False) -> tuple:
+        print("\nEXPERIMENTAL's TURN")
+        if print_ai_cards == True:
+            print("\nEXPERIMENTAL's hand:")
+            for card in self.current_player.hand:
+                print(Card.print_pretty_card(card))
+        ai_move = get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
+        print(f"\nEXPERIMENTAL's MOVE: {ai_move}\n")
         return ai_move
     
     def get_action(self, actions:list[tuple]) -> tuple:
