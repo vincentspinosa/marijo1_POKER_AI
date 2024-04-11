@@ -29,13 +29,13 @@ def find_max_regret(regrets:list) -> float:
 
 def normalize_regrets(regrets:list, min_regret:float) -> list:
     for data in regrets:
-        data[1] += min_regret
+        data[1] += (min_regret * -1)
     return regrets
 
 def turn_regrets_to_values(regrets:list) -> list:
     minR = find_min_regret(regrets)
     if minR < 0:
-        regrets = normalize_regrets(regrets, (minR * -1))
+        regrets = normalize_regrets(regrets, minR)
     maxR = find_max_regret(regrets)
     for data in regrets:
         if data[1] < 1:
@@ -119,10 +119,11 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / pow2(uncertaintyValue)) * winsCoefficient) * wins)
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
-                if action[0] != 'raise':
+                regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
+                """ if action[0] != 'raise':
                     regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
                 else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses)
+                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses) """
             if wins > 0.01:
                 #regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
                 if action[1] < maxBetAmount:
