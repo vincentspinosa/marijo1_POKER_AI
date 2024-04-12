@@ -1,6 +1,5 @@
 import pickle
 import random
-import copy
 import numpy as np
 from treys import Card
 from .gameState.gameState import GameState
@@ -59,7 +58,6 @@ def compute_regrets_probabilities(regrets:list) -> list:
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
     liste_actions = gameState.available_actions()
-    uncertaintyValue = 10
     regrets = [[el, 0] for el in liste_actions]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
@@ -105,8 +103,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             print(f"Opposite player cards:")
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
+    winsCoefficient = wins / games
     index = -1
     winsCoefficient = wins / games
+    uncertaintyValue = 10
     for action in liste_actions:
         index += 1
         if action[0] == 'fold':
@@ -119,17 +119,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / pow2(uncertaintyValue)) * winsCoefficient) * wins)
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
-                regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
-                """ if action[0] != 'raise':
+                if action[0] != 'raise':
                     regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
                 else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses) """
+                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses)
             if wins > 0.01:
-                #regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
+                regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
                 if action[1] < maxBetAmount:
                     regrets[index][1] += ((((maxBetAmount - action[1]) / pow2(uncertaintyValue)) * winsCoefficient) * wins)
-            #if draws > 0.01:
-                #regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
+            if draws > 0.01:
+                regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
     # VERBOSE
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
