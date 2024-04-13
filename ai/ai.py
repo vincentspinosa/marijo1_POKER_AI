@@ -96,7 +96,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         else:
             loses += 1
         # VERBOSE
-        if verboseLevel > 2 and iterations % iter == 0:
+        if verboseLevel > 2 and iter % verboseIterationsSteps == 0:
             print(f"\nIteration {iter}")
             print(f"Community cards:")
             Card.print_pretty_cards(gameStateTemp.community_cards)
