@@ -105,7 +105,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
     index = -1
-    winsCoefficient = wins / games
     uncertaintyValue = 10
     for action in liste_actions:
         index += 1
