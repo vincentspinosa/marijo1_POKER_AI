@@ -43,6 +43,14 @@ def turn_regrets_to_values(regrets:list) -> list:
             data[1] = (maxR / data[1])
     return regrets
 
+def shave_regrets(regrets:list) -> list:
+    maxR = find_max_regret(regrets)
+    for data in regrets:
+        data[1] -= maxR / 10
+        if data[1] <= 0:
+            data[1] = 0
+    return (regrets)
+
 def compute_probabilities(values:list) -> list:
     sum = 0
     for vl in values:
@@ -53,7 +61,7 @@ def compute_probabilities(values:list) -> list:
     return values
 
 def compute_regrets_probabilities(regrets:list) -> list:
-    return compute_probabilities(turn_regrets_to_values(regrets))
+    return compute_probabilities(shave_regrets(turn_regrets_to_values(regrets)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -105,7 +113,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
     index = -1
-    uncertaintyValue = 10
+    uncertaintyValue = 8.34
     for action in liste_actions:
         index += 1
         if action[0] == 'fold':
@@ -123,11 +131,11 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 else:
                     regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses)
             if wins > 0.01:
-                regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
+                #regrets[index][1] -= ((potMinusDiff * winsCoefficient) * wins)
                 if action[1] < maxBetAmount:
                     regrets[index][1] += ((((maxBetAmount - action[1]) / pow2(uncertaintyValue)) * winsCoefficient) * wins)
-            if draws > 0.01:
-                regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
+            #if draws > 0.01:
+                #regrets[index][1] -= (((potMinusDiff / 2) * winsCoefficient) * draws)
     # VERBOSE
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
@@ -147,4 +155,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
 
 
 def algorithm_EXPERIMENTAL(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
-    """ Create your own algorithm here """
+    """ 
+    Create your own algorithm here 
+    Or leave the call to the function below
+    """
+    return algorithm(gameState=gameState, iterations=iterations, verboseLevel=verboseLevel, verboseIterationsSteps=verboseIterationsSteps)
