@@ -5,25 +5,25 @@ from .gameState.gameState import GameState
 
 def find_max_value(actions:list) -> float:
     maxV = 0
-    for data in actions:
-        if data[1] > maxV:
-            maxV = data[1]
+    for ac in actions:
+        if ac[1] > maxV:
+            maxV = ac[1]
     return maxV
 
 def turn_regrets_to_values(actions:list) -> list:
     maxV = find_max_value(actions)
-    for data in actions:
-        if data[1] < 1:
-            data[1] = maxV
+    for ac in actions:
+        if ac[1] < 1:
+            ac[1] = maxV
         else:
-            data[1] = (maxV / data[1])
+            ac[1] = (maxV / ac[1])
     return actions
 
 def drop_bad_actions(actions:list) -> list:
     maxV = find_max_value(actions)
-    for data in actions:
-        if data[1] < maxV / 2:
-            data[1] = 0
+    for ac in actions:
+        if ac[1] < maxV / 2:
+            ac[1] = 0
     return actions
 
 def compute_probabilities(actions:list) -> list:
