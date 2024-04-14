@@ -19,7 +19,7 @@ def find_min_regret(regrets:list) -> float:
             minR = data[1]
     return minR
 
-def find_max_regret(regrets:list) -> float:
+def find_max_value(regrets:list) -> float:
     maxR = 0
     for data in regrets:
         if data[1] > maxR:
@@ -27,13 +27,23 @@ def find_max_regret(regrets:list) -> float:
     return maxR
 
 def turn_regrets_to_values(regrets:list) -> list:
-    maxR = find_max_regret(regrets)
+    maxR = find_max_value(regrets)
     for data in regrets:
         if data[1] < 1:
             data[1] = maxR
         else:
             data[1] = (maxR / data[1])
     return regrets
+
+def shave_regrets(regrets:list) -> list:
+    maxR = find_max_value(regrets)
+    for data in regrets:
+        if data[1] < maxR / 2:
+            data[1] = 0
+        """ data[1] -= maxR / 2
+        if data[1] <= 0:
+            data[1] = 0 """
+    return (regrets)
 
 def compute_probabilities(values:list) -> list:
     sum = 0
@@ -45,7 +55,7 @@ def compute_probabilities(values:list) -> list:
     return values
 
 def compute_regrets_probabilities(regrets:list) -> list:
-    return compute_probabilities(turn_regrets_to_values(regrets))
+    return compute_probabilities(shave_regrets(turn_regrets_to_values(regrets)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -96,7 +106,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
-    vA = max(1, 100 - int(winsCoefficient * 100))
+    vA = (100 - int(winsCoefficient * 100)) * winsCoefficient
+    vA = max(1, vA)
     index = -1
     for action in liste_actions:
         index += 1
