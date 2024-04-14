@@ -1,66 +1,47 @@
 import pickle
 import random
-import numpy as np
 from treys import Card
 from .gameState.gameState import GameState
 
-def pow2(x):
-    return x ** 2
+def find_max_value(actions:list) -> float:
+    maxV = 0
+    for data in actions:
+        if data[1] > maxV:
+            maxV = data[1]
+    return maxV
 
-def sig(x):
-    return 1 / (1 + np.exp(-x))
-
-def find_min_regret(regrets:list) -> float:
-    minR = None
-    for data in regrets:
-        if minR is None:
-            minR = data[1]
-        elif data[1] < minR:
-            minR = data[1]
-    return minR
-
-def find_max_value(regrets:list) -> float:
-    maxR = 0
-    for data in regrets:
-        if data[1] > maxR:
-            maxR = data[1]
-    return maxR
-
-def turn_regrets_to_values(regrets:list) -> list:
-    maxR = find_max_value(regrets)
-    for data in regrets:
+def turn_regrets_to_values(actions:list) -> list:
+    maxV = find_max_value(actions)
+    for data in actions:
         if data[1] < 1:
-            data[1] = maxR
+            data[1] = maxV
         else:
-            data[1] = (maxR / data[1])
-    return regrets
+            data[1] = (maxV / data[1])
+    return actions
 
-def shave_regrets(regrets:list) -> list:
-    maxR = find_max_value(regrets)
-    for data in regrets:
-        if data[1] < maxR / 2:
+def drop_bad_actions(actions:list) -> list:
+    maxV = find_max_value(actions)
+    for data in actions:
+        if data[1] < maxV / 2:
             data[1] = 0
-        """ data[1] -= maxR / 2
-        if data[1] <= 0:
-            data[1] = 0 """
-    return (regrets)
+    return actions
 
-def compute_probabilities(values:list) -> list:
+def compute_probabilities(actions:list) -> list:
     sum = 0
-    for vl in values:
-        sum += vl[1]
-    for vl in values:
-        if vl[1] > 0:
-            vl[1] /= sum
-    return values
+    for ac in actions:
+        sum += ac[1]
+    for ac in actions:
+        if ac[1] > 0:
+            ac[1] /= sum
+    return actions
 
-def compute_regrets_probabilities(regrets:list) -> list:
-    return compute_probabilities(shave_regrets(turn_regrets_to_values(regrets)))
+def compute_action_distribution(actions_with_raw_regrets:list) -> list:
+    return compute_probabilities(drop_bad_actions(turn_regrets_to_values(actions_with_raw_regrets)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
-    liste_actions = gameState.available_actions()
-    regrets = [[el, 0] for el in liste_actions]
+    actions_list = gameState.available_actions()
+    regrets = [[el, 0] for el in actions_list]
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
     gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
@@ -109,7 +90,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     vA = (100 - int(winsCoefficient * 100)) * winsCoefficient
     vA = max(1, vA)
     index = -1
-    for action in liste_actions:
+    for action in actions_list:
         index += 1
         if action[0] == 'fold':
             if wins > 0.01:
@@ -136,7 +117,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    result = compute_regrets_probabilities(regrets)
+    result = compute_action_distribution(regrets)
     # VERBOSE
     if verboseLevel > 1:
         print("\nAction distribution:")
