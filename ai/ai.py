@@ -22,11 +22,18 @@ def turn_regrets_to_values(actions:list) -> list:
 def drop_bad_actions(actions:list) -> list:
     maxV = find_max_value(actions)
     for ac in actions:
-        if ac[1] < maxV / 2:
+        if ac[1] < maxV / 10:
             ac[1] = 0
     return actions
 
-def compute_probabilities(actions:list) -> list:
+def extract_strategy_values(actions:list) -> list:
+    maxV = find_max_value(actions)
+    for ac in actions:
+        if ac[1] < maxV:
+            ac[1] *= (ac[1] / maxV)
+    return actions
+
+def compute_distribution(actions:list) -> list:
     sum = 0
     for ac in actions:
         sum += ac[1]
@@ -36,7 +43,7 @@ def compute_probabilities(actions:list) -> list:
     return actions
 
 def compute_action_distribution(actions_with_raw_regrets:list) -> list:
-    return compute_probabilities(drop_bad_actions(turn_regrets_to_values(actions_with_raw_regrets)))
+    return compute_distribution(extract_strategy_values(drop_bad_actions(turn_regrets_to_values(actions_with_raw_regrets))))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -103,9 +110,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
                 regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
-            if wins > 0.01:
-                if action[1] < maxBetAmount:
-                    regrets[index][1] += ((((maxBetAmount - action[1]) / vA) * winsCoefficient) * wins)
+            if wins > 0.01 and action[1] < maxBetAmount:
+                regrets[index][1] += ((((maxBetAmount - action[1]) / vA) * winsCoefficient) * wins)
     # VERBOSE
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
