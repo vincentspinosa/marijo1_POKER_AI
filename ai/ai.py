@@ -102,10 +102,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / vA) * winsCoefficient) * wins)
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
-                if action[0] != 'raise':
-                    regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
-                else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (2 - winsCoefficient)) / winsCoefficient) * loses)
+                regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
             if wins > 0.01:
                 if action[1] < maxBetAmount:
                     regrets[index][1] += ((((maxBetAmount - action[1]) / vA) * winsCoefficient) * wins)
