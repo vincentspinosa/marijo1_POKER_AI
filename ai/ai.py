@@ -73,7 +73,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     loses = 0.01
     cc_to_deal = 5 - len(gameStateTemp.community_cards)
     # TRAVERSAL OF THE GAME TREE
-    for iter in range(iterations):
+    for iter in range(30000):
         games += 1
         sampleList = random.sample(gameStateTemp.ai_deck, cc_to_deal + 2)
         gameStateTemp.community_cards = gameState.community_cards + sampleList[:cc_to_deal]
