@@ -19,7 +19,7 @@ def turn_regrets_to_values(actions:list) -> list:
             ac[1] = (maxV / ac[1])
     return actions
 
-def actions_filter(actions:list) -> list:
+def filter_actions(actions:list) -> list:
     maxV = find_max_value(actions)
     floor = maxV / 2
     for ac in actions:
@@ -47,7 +47,7 @@ def compute_distribution(actions:list) -> list:
 
 def compute_action_distribution(actions:list) -> list:
     actions = turn_regrets_to_values(actions)
-    actions = actions_filter(actions)
+    actions = filter_actions(actions)
     actions = extract_strategy_values(actions)
     return compute_distribution(actions)
 
@@ -92,7 +92,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         else:
             loses += 1
         # VERBOSE
-        if verboseLevel > 2 and iter % verboseIterationsSteps == 0:
+        if verboseLevel > 1 and iter % verboseIterationsSteps == 0:
             print(f"\nIteration {iter}")
             print(f"Community cards:")
             Card.print_pretty_cards(gameStateTemp.community_cards)
@@ -100,9 +100,6 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
-    #vA = (100 - int(winsCoefficient * 100)) * winsCoefficient
-    #vA = max(1, vA)
-    #vA = 8.34 ** 2
     vA = 2
     index = -1
     for action in actions_list:
@@ -120,17 +117,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
             if wins > 0.01 and action[1] < maxBetAmount:
                 regrets[index][1] += ((((maxBetAmount - action[1]) / vA) * winsCoefficient) * wins)
-    # VERBOSE
-    if verboseLevel > 0:
-        print(f"\nIterations: {iterations}")
-    if verboseLevel > 1:
-        print("\nRegrets before computing them:")
-        for r in regrets:
-            print(r)
     # COMPUTATION OF THE RESULTS
     result = compute_action_distribution(regrets)
     # VERBOSE
-    if verboseLevel > 1:
+    if verboseLevel > 0:
         print("\nAction distribution:")
         for action_distribution in result:
             print(action_distribution)
