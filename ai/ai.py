@@ -19,9 +19,9 @@ def turn_regrets_to_values(actions:list) -> list:
             ac[1] = (maxV / ac[1])
     return actions
 
-def filter_actions(actions:list) -> list:
+def filter_actions(actions:list, winsCoefficient:float) -> list:
     maxV = find_max_value(actions)
-    floor = maxV / 2
+    floor = maxV / (1 / winsCoefficient)
     for ac in actions:
         if ac[1] < floor:
             ac[1] = 0
@@ -45,10 +45,11 @@ def compute_distribution(actions:list) -> list:
             ac[1] /= sum
     return actions
 
-def compute_action_distribution(actions:list) -> list:
+def compute_action_distribution(actions:list, winsCoefficient:float) -> list:
     actions = turn_regrets_to_values(actions)
-    actions = filter_actions(actions)
-    actions = extract_strategy_values(actions)
+    actions = filter_actions(actions, winsCoefficient)
+    for _ in range(4):
+        actions = extract_strategy_values(actions)
     return compute_distribution(actions)
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
@@ -118,7 +119,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             if wins > 0.01 and action[1] < maxBetAmount:
                 regrets[index][1] += ((((maxBetAmount - action[1]) / vA) * winsCoefficient) * wins)
     # COMPUTATION OF THE RESULTS
-    result = compute_action_distribution(regrets)
+    result = compute_action_distribution(regrets, winsCoefficient)
     # VERBOSE
     if verboseLevel > 0:
         print("\nAction distribution:")
