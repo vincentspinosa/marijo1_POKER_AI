@@ -19,12 +19,15 @@ def turn_regrets_to_values(actions:list) -> list:
             ac[1] = (maxV / ac[1])
     return actions
 
-""" def drop_bad_actions(actions:list) -> list:
+def actions_filter(actions:list) -> list:
     maxV = find_max_value(actions)
+    floor = maxV / 2
     for ac in actions:
-        if ac[1] < maxV / 10:
+        if ac[1] < floor:
             ac[1] = 0
-    return actions """
+        else:
+            ac[1] -= floor
+    return actions
 
 def extract_strategy_values(actions:list) -> list:
     maxV = find_max_value(actions)
@@ -42,8 +45,11 @@ def compute_distribution(actions:list) -> list:
             ac[1] /= sum
     return actions
 
-def compute_action_distribution(actions_with_raw_regrets:list) -> list:
-    return compute_distribution(extract_strategy_values(turn_regrets_to_values(actions_with_raw_regrets)))
+def compute_action_distribution(actions:list) -> list:
+    actions = turn_regrets_to_values(actions)
+    actions = actions_filter(actions)
+    actions = extract_strategy_values(actions)
+    return compute_distribution(actions)
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -94,8 +100,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
-    vA = (100 - int(winsCoefficient * 100)) * winsCoefficient
-    vA = max(1, vA)
+    #vA = (100 - int(winsCoefficient * 100)) * winsCoefficient
+    #vA = max(1, vA)
+    #vA = 8.34 ** 2
+    vA = 2
     index = -1
     for action in actions_list:
         index += 1

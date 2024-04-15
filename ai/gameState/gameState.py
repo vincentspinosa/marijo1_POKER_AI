@@ -52,8 +52,13 @@ class GameState:
     def eliminate_player(self, player:Player) -> None:
         self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
-    def calculate_raise_buckets(self, player:Player, min_raise:int) -> list:
-        return [min_raise, min_raise + int((player.chips - min_raise) / 16), min_raise + int((player.chips - min_raise) / 8), min_raise + int((player.chips - min_raise) / 4), min_raise + int((player.chips - min_raise) / 2)]
+    def calculate_raise_buckets(self, player:Player, min_raise:int, current_bet:int) -> list:
+        x = max(min_raise, current_bet * 2)
+        buckets = []
+        while x <= player.chips / 2:
+            buckets.append(x)
+            x *= 2
+        return buckets
 
     def available_actions(self) -> list:
         actions = []
@@ -73,7 +78,7 @@ class GameState:
                 min_raise = current_bet - player_bet + self.big_blind
                 max_raise = self.current_player.chips
                 if min_raise < max_raise:
-                    raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise)
+                    raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, current_bet)
                     for raise_amount in raise_buckets:
                         actions.append(('raise', raise_amount))
                 else:
