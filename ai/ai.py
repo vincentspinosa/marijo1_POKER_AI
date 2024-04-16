@@ -70,7 +70,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     loses = 0.01
     cc_to_deal = 5 - len(gameStateTemp.community_cards)
     # TRAVERSAL OF THE GAME TREE
-    for iter in range(iterations):
+    for iter in range(5000):
         games += 1
         sampleList = random.sample(gameStateTemp.ai_deck, cc_to_deal + 2)
         gameStateTemp.community_cards = gameState.community_cards + sampleList[:cc_to_deal]
@@ -91,8 +91,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
+    missingParametersWeight = cc_to_deal + 2
     index = -1
-    uncertaintyValue = 8.34
     for action in liste_actions:
         index += 1
         if action[0] == 'fold':
@@ -102,16 +102,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 regrets[index][1] += ((potMinusDiff / 2) * draws)
         if action[0] == 'check':
             if wins > 0.01:
-                regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / (uncertaintyValue ** 2)) * winsCoefficient) * wins)
+                regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / (missingParametersWeight ** 2)) * winsCoefficient) * wins)
         if action[0] in ['call', 'raise', 'all-in']:
             if loses > 0.01:
                 if liste_actions[0][0] == 'check' or action[0] != 'raise':
                     regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
                 else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(uncertaintyValue))) / winsCoefficient) * loses)
+                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient) * loses)
             if wins > 0.01:
                 if action[1] < maxBetAmount:
-                    regrets[index][1] += ((((maxBetAmount - action[1]) / (uncertaintyValue ** 2)) * winsCoefficient) * wins)
+                    regrets[index][1] += ((((maxBetAmount - action[1]) / (missingParametersWeight ** 2)) * winsCoefficient) * wins)
     # VERBOSE
     if verboseLevel > 0:
         print(f"\nIterations: {iterations}")
