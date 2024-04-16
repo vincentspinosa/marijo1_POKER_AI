@@ -5,24 +5,22 @@ from ai.rules.player import Player
 from helper_functions.helpers import force_int_input
 
 default = True
-playersDict = {0: "Marijo1 (Base)", 1: "Experimental"}
+playersDict = {0: "Marijo1 A", 1: "Marijo1 B"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
-print_ai_crds = True
+print_ai_crds = False
 
 if default == False:
-    iterations = force_int_input("Number of iterations: ")
     ai_verbose_lvl = force_int_input("\nAI verbose level: ")
     sm_blind = force_int_input("\nSmall blind: ")
     players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
 else:
-    iterations = 5000
-    ai_verbose_lvl = 2
+    ai_verbose_lvl = 0
     sm_blind = 10
     players_chips = 1000
 
 players = (Player(chips=players_chips), Player(chips=players_chips))
 first_dealer = random.randint(0, 1)
-game_ui = UI(ai_iterations=iterations, players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 time.sleep(1)

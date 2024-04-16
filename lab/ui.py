@@ -12,9 +12,8 @@ from treys import Card
 # new_hand() is declared below the UI class!
 
 class UI(GameState):
-    def __init__(self, ai_iterations: int, players: tuple[Player], ai_player_index: int, ai_verbose: int=0, ai_verbose_steps: int=50, dealer_position: int=0, small_blind: int=10, big_blind: int=20, current_pot: int=0, current_stage: str='pre-flop'):
+    def __init__(self, players: tuple[Player], ai_player_index: int, ai_verbose: int=0, ai_verbose_steps: int=50, dealer_position: int=0, small_blind: int=10, big_blind: int=20, current_pot: int=0, current_stage: str='pre-flop'):
         super().__init__(players=players, ai_player_index=ai_player_index, dealer_position=dealer_position, small_blind=small_blind, big_blind=big_blind, current_pot=current_pot, current_stage=current_stage)
-        self.ai_iterations = ai_iterations
         self.hand_is_over:bool = False
         self.ai_verbose = ai_verbose
         self.ai_verbose_steps = ai_verbose_steps
@@ -107,10 +106,7 @@ class UI(GameState):
     def play_round_2AI(self, print_ai_cards=False) -> None:
         self.reset_round()
         while not self.is_round_over():
-            if self.current_player == self.ai_player:
-                action = self.ai_action(print_ai_cards=print_ai_cards)
-            else:
-                action = self.ai_action_ALGO2(print_ai_cards=print_ai_cards)
+            action = self.ai_action(print_ai_cards=print_ai_cards)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
 
@@ -188,18 +184,8 @@ class UI(GameState):
             print("\nMarijo1's hand:")
             for card in self.current_player.hand:
                 print(Card.print_pretty_card(card))
-        ai_move = get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
+        ai_move = get_play(ai.algorithm(self, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
-        return ai_move
-
-    def ai_action_ALGO2(self, print_ai_cards=False) -> tuple:
-        print("\nEXPERIMENTAL's TURN")
-        if print_ai_cards == True:
-            print("\nEXPERIMENTAL's hand:")
-            for card in self.current_player.hand:
-                print(Card.print_pretty_card(card))
-        ai_move = get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
-        print(f"\nEXPERIMENTAL's MOVE: {ai_move}\n")
         return ai_move
     
     def get_action(self, actions:list[tuple]) -> tuple:
@@ -271,5 +257,5 @@ class UI(GameState):
         Card.print_pretty_cards(self.community_cards)
 
 def new_hand(gameUI:UI) -> UI:
-    new_hand = UI(ai_iterations=gameUI.ai_iterations, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')
+    new_hand = UI(players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')
     return new_hand
