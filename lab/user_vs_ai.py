@@ -9,10 +9,12 @@ playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 print_ai_crds = True
 
 if default == False:
+    iterations = force_int_input("Number of iterations: ")
     ai_verbose_lvl = force_int_input("\nAI verbose level: ")
     sm_blind = force_int_input("\nSmall blind: ")
     players_chips = force_int_input("Players chips (both players will start wih the amount entered): ")
 else:
+    iterations = 5000
     ai_verbose_lvl = 1
     sm_blind = 10
     players_chips = 1000
@@ -20,7 +22,7 @@ else:
 players = (Player(chips=players_chips), Player(chips=players_chips))
 print("\nIn this game, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
 first_dealer = force_int_input("First dealer of the game (Marijo1: 0, You: 1): ")
-game_ui = UI(players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(ai_iterations=iterations, players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 time.sleep(1)

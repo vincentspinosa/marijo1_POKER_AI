@@ -13,16 +13,17 @@ Marijo1Return = 0
 
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
-print_ai_crds = False
+print_ai_crds = True
 
-ai_verbose_lvl = 0
+iterations = 5000
+ai_verbose_lvl = 3
 sm_blind = 10
 players_chips = 1000
 
 players = (Player(chips=players_chips), Player(chips=players_chips))
 print("\nFor this test, Marijo1 is indexed as Player 0, and you are indexed as Player 1.")
 first_dealer = force_int_input("First dealer of the test (Marijo1: 0, You: 1): ")
-game_ui = UI(players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
+game_ui = UI(ai_iterations=iterations, players=players, ai_player_index=0, ai_verbose=ai_verbose_lvl, dealer_position=first_dealer, small_blind=sm_blind, big_blind=(sm_blind * 2))
 
 print("\nLet's begin!")
 time.sleep(1)

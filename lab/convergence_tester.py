@@ -1,5 +1,3 @@
-# THIS SCRIPT WILL CRASH SINCE THE iterations PAREMETER OF THE algoritmh() FUNCTION HAS BEEN REMOVED !
-# YOU CAN MAKE THIS SCRIPT WORK BY ADDING AN iterations:int PAREMETER BEFORE THE verboseIterationsStep:int PARAMETER OF algorithm()
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
