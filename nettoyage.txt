@@ -1,0 +1,3 @@
+Séparer UI et AI : UI parle à API seulement
+
+Dans GameState de IA : retirer ai_player : seulement current_player a besoin d'être connu pour faire une prédiction
