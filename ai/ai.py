@@ -1,5 +1,6 @@
 import pickle
 import random
+import math
 import numpy as np
 from treys import Card
 from .gameState.gameState import GameState
@@ -30,7 +31,14 @@ def extract_strategy_values(actions:list) -> list:
             ac[1] *= (ac[1] / maxV)
     return actions
 
-def compute_probabilities(actions:list) -> list:
+def drop_bad_actions(actions:list) -> list:
+    maxV = find_max_value(actions)
+    for ac in actions:
+        if ac[1] ** 2 < math.sqrt(maxV):
+            ac[1] = 0
+    return actions
+
+def compute_distribution(actions:list) -> list:
     sum = 0
     for ac in actions:
         sum += ac[1]
@@ -39,8 +47,8 @@ def compute_probabilities(actions:list) -> list:
             ac[1] /= sum
     return actions
 
-def compute_regrets_probabilities(actions:list) -> list:
-    return compute_probabilities(extract_strategy_values(turn_action_regrets_to_values(actions)))
+def compute_actions_distribution(actions:list) -> list:
+    return compute_distribution(drop_bad_actions(extract_strategy_values(turn_action_regrets_to_values(actions))))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -120,7 +128,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
-    result = compute_regrets_probabilities(regrets)
+    result = compute_actions_distribution(regrets)
     # VERBOSE
     if verboseLevel > 1:
         print("\nAction distribution:")
