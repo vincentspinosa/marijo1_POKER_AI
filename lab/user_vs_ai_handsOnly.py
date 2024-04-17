@@ -16,7 +16,7 @@ playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 print_ai_crds = True
 
 iterations = 5000
-ai_verbose_lvl = 2
+ai_verbose_lvl = 3
 sm_blind = 10
 players_chips = 1000
 

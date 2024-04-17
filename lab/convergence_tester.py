@@ -1,4 +1,3 @@
-# iterations is as of now specified as a hard number in algorithm, change it to make this script work
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,9 +9,9 @@ from ui import UI
 from ai import ai
 from ai.rules.player import Player
 
-min_iterations = 1000
-max_iterations = 10000
-iterations_step = 1000
+min_iterations = 5000
+max_iterations = 31000
+iterations_step = 5000
 algorithm_runs = 100
 stopAtStratFound = False
 # stratFoundCeiling is on a scale of 0 to 1
