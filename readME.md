@@ -15,7 +15,7 @@ This makes it very fast, but should inherently prevent it from reaching super-hu
     - Provide a base strategy for other regret minimization algorithms
 
     - Provide a public benchmark for any developer wanting to test his AI against another one
-    
+
     - Provide a good base for Marijo2
 
 **What will be Marijo2?**
@@ -26,6 +26,8 @@ As Marijo1 was solely developped by playing against a human-being, Marijo2 will 
 
 **Marijo1 is the algorithm that seems the most logical to me. Marijo2 will be the better AI empirically.**
 
-To help me build it, you can donate BTC to the address: *[...]
+To help me build it, you can donate BTC to the address:
+
+    [...]
 
 Thanks in advance!
