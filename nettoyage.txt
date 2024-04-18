@@ -1,3 +1,0 @@
-API : supprimer eval(), passer get_play dans ai.py
-
-Dans GameState de IA : retirer ai_player : seulement current_player a besoin d'être connu pour faire une prédiction

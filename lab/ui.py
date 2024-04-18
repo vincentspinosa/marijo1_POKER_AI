@@ -22,12 +22,15 @@ class UI(GameState):
     """ 
         methods of the UI class:
 
+            - get_next_player(self, player:Player) -> Player
+            - next_player(self) -> None
+            - eliminate_player(self, player:Player) -> None
             - deal_hole_cards(self)
             - deal_community_cards(self)
-            - new_hand(self)
             - is_game_over(self)
             - set_if_hand_over(self)
             - is_round_over(self)
+            - handle_action(self, action:str, raise_amount:int=0) -> None
             - play_round(self)
             - round(self, stage)
             - reset_round(self)
@@ -42,6 +45,14 @@ class UI(GameState):
             - print_players_chips(self)
             - print_community_cards(self)
     """
+
+    def get_next_player(self, player:Player) -> Player:
+        position = self.get_player_position(player)
+        next_position = (position + 1) % len(self.players)
+        return self.players[next_position]
+
+    def next_player(self) -> None:
+        self.current_player = self.get_next_player(self.current_player)
 
     def deal_hole_cards(self) -> None:
         self.deck.shuffle()
@@ -89,6 +100,54 @@ class UI(GameState):
             if len(set(active_bets)) == 1:
                 return True 
         return False
+
+    def eliminate_player(self, player:Player) -> None:
+        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
+
+    def handle_action(self, action:str, raise_amount:int=0) -> None:
+        print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
+        if action == 'check':
+            self.current_bets[self.current_player] = 0
+            self.lastActionIsCheck = True
+        elif action == 'call':
+            call_amount = max(self.current_bets.values()) - self.current_bets[self.current_player]
+            print(f"\nCall amount: {call_amount}\n")
+            self.current_player.bet(call_amount)
+            self.current_pot += call_amount
+            self.current_bets[self.current_player] = 0
+            self.current_bets[self.get_next_player(self.current_player)] = 0
+            self.lastActionIsCheck = False
+        elif action == 'raise':
+            if raise_amount >= self.current_player.chips:
+                self.handle_action('all-in', raise_amount=raise_amount)
+            else:
+                self.current_player.bet(raise_amount)
+                self.current_pot += raise_amount
+                self.current_bets[self.current_player] += raise_amount
+                self.lastActionIsCheck = False
+        elif action == 'all-in':
+            opp = self.get_next_player(self.current_player)
+            bet_adversary = self.current_bets[self.get_next_player(self.current_player)]
+            bet_amount = self.current_player.chips
+            if bet_amount <= bet_adversary:
+                self.dontHaveToAnswer = True
+            bet_total = bet_amount + self.current_bets[self.current_player]
+            if bet_total <= bet_adversary:
+                bet_diff = bet_adversary - bet_total
+                self.current_pot -= bet_diff
+                self.get_next_player(self.current_player).chips += bet_diff
+            elif opp.chips + bet_adversary < bet_amount:
+                bet_amount -= (bet_amount - opp.chips - bet_adversary)
+            self.current_player.bet(bet_amount)
+            self.current_pot += bet_amount
+            self.current_bets[self.current_player] += bet_amount
+            self.all_in_players.append(self.current_player)
+            self.lastActionIsCheck = False
+        elif action == 'fold':
+            self.eliminate_player(self.current_player)
+            self.lastActionIsCheck = False
+            print(f"Folded. Number of active players: {len(self.active_players)}")
+        self.round_turns += 1
 
     def play_round(self, print_ai_cards=False) -> None:
         self.reset_round()
@@ -239,5 +298,4 @@ class UI(GameState):
         Card.print_pretty_cards(self.community_cards)
 
 def new_hand(gameUI:UI) -> UI:
-    new_hand = UI(ai_iterations=gameUI.ai_iterations, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')
-    return new_hand
+    return UI(ai_iterations=gameUI.ai_iterations, players=gameUI.players, ai_player_index=gameUI.get_player_position(gameUI.ai_player), ai_verbose=gameUI.ai_verbose, ai_verbose_steps=gameUI.ai_verbose_steps, dealer_position=gameUI.dealer_position, small_blind=gameUI.small_blind, big_blind=gameUI.big_blind, current_pot=0, current_stage='pre-flop')

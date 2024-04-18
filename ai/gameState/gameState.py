@@ -29,28 +29,13 @@ class GameState:
         Methods of the GameState class:
 
             - get_player_position(self, player:Player) -> int
-            - get_next_player(self, player:Player) -> Player
-            - next_player(self) -> None
-            - eliminate_player(self, player:Player) -> None
             - calculate_raise_buckets(self, player:Player, min_raise:int) -> list
             - available_actions(self) -> list
-            - handle_action(self, action:str, raise_amount:int=0) -> None
             - showdown(self, players:tuple[Player]) -> Player or None
     """
 
     def get_player_position(self, player:Player) -> int:
         return self.players.index(player)
-
-    def get_next_player(self, player:Player) -> Player:
-        position = self.get_player_position(player)
-        next_position = (position + 1) % len(self.players)
-        return self.players[next_position]
-
-    def next_player(self) -> None:
-        self.current_player = self.get_next_player(self.current_player)
-
-    def eliminate_player(self, player:Player) -> None:
-        self.active_players = self.active_players[:self.get_player_position(player)] + self.active_players[(self.get_player_position(player) + 1):]
 
     def calculate_raise_buckets(self, player:Player, min_raise:int, current_bet:int) -> list:
         x = max(min_raise, current_bet * 2)
@@ -62,14 +47,15 @@ class GameState:
 
     def available_actions(self) -> list:
         actions = []
-        actions.append(('fold', 0))
         if self.current_player not in self.active_players:
             return actions
+        actions.append(('fold', 0))
         current_bet = max(self.current_bets.values())
         player_bet = self.current_bets[self.current_player]
         if self.current_player.chips + player_bet > current_bet:
-            if player_bet < current_bet and self.current_player.chips > current_bet - player_bet:
-                actions.append(('call', current_bet - player_bet))
+            if player_bet < current_bet:
+                if self.current_player.chips > current_bet - player_bet:
+                    actions.append(('call', current_bet - player_bet))
             else:
                 actions.append(('check', 0))
                 actions.pop(0)
@@ -81,55 +67,8 @@ class GameState:
                     raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, current_bet)
                     for raise_amount in raise_buckets:
                         actions.append(('raise', raise_amount))
-                else:
-                    actions.append(('raise', min_raise))
         actions.append(('all-in', self.current_player.chips))
         return actions
-
-    def handle_action(self, action:str, raise_amount:int=0) -> None:
-        print(f"\nHANDLING THE ACTION {str(action).upper()}\n")
-        if action == 'check':
-            self.current_bets[self.current_player] = 0
-            self.lastActionIsCheck = True
-        elif action == 'call':
-            call_amount = max(self.current_bets.values()) - self.current_bets[self.current_player]
-            print(f"\nCall amount: {call_amount}\n")
-            self.current_player.bet(call_amount)
-            self.current_pot += call_amount
-            self.current_bets[self.current_player] = 0
-            self.current_bets[self.get_next_player(self.current_player)] = 0
-            self.lastActionIsCheck = False
-        elif action == 'raise':
-            if raise_amount >= self.current_player.chips:
-                self.handle_action('all-in', raise_amount=raise_amount)
-            else:
-                self.current_player.bet(raise_amount)
-                self.current_pot += raise_amount
-                self.current_bets[self.current_player] += raise_amount
-                self.lastActionIsCheck = False
-        elif action == 'all-in':
-            opp = self.get_next_player(self.current_player)
-            bet_adversary = self.current_bets[self.get_next_player(self.current_player)]
-            bet_amount = self.current_player.chips
-            if bet_amount <= bet_adversary:
-                self.dontHaveToAnswer = True
-            bet_total = bet_amount + self.current_bets[self.current_player]
-            if bet_total <= bet_adversary:
-                bet_diff = bet_adversary - bet_total
-                self.current_pot -= bet_diff
-                self.get_next_player(self.current_player).chips += bet_diff
-            elif opp.chips + bet_adversary < bet_amount:
-                bet_amount -= (bet_amount - opp.chips - bet_adversary)
-            self.current_player.bet(bet_amount)
-            self.current_pot += bet_amount
-            self.current_bets[self.current_player] += bet_amount
-            self.all_in_players.append(self.current_player)
-            self.lastActionIsCheck = False
-        elif action == 'fold':
-            self.eliminate_player(self.current_player)
-            self.lastActionIsCheck = False
-            print(f"Folded. Number of active players: {len(self.active_players)}")
-        self.round_turns += 1
 
     def showdown(self, players:tuple[Player]) -> Player | None:
         x = self.hand_evaluator.evaluate(players[0].hand, self.community_cards)
