@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from api.evalAgent import eval, get_play
 from helper_functions.helpers import force_int_input
 from ai.rules.player import Player
 from ai import ai
@@ -167,7 +166,7 @@ class UI(GameState):
             print("\nMarijo1's hand:")
             for card in self.current_player.hand:
                 print(Card.print_pretty_card(card))
-        ai_move = get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
+        ai_move = ai.get_play(ai.algorithm(self, iterations=self.ai_iterations, verboseLevel=self.ai_verbose, verboseIterationsSteps=self.ai_verbose_steps))[0]
         print(f"\nMarijo1's MOVE: {ai_move}\n")
         return ai_move
     

@@ -137,10 +137,9 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     # RETURN
     return result
 
-
-def algorithm_EXPERIMENTAL(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
-    """ 
-    Create your own algorithm here 
-    Or leave the call to the function below
-    """
-    return algorithm(gameState=gameState, iterations=iterations, verboseLevel=verboseLevel, verboseIterationsSteps=verboseIterationsSteps)
+def get_play(probability_distribution: list[tuple]) -> tuple:
+    probability_distribution = np.array(probability_distribution, dtype=list)
+    indices = np.arange(len(probability_distribution))
+    probabilities = probability_distribution[:, 1].astype(float)
+    chosen_index = np.random.choice(indices, p=probabilities)
+    return probability_distribution[chosen_index]
