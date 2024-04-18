@@ -1,7 +1,7 @@
 import time
 from ui import UI, new_hand
-from ai.rules.player import Player
-from helper_functions.helpers import force_int_input
+from player import Player
+from helpers import force_int_input
 
 iterations = 5000
 

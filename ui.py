@@ -2,10 +2,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from helper_functions.helpers import force_int_input
-from ai.rules.player import Player
-from ai import ai
-from ai.gameState.gameState import GameState
+import ai
+from helpers import force_int_input
+from player import Player
+from gameState import GameState
 from treys import Card
 
 # new_hand() is declared below the UI class!

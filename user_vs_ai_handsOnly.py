@@ -1,7 +1,7 @@
 import time
 from ui import UI, new_hand
-from ai.rules.player import Player
-from helper_functions.helpers import force_int_input
+from player import Player
+from helpers import force_int_input
 
 # The goal of this script is to test the level of the AI
 # Here, only hands are played, not full games

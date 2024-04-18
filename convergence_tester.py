@@ -5,14 +5,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import copy
 import plotext as plt
 
+import ai
 from ui import UI
-from ai import ai
-from ai.rules.player import Player
+from player import Player
 
 # The goal of this script is to find the optimal number of iterations for the AI
 
 min_iterations = 5000
-max_iterations = 31000
+max_iterations = 6000
 iterations_step = 5000
 algorithm_runs = 100
 stopAtStratFound = False
