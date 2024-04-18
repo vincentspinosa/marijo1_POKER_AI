@@ -22,27 +22,31 @@ class UI(GameState):
     """ 
         methods of the UI class:
 
-            - get_next_player(self, player:Player) -> Player
-            - next_player(self) -> None
-            - eliminate_player(self, player:Player) -> None
+            - get_next_player(self, player)
+            - next_player(self)
             - deal_hole_cards(self)
             - deal_community_cards(self)
             - is_game_over(self)
             - set_if_hand_over(self)
             - is_round_over(self)
-            - handle_action(self, action:str, raise_amount:int=0) -> None
-            - play_round(self)
-            - round(self, stage)
+            - eliminate_player(self, player)
+            - handle_action(self, action, raise_amount)
+            - play_round(self, print_ai_cards)
+            - round(self, stage, print_ai_cards)
             - reset_round(self)
-            - end_round(self, winner)
+            - first_to_act_rule(self)
+            - split_pot(self)
+            - end_hand(self, winnerIndex)
             - move_dealer_button(self)
             - collect_blinds(self)
-            - ai_action(self)
+            - ai_action(self, print_ai_cards)
             - get_action(self, actions)
             - human_action(self)
             - available_human_player_actions(self)
             - print_round_info(self)
-            - print_players_chips(self)
+            - print_showdown_info(self)
+            - print_players_chips(self, players_dict)
+            - print_players_cards(self, players_dict)
             - print_community_cards(self)
     """
 

@@ -28,10 +28,10 @@ class GameState:
     """
         Methods of the GameState class:
 
-            - get_player_position(self, player:Player) -> int
-            - calculate_raise_buckets(self, player:Player, min_raise:int) -> list
-            - available_actions(self) -> list
-            - showdown(self, players:tuple[Player]) -> Player or None
+            - get_player_position(self, player)
+            - calculate_raise_buckets(self, player, min_raise, current_bet)
+            - available_actions(self)
+            - showdown(self, players)
     """
 
     def get_player_position(self, player:Player) -> int:
