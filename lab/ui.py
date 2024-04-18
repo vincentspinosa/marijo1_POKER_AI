@@ -206,13 +206,11 @@ class UI(GameState):
         big_blind_player = self.players[(self.dealer_position + 2) % len(self.players)]
         small_blind_amount = min(small_blind_player.chips, self.small_blind)
         big_blind_amount = min(big_blind_player.chips, self.big_blind)
-
         small_blind_player.bet(small_blind_amount)
         big_blind_player.bet(big_blind_amount)
         self.current_bets[small_blind_player] = small_blind_amount
         self.current_bets[big_blind_player] = big_blind_amount
         self.current_pot += small_blind_amount + big_blind_amount
-
         if small_blind_player.chips == 0:
             self.all_in_players.append(small_blind_player)
         if big_blind_player.chips == 0:
