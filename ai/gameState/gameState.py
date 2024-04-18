@@ -131,7 +131,7 @@ class GameState:
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
-    def showdown(self, players:tuple[Player]) -> Player or None:
+    def showdown(self, players:tuple[Player]) -> Player | None:
         x = self.hand_evaluator.evaluate(players[0].hand, self.community_cards)
         y = self.hand_evaluator.evaluate(players[1].hand, self.community_cards)
         if x < y:
