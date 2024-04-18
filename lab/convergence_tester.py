@@ -9,6 +9,8 @@ from ui import UI
 from ai import ai
 from ai.rules.player import Player
 
+# The goal of this script is to find the optimal number of iterations for the AI
+
 min_iterations = 5000
 max_iterations = 31000
 iterations_step = 5000

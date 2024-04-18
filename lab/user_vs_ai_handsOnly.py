@@ -8,6 +8,8 @@ from helper_functions.helpers import force_int_input
 # For each hand, both the AI and the Player have 1000 chips
 # The small blind is 10, the big blind 20, there is no ante
 
+iterations = 5000
+
 numberOfHandsPlayed = 0
 Marijo1Return = 0
 
@@ -15,7 +17,6 @@ playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
 print_ai_crds = False
 
-iterations = 5000
 ai_verbose_lvl = 0
 sm_blind = 10
 players_chips = 1000

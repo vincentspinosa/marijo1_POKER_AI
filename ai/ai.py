@@ -78,7 +78,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     loses = 0.01
     cc_to_deal = 5 - len(gameStateTemp.community_cards)
     # TRAVERSAL OF THE GAME TREE
-    for iter in range(5000):
+    for iter in range(iterations):
         games += 1
         sampleList = random.sample(gameStateTemp.ai_deck, cc_to_deal + 2)
         gameStateTemp.community_cards = gameState.community_cards + sampleList[:cc_to_deal]
@@ -91,7 +91,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
         else:
             loses += 1
         # VERBOSE
-        if verboseLevel > 2 and iter % verboseIterationsSteps == 0:
+        if verboseLevel > 3 and iter % verboseIterationsSteps == 0:
             print(f"\nIteration {iter}")
             print(f"Community cards:")
             Card.print_pretty_cards(gameStateTemp.community_cards)
@@ -121,16 +121,16 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
                 if action[1] < maxBetAmount:
                     regrets[index][1] += ((((maxBetAmount - action[1]) / (missingParametersWeight ** 2)) * winsCoefficient) * wins)
     # VERBOSE
-    if verboseLevel > 0:
-        print(f"\nIterations: {iterations}")
     if verboseLevel > 1:
+        print(f"\nIterations: {iterations}")
+    if verboseLevel > 2:
         print("\nRegrets before computing them:")
         for r in regrets:
             print(r)
     # COMPUTATION OF THE RESULTS
     result = compute_actions_distribution(regrets)
     # VERBOSE
-    if verboseLevel > 1:
+    if verboseLevel > 0:
         print("\nAction distribution:")
         for action_distribution in result:
             print(action_distribution)
