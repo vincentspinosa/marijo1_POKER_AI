@@ -26,8 +26,7 @@ As Marijo1 was solely developped by playing against a human-being, Marijo2 will 
 
 **Marijo1 is the algorithm that seems the most logical to me. Marijo2 will be the better AI empirically.**
 
-To help me build it, you can donate BTC to the address:
+To help me build it, feel free to create a better version of your own and publish it! I think its the sharing of ideas that will solve the question at hand.
 
-    [...]
-
-Thanks in advance!
+Best of luck,
+Vincent
