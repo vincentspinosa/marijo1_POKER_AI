@@ -3,7 +3,7 @@ import random
 import math
 import numpy as np
 from treys import Card
-from gameState import GameState
+from .gameState.gameState import GameState
 
 def sig(x):
     return 1 / (1 + np.exp(-x))

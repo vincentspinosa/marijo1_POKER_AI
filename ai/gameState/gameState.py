@@ -1,6 +1,6 @@
 from treys import Evaluator
-from deck import Deck
-from player import Player
+from ..rules.deck import Deck
+from ..rules.player import Player
 
 
 class GameState:
