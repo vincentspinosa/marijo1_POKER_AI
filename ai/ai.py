@@ -1,6 +1,5 @@
 import pickle
 import random
-import math
 import numpy as np
 from treys import Card
 from .gameState.gameState import GameState
@@ -31,13 +30,6 @@ def extract_strategy_values(actions:list) -> list:
             ac[1] *= (ac[1] / maxV)
     return actions
 
-def drop_bad_actions(actions:list) -> list:
-    maxV = find_max_value(actions)
-    for ac in actions:
-        if ac[1] ** 2 < math.sqrt(maxV):
-            ac[1] = 0
-    return actions
-
 def compute_distribution(actions:list) -> list:
     sum = 0
     for ac in actions:
@@ -48,7 +40,7 @@ def compute_distribution(actions:list) -> list:
     return actions
 
 def compute_actions_distribution(actions:list) -> list:
-    return compute_distribution(drop_bad_actions(extract_strategy_values(turn_action_regrets_to_values(actions))))
+    return compute_distribution(extract_strategy_values(turn_action_regrets_to_values(actions)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
@@ -99,7 +91,8 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
-    missingParametersWeight = cc_to_deal + 2
+    #missingParametersWeight = cc_to_deal + 2
+    missingParametersWeight = 2
     index = -1
     for action in liste_actions:
         index += 1
