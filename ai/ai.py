@@ -91,8 +91,7 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
     winsCoefficient = wins / games
-    #missingParametersWeight = cc_to_deal + 2
-    missingParametersWeight = 2
+    missingParametersWeight = cc_to_deal + 2
     index = -1
     for action in liste_actions:
         index += 1
