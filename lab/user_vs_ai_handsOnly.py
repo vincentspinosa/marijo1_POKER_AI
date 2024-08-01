@@ -15,9 +15,9 @@ Marijo1Return = 0
 
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
 # if print_ai_crds is True, Marijo1's hand will be printed in the terminal
-print_ai_crds = True
+print_ai_crds = False
 
-ai_verbose_lvl = 2
+ai_verbose_lvl = 0
 sm_blind = 10
 players_chips = 1000
 
