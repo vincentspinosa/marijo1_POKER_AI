@@ -2,7 +2,7 @@
 
 **The AI works with the following constraint: when making a prediction, it cannot compute any possible response from the opponent, or any other action to do later in the game.**
 
-Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, Deep-CFR, ...) and this AI was made firstly to have fun, and secondly to be extremly fast.
+Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, Deep-CFR, ...) and this AI was made to have fun, and be extremly fast.
 
 Marijo1 is not super-human, and is beatable, if you are a good player and are focused, but it plays well, with great speed.
 
