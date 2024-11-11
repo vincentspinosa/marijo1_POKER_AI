@@ -21,3 +21,5 @@ A verbose level of 2 will print the above, and the number of iterations of the A
 A verbose level of 3 will print the above, and the raw regrets, before computing the action distribution.
 
 A verbose level of 4 will print the above, and (coupled with the value of verbose_iteration_steps) will print the cards of (some of) the simulations of the game when computing the regrets.
+
+**Finally**, if you try Marijo1 in Codespaces, you will need to install Treys (pip install treys) on your VM.
