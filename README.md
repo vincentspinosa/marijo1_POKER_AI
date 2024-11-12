@@ -1,4 +1,4 @@
-**Marijo1 is a 2-Player No-Limit Texas Hold'em Artificial Intelligence, which works with a regret minimization algorithm, and tries to compute the best possible strategy for any situation it is in.**
+**Marijo1 is a 2-Player No-Limit Texas Hold'em Artificial Intelligence, which works with a regret minimization algorithm, that tries to compute the best possible strategy for any situation it is in.**
 
 **The AI works with the following constraint: when making a prediction, it cannot compute any possible response from the opponent.**
 
@@ -6,7 +6,7 @@ Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, De
 
 Marijo1 is clearly not super-human, but it is strong enough, for example, to be integrated into a Poker application.
 
-**You can play against Marijo1 with the script user_vs_ai.py in the lab/ folder.**
+**You can play against the AI with the script user_vs_ai.py, present in the lab/ folder.**
 
 In it, you can customize your playing experience. Among other things, you can use the **print_ai_cards** variable, set to True or False, to print the cards of Marijo1 in the terminal.
 
