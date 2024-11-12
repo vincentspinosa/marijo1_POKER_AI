@@ -21,3 +21,5 @@ Verbose levels superior to that print more and more information, related to that
 Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if the AI bets 20, you need to bet 50 to make a raise of 30).
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
+
+Thanks for reading, and enjoy ! :)
