@@ -6,11 +6,9 @@ Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, De
 
 Marijo1 is not super-human, and is beatable, if you are a good player and are focused, but it plays well, and with great speed.
 
-**You can find the full code of the algorithm in the ai/ folder. You can play against the ai with the code in the lab/ folder:**
+**You can play against Marijo1 with the script user_vs_ai.py in the lab/ folder.**
 
-You can play a full game against Marijo1 with lab/user_vs_ai.py, or hand by hand with lab/user_vs_ai_handsOnly.py.
-
-In both scripts, you can customize your playing experience. Among other things, you can use the **print_ai_cards** variable, set to True or False, to print the cards of Marijo1 in the terminal.
+In it, you can customize your playing experience. Among other things, you can use the **print_ai_cards** variable, set to True or False, to print the cards of Marijo1 in the terminal.
 
 You can also use the **ai_verbose_level** variable to print different informations in the terminal:
 
@@ -21,5 +19,3 @@ Verbose levels superior to that print more and more information, related to that
 Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if the AI bets 20, you need to bet 50 to make a raise of 30).
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
-
-Thanks for reading, and enjoy ! :)
