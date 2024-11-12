@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from helper_functions.helpers import force_int_input
 from ai.rules.player import Player
 from ai import ai
 from ai.gameState.gameState import GameState
@@ -31,6 +30,7 @@ class UI(GameState):
             - is_round_over(self)
             - eliminate_player(self, player)
             - handle_action(self, action, raise_amount)
+            - force_int_input(question)
             - play_round(self, print_ai_cards)
             - round(self, stage, print_ai_cards)
             - reset_round(self)
@@ -153,6 +153,12 @@ class UI(GameState):
             print(f"Folded. Number of active players: {len(self.active_players)}")
         self.round_turns += 1
 
+    def force_int_input(self, question: str) -> int:
+        try:
+            return int(input(question))
+        except:
+            return self.force_int_input(question)
+
     def play_round(self, print_ai_cards=False) -> None:
         self.reset_round()
         while not self.is_round_over():
@@ -161,7 +167,7 @@ class UI(GameState):
             else:
                 action = self.human_action()
                 if action[0] == 'raise':
-                    raise_amount = force_int_input("Raise amount: ")
+                    raise_amount = self.force_int_input("Raise amount: ")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
@@ -236,7 +242,7 @@ class UI(GameState):
         for i in actions:
             index += 1
             print(f"{index} - {i}")
-        return actions[force_int_input("\nChosen action: ")]
+        return actions[self.force_int_input("\nChosen action: ")]
     
     def human_action(self) -> tuple:
         player = self.current_player
