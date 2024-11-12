@@ -4,7 +4,7 @@
 
 Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, Deep-CFR, ...) and this AI was made to have fun, and be extremely fast.
 
-Marijo1 is not super-human, and is beatable, if you are a good player and are focused, but it plays well, and with great speed.
+Marijo1 is clearly not super-human, but it is strong enough, for example, to be integrated into a Poker application.
 
 **You can play against Marijo1 with the script user_vs_ai.py in the lab/ folder.**
 
