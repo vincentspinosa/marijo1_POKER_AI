@@ -21,6 +21,6 @@ Please note than when you want to raise, you need to include the amount needed t
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
-<img width="760" alt="raw regrets computing" src="https://github.com/user-attachments/assets/916d18f9-4f9f-49da-995d-5cd2cd87d234" />
+<img width="752" alt="raw regrets computing" src="https://github.com/user-attachments/assets/e5c5b4e4-5216-4538-90d5-7c77b6ea19be" />
 
 <img width="418" alt="strategy computing" src="https://github.com/user-attachments/assets/2b309844-b96d-48be-9b48-8bf017a307e9" />
