@@ -1,6 +1,7 @@
 import pickle
 import random
 import numpy as np
+from math import e
 from treys import Card
 from .gameState.gameState import GameState
 
@@ -90,28 +91,21 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
             print(f"Opposite player cards:")
             Card.print_pretty_cards(gameStateTemp.players[opposite_player_index].hand)
     # COMPUTATION OF THE REGRETS
-    winsCoefficient = wins / games
-    missingParametersWeight = 2
+    c = wins / games
     index = -1
     for action in liste_actions:
         index += 1
         if action[0] == 'fold':
-            if wins > 0.01:
-                regrets[index][1] += ((potMinusDiff + (maxBetAmount * winsCoefficient)) * wins)
-            if draws > 0.01:
-                regrets[index][1] += ((potMinusDiff / 2) * draws)
+            regrets[index][1] = ((potMinusDiff + (maxBetAmount * c)) * wins) + ((potMinusDiff / 2) * draws)
         if action[0] == 'check':
-            if wins > 0.01:
-                regrets[index][1] += ((potMinusDiff / 2) + ((maxBetAmount / (missingParametersWeight ** 2)) * winsCoefficient) * wins)
+            regrets[index][1] = ((potMinusDiff / 2) + ((maxBetAmount / (e ** 2)) * c)) * wins
         if action[0] in ['call', 'raise', 'all-in']:
-            if loses > 0.01:
-                if liste_actions[0][0] == 'check' or action[0] != 'raise':
-                    regrets[index][1] += ((min(action[1], maxBetAmount) / winsCoefficient) * loses)
-                else:
-                    regrets[index][1] += (((min(action[1], maxBetAmount) * (1 + sig(missingParametersWeight))) / winsCoefficient) * loses)
-            if wins > 0.01:
-                if action[1] < maxBetAmount:
-                    regrets[index][1] += ((((maxBetAmount - action[1]) / (missingParametersWeight ** 2)) * winsCoefficient) * wins)
+            if liste_actions[0][0] == 'check' or action[0] != 'raise':
+                regrets[index][1] = (min(action[1], maxBetAmount) / c) * loses
+            else:
+                regrets[index][1] = ((min(action[1], maxBetAmount) * (1 + sig(e))) / c) * loses
+            if action[1] < maxBetAmount:
+                regrets[index][1] += (((maxBetAmount - action[1]) / (e ** 2)) * c) * wins
     # VERBOSE
     if verboseLevel > 1:
         print(f"\nIterations: {iterations}")
