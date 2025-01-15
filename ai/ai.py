@@ -65,10 +65,10 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     potMinusDiff = potSave - diff
     gameStateInitial = pickle.dumps(gameState)
     gameStateTemp = pickle.loads(gameStateInitial)
-    games = 0.01
-    wins = 0.01
-    draws = 0.01
-    loses = 0.01
+    games = 0.0000001
+    wins = 0.0000001
+    draws = 0.0000001
+    loses = 0.0000001
     cc_to_deal = 5 - len(gameStateTemp.community_cards)
     # TRAVERSAL OF THE GAME TREE
     for iter in range(iterations):
