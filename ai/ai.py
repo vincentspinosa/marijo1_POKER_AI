@@ -24,11 +24,12 @@ def turn_action_regrets_to_values(actions:list) -> list:
             ac[1] = (maxV / ac[1])
     return actions
 
-def extract_strategy_values(actions:list) -> list:
-    maxV = find_max_value(actions)
-    for ac in actions:
-        if ac[1] < maxV:
-            ac[1] *= (ac[1] / maxV)
+def extract_strategy_values(layers:int, actions:list) -> list:
+    for _ in range(layers):
+        maxV = find_max_value(actions)
+        for ac in actions:
+            if ac[1] < maxV:
+                ac[1] *= (ac[1] / maxV)
     return actions
 
 def compute_distribution(actions:list) -> list:
@@ -41,7 +42,7 @@ def compute_distribution(actions:list) -> list:
     return actions
 
 def compute_actions_distribution(actions:list) -> list:
-    return compute_distribution(extract_strategy_values(turn_action_regrets_to_values(actions)))
+    return compute_distribution(extract_strategy_values(2, turn_action_regrets_to_values(actions)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
