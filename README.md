@@ -4,23 +4,28 @@
 
 Why? Because the game of Poker is already solved (with CFR, CFR+, Linear CFR, Deep-CFR, ...) and this AI was made to have fun, and be extremely fast.
 
-Therefore, Marijo1 is not super-human, but it plays well, and with great speed.
+Therefore, Marijo1 is not super-human, but it plays very well, with astonishing speed.
 
-**You can play against the AI with the script user_vs_ai.py, present in the lab/ folder.**
+**You can play against the AI with the script user_vs_ai.py, present in the 'lab' folder.**
 
-In it, you can customize your playing experience. Among other things, you can use the **print_ai_cards** variable, set to True or False, to print the cards of Marijo1 in the terminal.
+When starting,the script will ask you if you want to print the cards of Marijo1 in your terminal, and the verbose level you desire while playing.
 
-You can also use the **ai_verbose_level** variable to print different informations in the terminal:
+A verbose level of 0 won't output any information not needed to play.
 
 A verbose level of 1 will print the strategy of the AI (the result of the algorithm).
 
-
-Verbose levels superior to that print more and more information, related to that computation.
+Verbose levels superior to that print more and more information, related to the computation of the algorithm.
 
 Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if the AI bets 20, you need to bet 50 to make a raise of 30).
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
-<img width="752" alt="raw regrets computing" src="https://github.com/user-attachments/assets/e5c5b4e4-5216-4538-90d5-7c77b6ea19be" />
+As the code is quite dense, here is the core of Marijo1:
 
-<img width="418" alt="strategy computing" src="https://github.com/user-attachments/assets/2b309844-b96d-48be-9b48-8bf017a307e9" />
+<img width="638" alt="Traversal of the game tree" src="https://github.com/user-attachments/assets/5d82714d-7c82-46b4-b859-7c5ae8619d45" />
+
+<img width="755" alt="Computation of the regrets" src="https://github.com/user-attachments/assets/f7fc5aa3-f82b-4673-b799-d3e2a7f6f051" />
+
+<img width="728" alt="Computation of the strategy" src="https://github.com/user-attachments/assets/721d94e5-57e8-460e-9e2e-e349cb3f3800" />
+
+Enjoy, and feel free to try to improve the algorithm!
