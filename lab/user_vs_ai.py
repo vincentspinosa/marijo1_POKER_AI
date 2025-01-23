@@ -2,9 +2,8 @@ import time
 from ui import UI, new_hand
 from ai.rules.player import Player
 
-# if print_ai_crds is True, Marijo1's hand will be printed in the terminal
-print_ai_crds = True
-ai_verbose_lvl = 1
+print_ai_crds = int(input("\nPrint AI cards? (0: No, 1: Yes): "))
+ai_verbose_lvl = int(input("Verbose level (0 and upwards): "))
 
 iterations = 5000
 playersDict = {0: "Marijo1 (Player 0)", 1: "You (Player 1)"}
