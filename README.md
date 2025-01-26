@@ -16,7 +16,7 @@ A verbose level of 1 will print the strategy of the AI (the result of the algori
 
 Verbose levels superior to that will output more and more information, related to the computation of the algorithm.
 
-Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if Marijo1 bets 20, you need to bet 50 to make a raise of 30).
+Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if Marijo1 bets 20, you need to place 50 on the table a raise of 30).
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
