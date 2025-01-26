@@ -66,7 +66,7 @@ class GameState:
                 if min_raise < max_raise:
                     raise_buckets = self.calculate_raise_buckets(self.current_player, min_raise, current_bet)
                     for raise_amount in raise_buckets:
-                        actions.append(('raise', raise_amount))
+                        actions.append(('bet/raise', raise_amount))
         actions.append(('all-in', self.current_player.chips))
         return actions
 

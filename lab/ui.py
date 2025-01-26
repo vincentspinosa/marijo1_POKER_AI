@@ -121,7 +121,7 @@ class UI(GameState):
             self.current_bets[self.current_player] = 0
             self.current_bets[self.get_next_player(self.current_player)] = 0
             self.lastActionIsCheck = False
-        elif action == 'raise':
+        elif action == 'bet/raise':
             if raise_amount >= self.current_player.chips:
                 self.handle_action('all-in', raise_amount=raise_amount)
             else:
@@ -166,8 +166,8 @@ class UI(GameState):
                 action = self.ai_action(print_ai_cards=print_ai_cards)
             else:
                 action = self.human_action()
-                if action[0] == 'raise':
-                    raise_amount = self.force_int_input("Raise amount: ")
+                if action[0] == 'bet/raise':
+                    raise_amount = self.force_int_input("Bet/Raise amount: ")
                     action = (action[0], raise_amount)
             self.handle_action(action[0], raise_amount=action[1])
             self.next_player()
@@ -267,7 +267,7 @@ class UI(GameState):
                 actions.pop(0)
         if len(self.all_in_players) + 1 < len(self.active_players):
             if self.current_player.chips + player_bet >= current_bet + self.big_blind:
-                actions.append(('raise', 0))
+                actions.append(('bet/raise', 0))
         actions.append(('all-in', self.current_player.chips))
         return actions
 
