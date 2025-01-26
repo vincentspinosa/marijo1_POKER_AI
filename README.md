@@ -16,14 +16,19 @@ A verbose level of 1 will print the strategy of the AI (the result of the algori
 
 Verbose levels superior to that will output more and more information, related to the computation of the algorithm.
 
-Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if Marijo1 bets 20, you need to place 50 on the table a raise of 30).
+Please note than when you want to raise, you need to include the amount needed to match the bet of the AI (if Marijo1 bets 20, you need to place 50 on the table to make a raise of 30).
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
 As the code is quite dense, here is the core of the AI:
 
-<img width="755" alt="Computation of the regrets" src="https://github.com/user-attachments/assets/f7fc5aa3-f82b-4673-b799-d3e2a7f6f051" />
+<img width="634" alt="Game tree traversal" src="https://github.com/user-attachments/assets/1d50672b-8e69-4d9d-a33b-332c13779eb7" />
 
-<img width="728" alt="Computation of the strategy" src="https://github.com/user-attachments/assets/721d94e5-57e8-460e-9e2e-e349cb3f3800" />
+
+<img width="757" alt="Base regrets computation" src="https://github.com/user-attachments/assets/f65e19e0-0392-41ce-91d2-b3364f41878e" />
+
+
+<img width="728" alt="Strategy computation" src="https://github.com/user-attachments/assets/721d94e5-57e8-460e-9e2e-e349cb3f3800" />
+
 
 Enjoy, and feel free to try to improve the algorithm!
