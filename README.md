@@ -22,8 +22,6 @@ Please note than when you want to raise, you need to include the amount needed t
 
 As the code is quite dense, here is the core of the AI:
 
-<img width="634" alt="Game tree traversal" src="https://github.com/user-attachments/assets/1d50672b-8e69-4d9d-a33b-332c13779eb7" />
-
 
 <img width="757" alt="Base regrets computation" src="https://github.com/user-attachments/assets/f65e19e0-0392-41ce-91d2-b3364f41878e" />
 
