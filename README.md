@@ -20,13 +20,4 @@ Please note than when you want to raise, you need to include the amount needed t
 
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
-As the code is quite dense, here is the core of the AI:
-
-
-<img width="757" alt="Base regrets computation" src="https://github.com/user-attachments/assets/f65e19e0-0392-41ce-91d2-b3364f41878e" />
-
-
-<img width="728" alt="Strategy computation" src="https://github.com/user-attachments/assets/721d94e5-57e8-460e-9e2e-e349cb3f3800" />
-
-
 Enjoy, and feel free to try to improve the algorithm!
