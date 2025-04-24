@@ -42,7 +42,7 @@ def compute_distribution(actions:list) -> list:
     return actions
 
 def compute_actions_distribution(actions:list) -> list:
-    return compute_distribution(extract_strategy_values(2, turn_action_regrets_to_values(actions)))
+    return compute_distribution(extract_strategy_values(1, turn_action_regrets_to_values(actions)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
