@@ -1,10 +1,8 @@
 **Marijo1 is a 2-Player No-Limit Texas Hold'em Artificial Intelligence, which works with a regret minimization algorithm, that tries to compute the best possible strategy for any situation it is in.**
 
-The AI works with the three following constraints: 
+The AI works with the two following constraints: 
 
 - When making a prediction, it cannot compute any possible response from the opponent.
-
-- No self-play, or play against another AI can be involved in the development of the algorithm.
 
 - No strategy about Poker (for example what to do at each round, with each hand) can be put into the algorithm. The only thing allowed is to know wether the AI engages the action or not.
 
