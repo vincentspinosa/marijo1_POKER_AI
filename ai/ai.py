@@ -28,7 +28,7 @@ def extract_strategy_values(actions:list) -> list:
     maxV = find_max_value(actions)
     for ac in actions:
         if ac[1] < maxV:
-            ac[1] *= (ac[1] / (maxV * (maxV / math.e)))
+            ac[1] *= (ac[1] / (maxV * maxV))
     return actions
 
 def compute_distribution(actions:list) -> list:
