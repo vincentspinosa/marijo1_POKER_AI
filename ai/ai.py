@@ -8,40 +8,40 @@ from .gameState.gameState import GameState
 def sig(x):
     return 1 / (1 + np.exp(-x))
 
-def find_max_value(actions:list) -> float:
+def find_max_value(regrets:list) -> float:
     maxV = 0
-    for ac in actions:
-        if ac[1] > maxV:
-            maxV = ac[1]
+    for r in regrets:
+        if r[1] > maxV:
+            maxV = r[1]
     return maxV
 
-def turn_action_regrets_to_values(actions:list) -> list:
-    maxV = find_max_value(actions)
-    for ac in actions:
-        if ac[1] < 1:
-            ac[1] = maxV
+def turn_action_regrets_to_values(regrets:list) -> list:
+    maxV = find_max_value(regrets)
+    for r in regrets:
+        if r[1] < 1:
+            r[1] = maxV
         else:
-            ac[1] = (maxV / ac[1])
-    return actions
+            r[1] = (maxV / r[1])
+    return regrets
 
-def extract_strategy_values(actions:list) -> list:
-    maxV = find_max_value(actions)
-    for ac in actions:
-        if ac[1] < maxV:
-            ac[1] *= (ac[1] / (maxV * maxV))
-    return actions
+def extract_strategy_values(values:list) -> list:
+    maxV = find_max_value(values)
+    for v in values:
+        if v[1] < maxV:
+            v[1] *= (v[1] / (maxV * maxV))
+    return values
 
-def compute_distribution(actions:list) -> list:
+def compute_distribution(values:list) -> list:
     sum = 0
-    for ac in actions:
-        sum += ac[1]
-    for ac in actions:
-        if ac[1] > 0:
-            ac[1] /= sum
-    return actions
+    for v in values:
+        sum += v[1]
+    for v in values:
+        if v[1] > 0:
+            v[1] /= sum
+    return values
 
-def compute_actions_distribution(actions:list) -> list:
-    return compute_distribution(extract_strategy_values(turn_action_regrets_to_values(actions)))
+def compute_actions_distribution(regrets:list) -> list:
+    return compute_distribution(extract_strategy_values(turn_action_regrets_to_values(regrets)))
 
 def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIterationsSteps:int=50) -> dict[list, int]:
     # SETTING-UP EVERYTHING
