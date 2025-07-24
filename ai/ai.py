@@ -50,9 +50,12 @@ def algorithm(gameState:GameState, iterations:int, verboseLevel:int=0, verboseIt
     aiIndex = gameState.get_player_position(gameState.ai_player)
     opposite_player_index = (aiIndex + 1) % len(gameState.players)
     """ The ai_deck property is scary, but it is fine:
-        - We receive, in the GameSate, all the cards from the Game.
+        - We receive, in the GameSate, all the cards from the Game (the Deck, the community cards,
+          the cards of the AI, the cards of the opposite player). That is IN MEMORY.
         - We then combine the deck received and the cards of the opposite player, to create
-          the Deck from which the AI will draw the cards to traverse the game tree.
+          the AI_Deck, from which the AI will draw the cards to traverse the game tree.
+        - The AI only uses the AI_Deck, which contains all cards not in its possession or 
+          stored as community card.
         - At absolutely no moment does the AI know the cards of the opposite player.
     """
     gameState.ai_deck = gameState.deck.cards + gameState.players[opposite_player_index].hand
