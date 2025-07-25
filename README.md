@@ -25,3 +25,29 @@ Please note than when you want to raise, you need to include the amount needed t
 **Finally**, on top of Python 3 and its standard library, you will need to have Treys (pip install treys) and Numpy (pip install numpy) on your machine to use Marijo1.
 
 Enjoy, and feel free to try to improve the algorithm!
+
+------------------------------------------------------------------------------------
+
+**THE ALGORITHM:**
+
+Step 1: we simulate the end of the game, for a given number of iterations (5000 as a production value)
+
+![game tree iteration](readme_assets/game_tree_iteration.png)
+
+Step 2: we extract the raw regrets
+
+![regrets computation](readme_assets/regrets_computation.png)
+
+potMinusDiff -> the max amount of chips the AI can take from the pot (in case the opposite player has bet more than what the AI can put)
+
+Step 3: we turn the regrets to values
+
+![turn regrets to values](readme_assets/turn_regrets_to_values.png)
+
+Step 4: we extract the strategy values
+
+![extract strategy values](readme_assets/extract_strategy_values.png)
+
+Step 5: we compute the action distribution
+
+![compute action distribution](readme_assets/compute_action_distribution.png)
