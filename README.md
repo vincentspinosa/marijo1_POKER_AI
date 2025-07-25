@@ -36,9 +36,9 @@ Step 1: we simulate the end of the game, for a given number of iterations (5000 
 
 Step 2: we extract the raw regrets
 
-![regrets computation](readme_assets/regrets_computation.png)
-
 potMinusDiff -> the max amount of chips the AI can take from the pot (in case the opposite player has bet more than what the AI can put)
+
+![regrets computation](readme_assets/regrets_computation.png)
 
 Step 3: we turn the regrets to values
 
